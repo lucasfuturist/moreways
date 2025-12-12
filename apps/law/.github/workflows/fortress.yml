@@ -1,0 +1,84 @@
+name: Code Fortress (CI)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # JOB 1: Integrity Checks (Fast)
+  # Runs Unit Tests, Linter, and Golden Set
+  integrity:
+    name: 🛡️ Integrity & Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Standard Suite
+        run: npx vitest run tests/unit tests/golden-set
+
+  # JOB 2: The Stress Chamber (Slow)
+  # Runs Fuzzing, Concurrency, and Memory checks
+  stress:
+    name: 🔥 Stress & Fuzzing
+    runs-on: ubuntu-latest
+    needs: integrity # Only run if integrity passes
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Fuzzer
+        run: npx vitest run tests/fuzzing
+
+      - name: Run Concurrency Stress
+        run: npx vitest run tests/stress/concurrency.test.ts
+
+      - name: Run Memory Stress
+        # Increase heap size for the test runner to mimic prod
+        run: node --max-old-space-size=4096 ./node_modules/vitest/vitest.mjs run tests/stress/memory.test.ts
+
+  # JOB 3: Integration & Resilience
+  # Runs the full pipeline and chaos tests
+  integration:
+    name: 🏗️ Integration & Chaos
+    runs-on: ubuntu-latest
+    needs: integrity
+    env:
+      # Use the "Dry Run" mode we built to avoid burning OpenAI credits in CI
+      DRY_RUN: 'true' 
+      # Mock the DB connection string (The mock client intercepts usage anyway)
+      SUPABASE_URL: 'https://mock.supabase.co'
+      SUPABASE_KEY: 'mock-key'
+      OPENAI_API_KEY: 'mock-key' 
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Pipeline Integration
+        run: npx vitest run tests/integration/full-pipeline.test.ts
+
+      - name: Run Chaos/Resilience Tests
+        run: npx vitest run tests/unit/shared.resilience.test.ts tests/integration/error-handling.test.ts

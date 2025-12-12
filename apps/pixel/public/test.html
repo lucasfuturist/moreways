@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attribution Test Bench</title>
+    
+    <!-- 1. Configuration (Simulating a client site) -->
+    <script>
+        window.MW_CONFIG = {
+            publicKey: "pk_test_123", // Matches the seed tenant we created
+            endpoint: "" // Empty = Force fallback to localhost:3000
+        };
+    </script>
+    
+    <!-- 2. Load the Pixel -->
+    <script src="./index.global.js"></script>
+    
+    <style>
+        body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: 0 auto; }
+        .card { border: 1px solid #ccc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        button { cursor: pointer; padding: 0.5rem 1rem; background: #0070f3; color: white; border: none; border-radius: 4px; }
+        button.secondary { background: #666; }
+    </style>
+</head>
+<body>
+    <h1>Attribution Engine Test</h1>
+    <p>Open <b>Developer Tools > Network</b> to see the requests.</p>
+
+    <div class="card">
+        <h3>1. Consent State</h3>
+        <p>By default, the pixel starts as <code>denied</code>.</p>
+        <button class="secondary" onclick="grantConsent()">✅ Grant Consent</button>
+    </div>
+
+    <div class="card">
+        <h3>2. Trigger Events</h3>
+        <button onclick="window.moreways.track('lead', { value: 50.00, currency: 'USD' })">
+            🚀 Submit Lead
+        </button>
+        <br><br>
+        <button onclick="window.moreways.track('purchase', { value: 199.00 })">
+            💰 Purchase
+        </button>
+    </div>
+
+    <script>
+        function grantConsent() {
+            window.moreways.consent({ 
+                ad_storage: 'granted', 
+                analytics_storage: 'granted' 
+            });
+            alert('Consent Granted! Future events will be sent to Meta/Google.');
+        }
+    </script>
+</body>
+</html>

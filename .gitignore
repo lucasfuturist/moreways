@@ -1,0 +1,84 @@
+$gitignore = @"
+# --- Node & Package Managers ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Context Control ---
+.Context.CORE-CONTEXT
+
+# Block mixed lockfiles (Enforce pnpm)
+package-lock.json
+yarn.lock
+
+# --- TurboRepo ---
+.turbo/
+
+# --- Environment Variables (CRITICAL) ---
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+# Exceptions: Keep the examples!
+!.env.example
+.env.stashed
+
+# --- Next.js ---
+.next/
+out/
+build/
+dist/
+
+# --- Vercel ---
+.vercel/
+
+# --- Testing & Coverage ---
+coverage/
+playwright-report/
+test-results/
+blob-report/
+.nyc_output/
+
+# --- Logs ---
+logs/
+*.log
+
+# --- Database & Local Storage ---
+*.db
+*.sqlite
+*.sqlite-journal
+/postgres_data/
+/redis_data/
+
+# --- IDE & OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# --- App Specific: Pixel Build Artifacts ---
+# We generally want to ignore the minified output in public
+apps/pixel/public/*.js
+apps/pixel/public/*.map
+# But keep the source tracking.js if it was manual
+!apps/pixel/public/tracking.js
+
+# --- App Specific: Law Engine ---
+apps/law/debug_output/
+apps/law/sample_docs/parsed/
+apps/law/credentials.json
+apps/law/google_credentials.json
+
+# --- TypeScript ---
+*.tsbuildinfo
+next-env.d.ts
+"@
+
+Set-Content -Path ".gitignore" -Value $gitignore
+
+Write-Host "✅ .gitignore created successfully." -ForegroundColor Green

@@ -1,0 +1,45 @@
+{
+  "name": "law-parsing-engine",
+  "version": "1.0.0",
+  "description": "Deterministic Legal Retrieval and Parsing Engine",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "ts-node tests/unit/ingest.svc.parsePdf.test.ts",
+    "prepare": "husky",
+    "start": "npx ts-node src/api/server.ts",
+    "dev": "npx ts-node -r dotenv/config src/api/server.ts"
+  },
+  "dependencies": {
+    "@azure/ai-form-recognizer": "^5.1.0",
+    "@supabase/supabase-js": "^2.86.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.45.1",
+    "express": "^5.2.1",
+    "googleapis": "^166.0.0",
+    "helmet": "^8.1.0",
+    "morgan": "^1.10.1",
+    "openai": "^6.9.1",
+    "pdf2json": "^4.0.0",
+    "pino": "^9.0.0",
+    "pino-http": "^11.0.0",
+    "postgres": "^3.4.7",
+    "uuid": "^10.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^20.19.25",
+    "@types/supertest": "^6.0.3",
+    "@types/uuid": "^10.0.0",
+    "drizzle-kit": "^0.31.8",
+    "husky": "^9.1.7",
+    "supertest": "^7.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.15"
+  }
+}

@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # UNIFIED DATABASE SERVER
+  postgres:
+    image: postgres:15-alpine
+    container_name: moreways_postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/init-dbs.sql:/docker-entrypoint-initdb.d/init-dbs.sql
+
+  # UNIFIED QUEUE SERVER
+  redis:
+    image: redis:7-alpine
+    container_name: moreways_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:

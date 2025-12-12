@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 
+  1. GLOBAL SCROLL LOCK
+  We hide the native window scrollbar because we are moving the 
+  scrolling logic INSIDE the PageTransition component (using Lenis).
+*/
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden; 
+  overscroll-behavior: none; /* Prevents the "rubber band" bounce on Mac */
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+  }
+ 
+  /* 
+     2. DARK MODE VARIABLES (Obsidian / Deep Space) 
+     These activate when the "dark" class is applied to <html>
+  */
+  .dark {
+    --background: 222.2 84% 4.9%; /* Deep Space */
+    --foreground: 210 40% 98%;    /* Pure White Text */
+    
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    
+    /* Make Primary brighter in dark mode (Electric Indigo) */
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    
+    /* Lighter Muted backgrounds for distinct separation */
+    --muted: 217.2 32.6% 12%; 
+    --muted-foreground: 215 20.2% 70%; /* Lighter gray text */
+    
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    
+    /* Make borders visible (15% white instead of dark gray) */
+    --border: 217.2 32.6% 17.5%; 
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+  }
+
+  select, textarea, input[type="text"], input[type="password"], input[type="email"], input[type="number"] {
+    font-size: 16px !important; 
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* 
+     3. FILM GRAIN TEXTURE 
+     Adds the "tactile" feel to the background.
+  */
+  .bg-noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0.04; /* Light mode opacity */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  /* Increase noise slightly in dark mode to prevent color banding */
+  .dark .bg-noise {
+    opacity: 0.025;
+  }
+  
+  .glass-panel {
+    @apply bg-white/40 backdrop-blur-xl border-white/20 shadow-xl dark:bg-slate-900/40 dark:border-white/10;
+  }
+  
+  .text-glow {
+    text-shadow: 0 0 20px rgba(14, 165, 233, 0.5);
+  }
+}
+
+/* 
+   4. HUD SCROLLBAR 
+   Custom "Optical Fiber" scrollbar styling
+*/
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.2); /* Indigo low opacity */
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.6); /* Glow on hover */
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}

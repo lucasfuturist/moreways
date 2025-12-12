@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # 1. The Ledger (Source of Truth)
+  postgres:
+    image: postgres:15-alpine
+    container_name: attribution-db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: attribution_engine
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d attribution_engine"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. The Queue (For High-Volume Ingestion)
+  redis:
+    image: redis:7-alpine
+    container_name: attribution-queue
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 3. Ingestion & Reporting API
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: attribution-api
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      PIXEL_DATABASE_URL: postgres://admin:password123@postgres:5432/attribution_engine
+      REDIS_URL: redis://redis:6379
+      PORT: 3000
+      HASH_SECRET: dev-secret-salt
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: node dist/api/index.js
+
+  # 4. Background Worker (Processor + Janitor)
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: attribution-worker
+    restart: always
+    environment:
+      PIXEL_DATABASE_URL: postgres://admin:password123@postgres:5432/attribution_engine
+      REDIS_URL: redis://redis:6379
+      HASH_SECRET: dev-secret-salt
+      NODE_ENV: production
+      # [FIX] Added dummy PORT to satisfy dotenv-safe validation
+      PORT: 3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: node dist/worker/index.js
+
+volumes:
+  pgdata:
+  redisdata:

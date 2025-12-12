@@ -1,0 +1,46 @@
+{
+  "name": "attribution-engine",
+  "version": "1.0.0",
+  "description": "High-fidelity server-side attribution with strict consent gating.",
+  "main": "src/api/index.ts",
+  "scripts": {
+    "dev": "concurrently \"pnpm dev:api\" \"pnpm dev:worker\"",
+    "dev:api": "tsx watch src/api/index.ts",
+    "dev:worker": "tsx watch src/worker/index.ts",
+    "build": "pnpm build:server && pnpm build:pixel",
+    "build:server": "tsup src/api/index.ts src/worker/index.ts --format cjs --out-dir dist",
+    "build:pixel": "tsup src/pixel/index.ts --format iife --minify --clean --out-dir public",
+    "start:api": "node dist/api/index.js",
+    "start:worker": "node dist/worker/index.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit push",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:load": "k6 run tests/load/ingest.load.js",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.11.0",
+    "bullmq": "^5.7.0",
+    "dotenv-safe": "^9.1.0",
+    "drizzle-orm": "^0.30.0",
+    "hono": "^4.3.0",
+    "pino": "^9.0.0",
+    "postgres": "^3.4.4",
+    "redis": "^5.10.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "@types/node": "^20.19.25",
+    "concurrently": "^9.2.1",
+    "drizzle-kit": "^0.21.0",
+    "msw": "^2.3.0",
+    "pino-pretty": "^11.0.0",
+    "tsup": "^8.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  }
+}

@@ -1,0 +1,2 @@
+# Run the fast tests before allowing a commit
+npx vitest run tests/unit tests/golden-set

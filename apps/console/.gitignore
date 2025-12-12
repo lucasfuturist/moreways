@@ -1,0 +1,53 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Next.js build output
+.next
+.out
+build
+dist
+
+# Environment Variables (Keep secrets safe)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+# NOTE: We intentionally keep .env.example committed!
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE & System
+.DS_Store
+.idea
+.vscode
+*.swp
+*.swo
+
+# Vercel
+.vercel
+
+# Prisma / Local DBs
+*.db
+*.sqlite
+*.sqlite-journal
+
+# TypeScript
+*.tsbuildinfo
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+# Generated Pixel (If you build this via script)
+# public/mwpx.js

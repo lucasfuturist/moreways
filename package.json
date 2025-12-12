@@ -1,0 +1,22 @@
+{
+    "name":  "moreways-monorepo",
+    "packageManager":  "pnpm@9.0.0",
+    "scripts":  {
+                    "lint":  "turbo run lint",
+                    "build":  "turbo run build",
+                    "db:up":  "docker-compose up -d",
+                    "db:down":  "docker-compose down",
+                    "test":  "turbo run test",
+                    "dev":  "turbo run dev"
+                },
+    "devDependencies":  {
+                            "typescript":  "5.4.5",
+                            "prettier":  "^3.2.5",
+                            "turbo":  "^2.0.0"
+                        },
+    "engines":  {
+                    "node":  "\u003e=20",
+                    "pnpm":  "\u003e=9"
+                },
+    "private":  true
+}

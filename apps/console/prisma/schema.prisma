@@ -1,0 +1,182 @@
+// --------------------------------------------------------
+// CONFIG
+// --------------------------------------------------------
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("CONSOLE_DATABASE_URL")
+}
+
+// --------------------------------------------------------
+// ENUMS
+// --------------------------------------------------------
+
+enum UserRole {
+  SUPER_ADMIN // Platform owner (Moreways internal)
+  ORG_ADMIN   // Law Firm Admin
+  LAWYER      // Law Firm Staff
+  CLIENT      // Consumer / Plaintiff
+}
+
+enum MatterStatus {
+  LEAD
+  OPEN
+  PENDING
+  CLOSED
+  REJECTED
+}
+
+// --------------------------------------------------------
+// MODELS
+// --------------------------------------------------------
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String?  @unique // e.g. "morgan-morgan" (for vanity URLs)
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  users           User[]
+  apiKeys         ApiKey[]
+  formSchemas     FormSchema[]
+  clients         Client[]
+  matters         Matter[]
+  formSubmissions FormSubmission[]
+
+  @@map("organizations")
+}
+
+model User {
+  id             String   @id @default(cuid())
+  organizationId String   @map("organization_id")
+  email          String   @unique
+  passwordHash   String?  @map("password_hash")
+  
+  // Unified Role System
+  role           UserRole @default(CLIENT)
+
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  
+  // If this User is a Client, link to their CRM record
+  clientProfile Client?
+
+  @@map("users")
+}
+
+// [NEW] API Keys for external integrations (e.g., the Marketing Site)
+model ApiKey {
+  id             String   @id @default(cuid())
+  organizationId String   @map("organization_id")
+  
+  keyPrefix      String   @map("key_prefix") // Store first 4 chars for UI display
+  keyHash        String   @map("key_hash")   // Hashed secret
+  label          String?  // e.g. "Marketing Site Production"
+  lastUsedAt     DateTime? @map("last_used_at")
+
+  createdAt      DateTime @default(now()) @map("created_at")
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@map("api_keys")
+}
+
+model FormSchema {
+  id             String   @id @default(cuid())
+  organizationId String   @map("organization_id")
+  
+  name           String
+  version        Int
+  schemaJson     Json     @map("schema_json")
+  
+  // [NEW] Integration Fields
+  // "slug" allows the marketing site to find this form via URL (e.g. /issue/car-accident)
+  slug           String?  @unique
+  // "isPublished" determines if this version is the one served to the public
+  isPublished    Boolean  @default(false) @map("is_published")
+  isDeprecated   Boolean  @default(false) @map("is_deprecated")
+
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization    Organization     @relation(fields: [organizationId], references: [id])
+  formSubmissions FormSubmission[]
+
+  // Ensure an org can't have duplicate versions of the same named form
+  @@unique([organizationId, name, version])
+  // Index for fast lookups by slug
+  @@index([organizationId, slug, isPublished])
+  
+  @@map("form_schemas")
+}
+
+model Client {
+  id             String   @id @default(cuid())
+  organizationId String   @map("organization_id")
+  
+  // Link to the User Login (optional, created when they register for the portal)
+  userId         String?  @unique @map("user_id")
+  
+  fullName       String   @map("full_name")
+  email          String?
+  phone          String?
+  
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization    Organization     @relation(fields: [organizationId], references: [id])
+  user            User?            @relation(fields: [userId], references: [id])
+  
+  matters         Matter[]
+  formSubmissions FormSubmission[]
+
+  @@map("clients")
+}
+
+model Matter {
+  id             String       @id @default(cuid())
+  organizationId String       @map("organization_id")
+  clientId       String       @map("client_id")
+  
+  name           String
+  status         MatterStatus @default(LEAD)
+  
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
+  organization    Organization     @relation(fields: [organizationId], references: [id])
+  client          Client           @relation(fields: [clientId], references: [id])
+  formSubmissions FormSubmission[]
+
+  @@map("matters")
+}
+
+model FormSubmission {
+  id             String   @id @default(cuid())
+  organizationId String   @map("organization_id")
+  formSchemaId   String   @map("form_schema_id")
+  clientId       String   @map("client_id")
+  matterId       String?  @map("matter_id")
+  
+  submissionData Json     @map("submission_data")
+  
+  // Risk/Value Flags detected by AI or Rules
+  flags          Json?    @default("[]") 
+
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  formSchema   FormSchema   @relation(fields: [formSchemaId], references: [id])
+  client       Client       @relation(fields: [clientId], references: [id])
+  matter       Matter?      @relation(fields: [matterId], references: [id])
+
+  @@map("form_submissions")
+}

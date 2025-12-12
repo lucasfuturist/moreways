@@ -1,0 +1,43 @@
+name: argueOS CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    name: Test & Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm dlx prisma generate
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Run Tests (Vitest)
+        run: pnpm test
+        env:
+          # Mock values for CI
+          CONSOLE_DATABASE_URL: "postgresql://mock:5432/mockdb"
+          OPENAI_API_KEY: "mock-key"
+          LLM_MOCK_MODE: "true"
