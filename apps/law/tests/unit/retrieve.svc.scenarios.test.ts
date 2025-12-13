@@ -1,10 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { ContextAssembler, IGraphReader } from '../../src/retrieve/svc/retrieve.svc.contextAssembler';
-import { MockOverrideRepo } from '../../src/graph/repo/graph.repo.overrideRepo'; // [NEW]
+import { MockOverrideRepo } from '../../src/graph/repo/graph.repo.overrideRepo';
 import { LegalNodeRecord } from '../../src/graph/schema/graph.schema.nodes';
 import { v4 as uuidv4 } from 'uuid';
 
-// ... (GraphBuilder and SmartMockReader classes remain unchanged) ...
+// --- HELPER CLASSES ---
+
 class GraphBuilder {
   private nodes: LegalNodeRecord[] = [];
   private rootId: string = '';
@@ -71,6 +72,7 @@ class GraphBuilder {
   }
 }
 
+// [FIX] Implemented missing interface methods
 class SmartMockReader implements IGraphReader {
   constructor(private db: LegalNodeRecord[]) {}
 
@@ -91,14 +93,38 @@ class SmartMockReader implements IGraphReader {
       n.content_text.includes("Definition")
     );
   }
+
+  // [NEW] Added for ContextAssembler compatibility
+  async getChildren(path: string): Promise<LegalNodeRecord[]> {
+      // Return direct children (path matches parent + 1 segment)
+      const parentDepth = path.split('.').length;
+      return this.db.filter(n => 
+          n.citation_path.startsWith(path + '.') && 
+          n.citation_path.split('.').length === parentDepth + 1
+      );
+  }
+
+  // [NEW] Added for ContextAssembler compatibility
+  async getSiblings(path: string, targetUrn: string): Promise<LegalNodeRecord[]> {
+      const lastDot = path.lastIndexOf('.');
+      if (lastDot === -1) return []; // Root has no siblings in this context
+      
+      const parentPath = path.substring(0, lastDot);
+      const myDepth = path.split('.').length;
+
+      return this.db.filter(n => 
+          n.citation_path.startsWith(parentPath + '.') && 
+          n.citation_path.split('.').length === myDepth &&
+          n.urn !== targetUrn
+      );
+  }
 }
-// ...
+
+// --- TEST SUITE ---
 
 describe('Retrieval Engine: Robustness Suite', () => {
 
-  // ... (Previous Scenarios 1-3 remain same, assume they pass) ...
   it('SCENARIO 1: Scope Isolation (preventing definition leaks)', async () => {
-    // ...
     const db = new GraphBuilder()
       .addRoot()
       .addSection('SecA', 'ROOT')
@@ -106,14 +132,15 @@ describe('Retrieval Engine: Robustness Suite', () => {
       .addSection('SecB', 'ROOT')
       .addNode('Target', 'PARAGRAPH', 'SecB', 'User Query Target')
       .build();
+    
     const assembler = new ContextAssembler(new SmartMockReader(db), new MockOverrideRepo());
     const context = await assembler.assembleContext('urn:node:Target');
+    
     const leakedDef = context.definitions.find(d => d.content_text.includes("Interest"));
     expect(leakedDef).toBeUndefined();
   });
 
   it('SCENARIO 2: Deep Hierarchy Resolution', async () => {
-     // ...
      const db = new GraphBuilder()
       .addRoot()
       .addSection('Part1', 'ROOT')
@@ -122,25 +149,29 @@ describe('Retrieval Engine: Robustness Suite', () => {
       .addNode('Para1', 'PARAGRAPH', 'Sub1')
       .addNode('Target', 'PARAGRAPH', 'Para1', 'Deep Target')
       .build();
+    
     const assembler = new ContextAssembler(new SmartMockReader(db), new MockOverrideRepo());
     const context = await assembler.assembleContext('urn:node:Target');
     expect(context.ancestry.length).toBe(5);
   });
 
   it('SCENARIO 3: Broken Chain (Missing Parent Record)', async () => {
-     // ...
      const db = new GraphBuilder()
       .addRoot()
       .addSection('Sec1', 'ROOT')
       .addNode('Target', 'PARAGRAPH', 'Sec1')
       .build();
+    
+    // Simulate data corruption by removing the Section node
     const brokenDb = db.filter(n => n.urn !== 'urn:sec:Sec1');
+    
     const assembler = new ContextAssembler(new SmartMockReader(brokenDb), new MockOverrideRepo());
     const context = await assembler.assembleContext('urn:node:Target');
+    
+    // Should recover what it can (Root)
     expect(context.ancestry.length).toBe(1);
   });
 
-  // [UPDATED SCENARIO 4]
   it('SCENARIO 4: Safety Override (Judicial Review - Pattern Matching)', async () => {
     const db = new GraphBuilder()
       .addRoot()
@@ -150,13 +181,7 @@ describe('Retrieval Engine: Robustness Suite', () => {
 
     const overrideRepo = new MockOverrideRepo();
     
-    // Safety Rule: Enjoin the entire section 1 (urn:sec:Sec1)
-    // The target (urn:node:Target) is a child, so checking ancestry should trigger the alert?
-    // Wait, getOverrides logic in repo uses URN matching.
-    // If we define override for "urn:sec:Sec1", direct lookup on "urn:node:Target" won't match.
-    // BUT ContextAssembler checks ancestry! 
-    // Ancestry of Target is [Root, Sec1]. Sec1 matches.
-    
+    // Safety Rule: Enjoin the parent Section
     overrideRepo.addOverride({
         urn_pattern: 'urn:sec:Sec1',
         type: 'ENJOINED',
@@ -168,12 +193,13 @@ describe('Retrieval Engine: Robustness Suite', () => {
     const assembler = new ContextAssembler(new SmartMockReader(db), overrideRepo);
     const context = await assembler.assembleContext('urn:node:Target');
 
+    // ContextAssembler checks ancestors for overrides. 
+    // Target's ancestor is Sec1, which has an override.
     expect(context.alerts.length).toBeGreaterThan(0);
-    expect(context.alerts[0].type).toBe('OVERRIDE');
+    expect(context.alerts[0].type).toBe('OVERRIDE'); // Mapped from ENJOINED
     expect(context.alerts[0].message).toContain('unconstitutional');
   });
 
-  // [NEW SCENARIO]
   it('SCENARIO 5: Preemption via Wildcard', async () => {
       const db = new GraphBuilder()
         .addRoot()
@@ -182,7 +208,8 @@ describe('Retrieval Engine: Robustness Suite', () => {
         .build();
 
       const overrideRepo = new MockOverrideRepo();
-      // Wildcard: Enjoin everything in the section
+      
+      // Wildcard: Enjoin everything starting with urn:node:*
       overrideRepo.addOverride({
           urn_pattern: 'urn:node:*', 
           type: 'PREEMPTED',
@@ -194,6 +221,7 @@ describe('Retrieval Engine: Robustness Suite', () => {
       const assembler = new ContextAssembler(new SmartMockReader(db), overrideRepo);
       const context = await assembler.assembleContext('urn:node:Target');
 
+      expect(context.alerts.length).toBeGreaterThan(0);
       expect(context.alerts[0].type).toBe('PREEMPTION');
   });
 

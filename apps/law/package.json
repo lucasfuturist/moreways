@@ -3,12 +3,18 @@
   "version": "1.0.0",
   "description": "Deterministic Legal Retrieval and Parsing Engine",
   "main": "dist/index.js",
-  "scripts": {
+"scripts": {
     "build": "tsc",
-    "test": "ts-node tests/unit/ingest.svc.parsePdf.test.ts",
-    "prepare": "husky",
     "start": "npx ts-node src/api/server.ts",
-    "dev": "npx ts-node -r dotenv/config src/api/server.ts"
+    "dev": "npx ts-node -r dotenv/config src/api/server.ts",
+    "run:magistrate": "tsx ./scripts/run-magistrate-batch.ts",
+
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:e2e": "vitest run tests/e2e",
+    "test:qa": "vitest run tests/e2e/quality.live.test.ts"
   },
   "dependencies": {
     "@azure/ai-form-recognizer": "^5.1.0",

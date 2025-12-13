@@ -1,6 +1,6 @@
-# File Scan: `apps/law/src/api`
+# High-Resolution Interface Map: `apps/law/src/api`
 
-## Tree: C:\projects\moreways-ecosystem\apps\law\src\api
+## Tree: `apps/law/src/api`
 
 ```
 api/
@@ -16,41 +16,32 @@ api/
 ├── server.ts
 ```
 
-## Files
+## File Summaries
 
-### `api/server.ts`
-**Role:** Express application entry point responsible for middleware configuration, dependency injection, and route definition.
+### `server.ts`
+**Role:** Configures the Express application, applies global middleware, initializes core dependencies (Graph Reader, Repo, Assembler), and mounts route controllers.
 **Key Exports:**
-- `createApp(): Express.Application` - Instantiates the app, injects dependencies (GraphReader, Assembler, Controllers), and mounts routes.
-- `app` - The initialized Express application instance.
-**Dependencies:** `SearchController`, `NodeController`, `ValidateController`, `ContextAssembler`, `SupabaseGraphReader`, `SupabaseOverrideRepo`.
+- `createApp(): Express` - Factory function that constructs and configures the Express app instance.
+- `app` - The initialized singleton Express application.
+**Dependencies:** `express`, `SearchController`, `NodeController`, `ValidateController`, `ContextAssembler`, `SupabaseGraphReader`, `SupabaseOverrideRepo`.
 
-### `api/handler/api.handler.nodeRoute.ts`
-**Role:** Controller managing the retrieval of specific legal graph nodes and their hierarchical children.
+### `api.handler.nodeRoute.ts`
+**Role:** Handles requests to fetch specific legal graph nodes (by UUID or URN), dynamically expanding content for non-leaf nodes (Sections/Parts) to include their children.
 **Key Exports:**
-- `NodeController` - Class handling node lookup logic.
-- `handleGetNode(req, res, next): Promise<Response>` - Fetches a node by UUID or URN, aggregates child content for context, and formats text.
-**Dependencies:** `SupabaseGraphReader`, `formatLegalText`, `zod`.
+- `NodeController` - Class handling node retrieval logic.
+- `handleGetNode(req, res, next): Promise<void>` - Validates ID, queries the Graph Reader, formats text, and returns the node record.
+**Dependencies:** `SupabaseGraphReader`, `zod`, `formatLegalText`.
 
-### `api/handler/api.handler.searchRoute.ts`
-**Role:** Orchestrator for the RAG (Retrieval-Augmented Generation) pipeline, managing query normalization, search, filtering, context assembly, and answer synthesis.
+### `api.handler.searchRoute.ts`
+**Role:** Orchestrates the primary RAG search pipeline, including query normalization, hybrid search, relevance filtering, context assembly, and answer synthesis.
 **Key Exports:**
-- `SearchController` - Class wrapping the search orchestration logic.
-- `handleSearch(body): Promise<SearchResultPayload>` - Executes the full search pipeline with caching, normalization, vector search, and LLM synthesis.
+- `SearchController` - Class handling search logic and context assembly injection.
+- `handleSearch(body): Promise<object>` - executes the full RAG pipeline, manages caching strategies, and constructs the response payload with citations.
 **Dependencies:** `ContextAssembler`, `QueryNormalizer`, `HybridSearchService`, `RelevanceFilterService`, `synthesizeAnswer`, `cache`.
 
-### `api/handler/api.handler.validateRoute.ts`
-**Role:** Controller responsible for evaluating user intent against form data using an AI-driven judgment service.
+### `api.handler.validateRoute.ts`
+**Role:** Endpoint for the "Magistrate" feature, validating user intent and form data against legal requirements using the Judge service.
 **Key Exports:**
-- `ValidateController` - Class handling validation requests.
-- `handleValidation(req, res, next): Promise<void>` - Parses validation requests and triggers the `JudgeService` to return a verdict.
-**Dependencies:** `JudgeService`, `HybridSearchService`, `SupabaseGraphReader`.
-
-### `api/handler/api.handler.ingestRoute.ts`
-*File present in tree but content provided was empty.*
-
-### `api/middleware/api.middleware.auth.ts`
-*File present in tree but content provided was empty.*
-
-### `api/middleware/api.middleware.validation.ts`
-*File present in tree but content provided was empty.*
+- `ValidateController` - Class handling the validation endpoint.
+- `handleValidation(req, res, next): Promise<void>` - Parses validation requests and returns a compliance verdict from the JudgeService.
+**Dependencies:** `JudgeService`, `HybridSearchService`, `SupabaseGraphReader`, `ValidationRequestSchema`.

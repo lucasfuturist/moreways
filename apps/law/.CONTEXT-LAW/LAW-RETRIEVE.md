@@ -1,6 +1,6 @@
-# File Scan: `apps/law/src/retrieve`
+# High-Resolution Interface Map: `apps/law/src/retrieve`
 
-## Tree: C:\projects\moreways-ecosystem\apps\law\src\retrieve
+## Tree: `apps/law/src/retrieve`
 
 ```
 retrieve/
@@ -16,50 +16,55 @@ retrieve/
 │   ├── retrieve.svc.synthesizer.ts
 ```
 
-## Files
+## File Summaries
 
-### `retrieve/schema/retrieve.schema.context.ts`
-**Role:** Defines the data structure ("Context Object") passed to the LLM, containing the target node, its ancestry, definitions, and safety alerts.
+### `retrieve.schema.contet.ts`
+**Role:** Defines the Zod schema and TypeScript type for the context payload provided to the LLM (Duplicate of `context.ts`).
 **Key Exports:**
-- `ScopedContextSchema` - Zod schema validating the context payload.
-- `ScopedContext` - TypeScript type inferred from the schema.
-**Dependencies:** `zod`, `LegalNodeRecordSchema`.
+- `ScopedContextSchema` - Zod object validating the structure of the LLM payload (target, ancestry, definitions, alerts).
+- `ScopedContext` - Type inference of the schema.
+**Dependencies:** `LegalNodeRecordSchema`
 
-### `retrieve/svc/retrieve.svc.contextAssembler.ts`
-**Role:** Aggregates related graph nodes (ancestors, children, siblings, definitions) around a target URN to build a comprehensive legal context.
+### `retrieve.schema.context.ts`
+**Role:** Defines the Zod schema and TypeScript type for the context payload provided to the LLM.
 **Key Exports:**
-- `ContextAssembler` - Class responsible for fetching and de-duplicating graph data.
-- `assembleContext(targetUrn): Promise<ScopedContext>` - Fetches the target node and expands its context with relevant definitions and override alerts.
-- `IGraphReader` - Interface abstracting the database read operations.
-**Dependencies:** `LegalNodeRecord`, `ScopedContext`, `IOverrideRepo`.
+- `ScopedContextSchema` - Zod object validating the structure of the LLM payload (target, ancestry, definitions, alerts).
+- `ScopedContext` - Type inference of the schema.
+**Dependencies:** `LegalNodeRecordSchema`
 
-### `retrieve/svc/retrieve.svc.hybridSearch.ts`
-**Role:** Executes the search strategy using a combination of OpenAI vector embeddings and PostgreSQL full-text search (via Supabase RPC).
+### `retrieve.svc.contextAssembler.ts`
+**Role:** Aggregates related graph data (ancestors, children, siblings, definitions) and safety alerts to build the full context for a target URN.
 **Key Exports:**
-- `HybridSearchService` - Class handling the search logic.
-- `search(userQuery, limit): Promise<SearchResult[]>` - Vectorizes the query and returns scored matches from the database.
-- `SearchResult` - Interface defining the structure of a search hit (score, content, URN).
-**Dependencies:** `openai`, `supabase`.
+- `IGraphReader` - Interface defining required methods for fetching nodes, ancestors, and siblings.
+- `ContextAssembler` - Class managing the assembly logic.
+- `assembleContext(targetUrn: string): Promise<ScopedContext>` - Fetches target node, resolves graph relationships, checks overrides, and returns the assembled context.
+**Dependencies:** `LegalNodeRecord`, `ScopedContext`, `IOverrideRepo`
 
-### `retrieve/svc/retrieve.svc.queryNormalizer.ts`
-**Role:** Uses an LLM to transform natural language user questions into optimized keyword-rich search strings for better retrieval recall.
+### `retrieve.svc.hybridSearch.ts`
+**Role:** Orchestrates the search process by generating embeddings and querying the database using a weighted mix of vector similarity and keyword matching.
 **Key Exports:**
-- `QueryNormalizer` - Class responsible for query preprocessing.
-- `normalize(rawQuery): Promise<NormalizedQuery>` - Returns both the original query and the LLM-transformed version.
-**Dependencies:** `openai`.
+- `SearchResult` - Interface defining the structure of a search hit (scores, content, urn).
+- `HybridSearchService` - Class managing the search execution.
+- `search(userQuery: string, limit: number): Promise<SearchResult[]>` - Vectorizes the query and calls the Supabase RPC `match_legal_nodes_hybrid`.
+**Dependencies:** `openai`, `supabase`
 
-### `retrieve/svc/retrieve.svc.relevanceFilter.ts`
-**Role:** Acts as an "AI Judge" to filter raw search results, discarding irrelevant chunks before they reach the expensive context assembly phase.
+### `retrieve.svc.queryNormalizer.ts`
+**Role:** Uses an LLM to transform natural language user inputs into optimized legal search keywords and statute references.
 **Key Exports:**
-- `RelevanceFilterService` - Class wrapping the filtering logic.
-- `filterRelevance(query, candidates): Promise<SearchResult[]>` - Sends candidates to an LLM to select only the relevant indices.
-**Dependencies:** `openai`, `SearchResult`.
+- `NormalizedQuery` - Interface holding the original and transformed query strings.
+- `QueryNormalizer` - Class managing the transformation logic.
+- `normalize(rawQuery: string): Promise<NormalizedQuery>` - Calls GPT-4o-mini to remove noise and expand terms into legal equivalents.
+**Dependencies:** `openai`
 
-### `retrieve/svc/retrieve.svc.synthesizer.ts`
-**Role:** Generates the final natural language answer for the user based on the assembled legal context.
+### `retrieve.svc.relevanceFilter.ts`
+**Role:** acts as a second-pass filter by using an LLM to review raw search candidates and discard irrelevant entries based on the user query.
 **Key Exports:**
-- `synthesizeAnswer(query, contextNodes): Promise<string>` - Constructs a prompt with the context nodes and asks the LLM to answer the query with citations.
-**Dependencies:** `openai`, `LegalNodeRecord`.
+- `RelevanceFilterService` - Class managing the filtering logic.
+- `filterRelevance(query: string, candidates: SearchResult[]): Promise<SearchResult[]>` - Sends text fragments to an LLM to identify and return only relevant items.
+**Dependencies:** `openai`, `SearchResult`
 
-### `retrieve/schema/retrieve.schema.contet.ts`
-*Note: This appears to be a duplicate or typo of `retrieve.schema.context.ts` containing identical schema definitions.*
+### `retrieve.svc.synthesizer.ts`
+**Role:** Generates the final, cited conversational response using the assembled legal context and alerts.
+**Key Exports:**
+- `synthesizeAnswer(query: string, contextNodes: LegalNodeRecord[], alerts: Alert[]): Promise<string>` - Constructs the prompt with context/alerts and retrieves the final answer from GPT-4o.
+**Dependencies:** `openai`, `LegalNodeRecord`
