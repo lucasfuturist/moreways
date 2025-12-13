@@ -5,6 +5,21 @@
 ```
 scripts/
 
+├── magistrate-results/
+├── rc/
+│   ├── api/
+│   │   ├── handler/
+├── sql/
+│   ├── README.md
+│   ├── init_backup_vault.sql
+│   ├── init_db.sql
+│   ├── init_job_tracker.sql
+│   ├── inspect_schema.sql
+│   ├── migration_add_fts.sql
+│   ├── preflight_health_check.sql
+│   ├── promote_staging.sql
+│   ├── setup_staging.sql
+│   ├── staging_to_vault.sql
 ├── ask-question.ts
 ├── atomize-definitions.ts
 ├── audit-quality.ts
@@ -20,26 +35,14 @@ scripts/
 ├── hydrate-from-cache.ts
 ├── inspect-definitions.ts
 ├── inspect-hierarchy.ts
-├── rc/
-│   ├── api/
-│   │   ├── handler/
 ├── reconstruct-document.ts
 ├── reingest-all.ts
 ├── reingest-specific.ts
 ├── repair-orphan-links.ts
 ├── run-drive-ingest.ts
 ├── run-local-ingest.ts
-├── sql/
-│   ├── README.md
-│   ├── init_backup_vault.sql
-│   ├── init_db.sql
-│   ├── init_job_tracker.sql
-│   ├── inspect_schema.sql
-│   ├── migration_add_fts.sql
-│   ├── preflight_health_check.sql
-│   ├── promote_staging.sql
-│   ├── setup_staging.sql
-│   ├── staging_to_vault.sql
+├── run-magistrate-batch.ts
+├── staging_complex_scenarios.md
 ```
 
 ## File Summaries
@@ -157,6 +160,18 @@ scripts/
 **Key Exports:**
 - `main()` - Iterates local files, constructs `IngestJob` objects, and executes the pipeline.
 **Dependencies:** `IngestWorker`, `AzureDocIntelClient`, `GraphNodeRepo`.
+
+### `run-magistrate-batch.ts`
+**Role:** A batch runner for the Magistrate features that generates (via LLM) or loads complex legal scenarios and runs them through the `JudgeService` to benchmark performance and accuracy.
+**Key Exports:**
+- `runBatch()` - Orchestrates the generation of cases, execution of the Judge logic, and reporting of verdicts/stats.
+**Dependencies:** `JudgeService`, `openai`, `withRetry`, `HybridSearchService`.
+
+### `staging_complex_scenarios.md`
+**Role:** A static data fixture (JSON content) containing high-fidelity, complex legal intake scenarios used by `run-magistrate-batch.ts` to ensure consistent test inputs.
+**Key Exports:**
+- JSON Array of test objects containing `id`, `intent`, `formData`, and `expected_bias`.
+**Dependencies:** None
 
 ---
 

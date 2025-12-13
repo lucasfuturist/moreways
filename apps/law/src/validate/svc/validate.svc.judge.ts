@@ -4,6 +4,8 @@ import { Verdict, VerdictSchema } from '../schema/validate.schema.verdict';
 import { SupabaseGraphReader } from '../../infra/supabase/infra.supabase.reader';
 import { SupabaseOverrideRepo } from '../../graph/repo/graph.repo.overrideRepo';
 import { LegalNodeRecord } from '../../graph/schema/graph.schema.nodes';
+// NEW IMPORT
+import { withRetry } from '../../shared/utils/resilience';
 
 // 1. Precise URNs (Known Anchors)
 const HARDCODED_ANCHORS: Record<string, string[]> = {
@@ -34,40 +36,33 @@ export class JudgeService {
         // A. Fuzzy Match Hardcoded Anchors
         for (const [key, urns] of Object.entries(HARDCODED_ANCHORS)) {
             if (normalizedIntent.includes(key)) {
-                console.log(`[Judge] 🎯 Fuzzy matched '${key}' in intent. Using hardcoded anchor.`);
+                // console.log(`[Judge] 🎯 Fuzzy matched '${key}' in intent.`);
                 const checks = await Promise.all(urns.map(urn => this.reader.getNodeByUrn(urn)));
                 if (checks.every(n => n !== null)) return urns;
             }
         }
 
-        // B. Dynamic Search (Self-Healing) with Filters
+        // B. Dynamic Search
         const conceptKey = Object.keys(INTENT_CONCEPTS).find(k => normalizedIntent.includes(k));
         const searchCtx = conceptKey ? INTENT_CONCEPTS[conceptKey] : intent;
         
-        console.log(`[Judge] 🔍 Searching for law matching concept: "${searchCtx}"`);
-        
+        // console.log(`[Judge] 🔍 Searching for law matching concept: "${searchCtx}"`);
         const results = await this.searcher.search(searchCtx, 5); 
         
         if (results.length > 0) {
-            // FILTER: Prefer actual regulations
             const lawCandidates = results.filter(r => {
                 const u = r.urn.toLowerCase();
                 return u.includes('cfr') || u.includes('cmr') || u.includes('usc') || u.includes('act');
             });
-
             const bestFit = lawCandidates.length > 0 ? lawCandidates[0] : results[0];
-            
-            console.log(`[Judge] ✅ Dynamically anchored to: ${bestFit.urn}`);
             return [bestFit.urn];
         }
-
-        console.warn(`[Judge] ⚠️ Could not find any law for intent: ${intent}`);
         return [];
     }
 
     public async evaluate(intent: string, formData: Record<string, any>): Promise<Verdict> {
-        console.log(`[Judge] ⚖️ Convening court for intent: "${intent}"`);
-        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        // console.log(`[Judge] ⚖️ Convening court for intent: "${intent}"`);
+        const today = new Date().toISOString().split('T')[0];
 
         // 1. Resolve Anchor URNs
         const anchors = await this.resolveAnchors(intent);
@@ -79,24 +74,20 @@ export class JudgeService {
 
         if (anchors.length > 0) {
             for (const urn of anchors) {
-                // Check Overrides
                 const nodeOverrides = await this.overrideRepo.getOverrides(urn);
                 nodeOverrides.forEach(o => {
                     overrides.push(`[ALERT] The law at ${urn} is flagged: ${o.type} - ${o.message} (Cite: ${o.court_citation})`);
                 });
 
-                // Fetch Content with Error Handling
                 try {
                     let nodesToRead: LegalNodeRecord[] = [];
                     const children = await this.reader.getChildren(urn.replace(/:/g, '.'), urn);
-                    
                     if (children.length > 0) {
                         nodesToRead = children;
                     } else {
                         const self = await this.reader.getNodeByUrn(urn);
                         if (self) nodesToRead = [self];
                     }
-
                     lawText += nodesToRead
                         .map(n => `SECTION [${n.urn}]:\n${n.content_text}`)
                         .join('\n\n');
@@ -112,7 +103,7 @@ export class JudgeService {
                 status: "POSSIBLE_VIOLATION", 
                 confidence_score: 0.1,
                 analysis: {
-                    summary: "System could not retrieve specific regulations. The case requires manual legal review.",
+                    summary: "System could not retrieve specific regulations. Case requires manual legal review.",
                     missing_elements: ["Regulatory Context"],
                     strength_factors: [],
                     weakness_factors: []
@@ -164,24 +155,31 @@ export class JudgeService {
         `;
 
         try {
-            const response = await openai.chat.completions.create({
-                model: "gpt-4o",
-                messages: [{ role: "system", content: "You are a strict, citation-focused Magistrate." }, { role: "user", content: prompt }],
-                response_format: { type: "json_object" },
-                temperature: 0
-            });
+            // --- RETRY WRAPPER START ---
+            // We wrap the OpenAI call with our resilience utility.
+            // Max 30 seconds total, starting with 1s delay, doubling each time.
+            const response = await withRetry(async () => {
+                return await openai.chat.completions.create({
+                    model: "gpt-4o",
+                    messages: [{ role: "system", content: "You are a strict, citation-focused Magistrate." }, { role: "user", content: prompt }],
+                    response_format: { type: "json_object" },
+                    temperature: 0
+                });
+            }, { maxDurationMs: 30000 });
+            // --- RETRY WRAPPER END ---
 
             const rawJson = response.choices[0].message.content || "{}";
             const parsed = JSON.parse(rawJson);
             return VerdictSchema.parse(parsed);
 
         } catch (error) {
-            console.error("[Judge] ❌ Mistrial:", error);
+            console.error("[Judge] ❌ Mistrial (Retries Exhausted):", error);
+            // Only fallback if we truly exhausted all retries
             return {
                 status: "POSSIBLE_VIOLATION",
                 confidence_score: 0.5,
                 analysis: {
-                    summary: "AI analysis failed. Defaulting to manual review.",
+                    summary: "AI analysis unavailable after multiple attempts. Defaulting to manual review.",
                     missing_elements: [],
                     strength_factors: [],
                     weakness_factors: []

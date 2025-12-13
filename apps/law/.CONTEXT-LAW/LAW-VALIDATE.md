@@ -1,6 +1,6 @@
-# File Scan: `apps/law/src/validate`
+# High-Resolution Interface Map: `apps/law/src/validate`
 
-## Tree: C:\projects\moreways-ecosystem\apps\law\src\validate
+## Tree: `apps/law/src/validate`
 
 ```
 validate/
@@ -11,19 +11,19 @@ validate/
 │   ├── validate.svc.judge.ts
 ```
 
-## Files
+## File Summaries
 
-### `validate/schema/validate.schema.verdict.ts`
-**Role:** Defines the Zod data contracts for the validation input (user intent/form data) and the structural output of the AI judgment (verdict).
+### `validate.schema.verdict.ts`
+**Role:** Defines the Zod schemas and TypeScript types for the compliance validation request payload and the resulting legal verdict.
 **Key Exports:**
-- `VerdictSchema` - Zod schema validating the AI's analysis, confidence score, and citation list.
-- `ValidationRequestSchema` - Zod schema validating the incoming request payload.
-- `Verdict` - TypeScript type inferred from the output schema.
-**Dependencies:** `zod`.
+- `VerdictSchema` - Zod object validating the structure of the Magistrate's decision (status, confidence, analysis, citations).
+- `Verdict` - Type inference of the output schema.
+- `ValidationRequestSchema` - Zod object validating the input intent and raw form data.
+**Dependencies:** `zod`
 
-### `validate/svc/validate.svc.judge.ts`
-**Role:** Acts as an AI Magistrate by resolving specific legal anchors (via hardcoded lookup or dynamic search) and evaluating user facts against the retrieved regulation text.
+### `validate.svc.judge.ts`
+**Role:** Orchestrates the compliance review process by resolving relevant regulations (via hardcoded anchors or search), fetching content and overrides, and prompting an LLM to render a legal verdict based on the facts.
 **Key Exports:**
-- `JudgeService` - Class responsible for the "facts vs. law" evaluation logic.
-- `evaluate(intent, formData): Promise<Verdict>` - Retrieves relevant legal context and prompts the LLM to render a verdict on the claim's validity.
-**Dependencies:** `openai`, `HybridSearchService`, `SupabaseGraphReader`, `VerdictSchema`.
+- `JudgeService` - Class managing the judgment logic.
+- `evaluate(intent: string, formData: Record<string, any>): Promise<Verdict>` - Resolves legal context, checks for overrides, and generates a structured compliance opinion using GPT-4o.
+**Dependencies:** `openai`, `HybridSearchService`, `SupabaseGraphReader`, `SupabaseOverrideRepo`, `Verdict`, `LegalNodeRecord`

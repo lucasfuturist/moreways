@@ -22,8 +22,8 @@ validate/
 **Dependencies:** `zod`
 
 ### `validate.svc.judge.ts`
-**Role:** Orchestrates the compliance review process by resolving relevant regulations (via hardcoded anchors or search), fetching content and overrides, and prompting an LLM to render a legal verdict based on the facts.
+**Role:** Orchestrates the compliance review process by resolving relevant regulations (via hardcoded anchors or search), fetching content and overrides, and prompting an LLM (with retry resilience) to render a legal verdict based on the facts.
 **Key Exports:**
 - `JudgeService` - Class managing the judgment logic.
 - `evaluate(intent: string, formData: Record<string, any>): Promise<Verdict>` - Resolves legal context, checks for overrides, and generates a structured compliance opinion using GPT-4o.
-**Dependencies:** `openai`, `HybridSearchService`, `SupabaseGraphReader`, `SupabaseOverrideRepo`, `Verdict`, `LegalNodeRecord`
+**Dependencies:** `openai`, `HybridSearchService`, `SupabaseGraphReader`, `SupabaseOverrideRepo`, `Verdict`, `LegalNodeRecord`, `withRetry`

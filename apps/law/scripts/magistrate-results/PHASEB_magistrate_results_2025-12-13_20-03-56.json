@@ -1,0 +1,518 @@
+[
+  {
+    "case_id": "complex_0_01",
+    "intent": "Auto Sales – Lemon Law",
+    "narrative_snippet": "I bought this car thinking it was reliable. Three days later, the light comes on. The dealer brushed...",
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.85,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "analysis": {
+      "summary": "The facts suggest a likely violation of the law regarding deceptive acts related to warranties. The claimant experienced repeated issues with the vehicle shortly after purchase, and the dealer's response may have rendered the warranty illusory by failing to effectively address the problem.",
+      "missing_elements": [
+        "Detailed terms of the warranty provided by the dealer."
+      ],
+      "strength_factors": [
+        "The vehicle experienced significant issues shortly after purchase.",
+        "The dealer's attempts to repair the vehicle were unsuccessful, indicating a potential failure to honor the warranty."
+      ],
+      "weakness_factors": [
+        "Lack of specific evidence regarding the warranty terms and conditions.",
+        "The dealer's claim that the issue was due to the claimant's driving habits."
+      ]
+    },
+    "duration_ms": 7141
+  },
+  {
+    "case_id": "complex_0_02",
+    "intent": "Debt Collection – Harassment",
+    "narrative_snippet": "These guys keep calling me at work, which is really embarrassing. I told them to stop and even sent ...",
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_04:1",
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_05:3:f"
+    ],
+    "analysis": {
+      "summary": "The creditor's actions likely constitute a violation of debt collection regulations due to continued contact after a cease and desist letter and contacting the debtor at their workplace.",
+      "missing_elements": [
+        "Confirmation of receipt of the cease and desist letter by the creditor."
+      ],
+      "strength_factors": [
+        "The debtor sent a cease and desist letter on 2023-03-01, yet received a call at home on 2023-03-05, indicating continued contact in violation of the debtor's request.",
+        "The debtor received a call at their workplace on 2023-02-15, which can be considered an unfair or deceptive act under SECTION [urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_05:3:f]."
+      ],
+      "weakness_factors": [
+        "Lack of evidence showing the creditor received the cease and desist letter."
+      ]
+    },
+    "duration_ms": 5650
+  },
+  {
+    "case_id": "complex_0_03",
+    "intent": "Credit Reporting – Identity Theft",
+    "narrative_snippet": "I got this credit report out of the blue, and it showed accounts I never opened. I followed up with ...",
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:fair_credit_reporting_act__fcra__:15:b"
+    ],
+    "analysis": {
+      "summary": "The facts suggest a likely violation of the Fair Credit Reporting Act's requirement for consumer reporting agencies to adopt reasonable procedures to ensure the accuracy and proper utilization of consumer information. The claimant discovered fraudulent accounts on their credit report and promptly filed disputes with the credit bureaus, indicating a potential failure by the agencies to maintain accurate records.",
+      "missing_elements": [
+        "Confirmation of the credit bureaus' responses to the disputes."
+      ],
+      "strength_factors": [
+        "The claimant promptly filed disputes with the credit bureaus upon discovering the fraudulent accounts.",
+        "The claimant has evidence in the form of a credit report and a police report for identity theft."
+      ],
+      "weakness_factors": [
+        "Lack of information on the outcome of the disputes filed with the credit bureaus."
+      ]
+    },
+    "duration_ms": 7128
+  },
+  {
+    "case_id": "complex_0_04",
+    "intent": "Home Improvement – Contractor Abandonment",
+    "narrative_snippet": "The contractor just vanished, leaving my kitchen half-finished. I can't cook or use the space. I've ...",
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:1",
+      "urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:2"
+    ],
+    "analysis": {
+      "summary": "The facts suggest a potential violation of the Truth in Lending Act, specifically regarding the method of payment to the contractor. However, the evidence does not clearly establish whether the payment was made in accordance with the statutory requirements.",
+      "missing_elements": [
+        "Evidence of payment method compliance with SECTION [urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:1] or [urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:2]."
+      ],
+      "strength_factors": [
+        "The contractor received $8,000 and failed to complete the work, which aligns with potential misuse of funds."
+      ],
+      "weakness_factors": [
+        "Lack of evidence showing the payment was made through an instrument payable to the consumer or via a third-party escrow agent as required by the law."
+      ]
+    },
+    "duration_ms": 4547
+  },
+  {
+    "case_id": "complex_0_05",
+    "intent": "Auto Sales – Misrepresentation",
+    "narrative_snippet": "I bought this car two years ago, and only now found out it had been in a major accident before I bou...",
+    "expected_bias": "LOSER",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.85,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "analysis": {
+      "summary": "The dealer's failure to disclose the car's prior accident history likely constitutes a deceptive act under the law, as it involves misrepresentation of the vehicle's condition, which is a material fact in the sale of goods.",
+      "missing_elements": [
+        "Direct evidence of the dealer's knowledge of the accident prior to sale."
+      ],
+      "strength_factors": [
+        "The CarFax Report and Mechanic's Report support the claim of undisclosed damage.",
+        "The client contacted the dealer promptly after discovering the issue."
+      ],
+      "weakness_factors": [
+        "The time elapsed since the purchase (nearly 5 years) may complicate the claim, though it is within the typical statute of limitations for contract claims."
+      ]
+    },
+    "duration_ms": 5191
+  },
+  {
+    "case_id": "complex_1_01",
+    "intent": "Auto Sales – Lemon Law",
+    "narrative_snippet": "I bought this car thinking it was reliable. Three days later, the light comes on. The dealer brushed...",
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "analysis": {
+      "summary": "The facts suggest a likely violation of the law regarding deceptive acts in warranties. The claimant purchased a vehicle with an implied warranty of merchantability, which was not met due to persistent transmission issues. The dealer's failure to adequately repair the vehicle and the prohibitive repair costs incurred by the claimant align with the elements of an illusory warranty under SECTION [urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b].",
+      "missing_elements": [
+        "Detailed repair records beyond Repair Order #123 to establish the persistence of the issue."
+      ],
+      "strength_factors": [
+        "The vehicle experienced significant mechanical issues shortly after purchase.",
+        "The dealer's repairs did not resolve the transmission problem, indicating a failure to meet the warranty of merchantability.",
+        "The claimant incurred substantial repair costs, which could be considered prohibitive."
+      ],
+      "weakness_factors": [
+        "The dealer's claim that the issues were due to the claimant's driving habits, although this is not substantiated in the provided facts."
+      ]
+    },
+    "duration_ms": 5081
+  },
+  {
+    "case_id": "complex_2_01",
+    "intent": "Debt Collection – Harassment",
+    "narrative_snippet": "These people just won't stop calling. I've told them multiple times I can't talk at work, but they d...",
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_04:1",
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_04:1:b",
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_05:3"
+    ],
+    "analysis": {
+      "summary": "The debt collector's actions likely constitute unfair or deceptive acts under Massachusetts debt collection regulations. The claimant sent a cease and desist letter, yet the debt collector continued to contact the claimant, including at their place of employment, which is prohibited.",
+      "missing_elements": [
+        "Confirmation of receipt of the cease and desist letter by the creditor."
+      ],
+      "strength_factors": [
+        "Cease and desist letter was sent on 2023-02-25.",
+        "Continued contact after cease and desist, including at work, violates SECTION [urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_04:1].",
+        "Threatening emails received, which may violate SECTION [urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_04:1:b]."
+      ],
+      "weakness_factors": [
+        "Lack of evidence showing the creditor received the cease and desist letter."
+      ]
+    },
+    "duration_ms": 6383
+  },
+  {
+    "case_id": "complex_3_01",
+    "intent": "Credit Reporting – Identity Theft",
+    "narrative_snippet": "I noticed a charge for $500 at a store I've never even been to. Then more charges started appearing....",
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.85,
+    "citations": [
+      "urn:lex:fed:fair_credit_reporting_act__fcra__:15:b"
+    ],
+    "analysis": {
+      "summary": "The facts suggest a likely violation of the Fair Credit Reporting Act's requirement for consumer reporting agencies to adopt reasonable procedures to ensure the accuracy and proper utilization of consumer information. The claimant reported fraudulent activity promptly, yet the credit agency failed to rectify the inaccuracies in a timely manner.",
+      "missing_elements": [
+        "Confirmation of the credit agency's response or lack thereof post-verification."
+      ],
+      "strength_factors": [
+        "The claimant reported the fraudulent activity to the credit agency promptly on 2023-03-07.",
+        "The credit agency verified the documents by 2023-04-10, yet the issue remains unresolved as of the current date."
+      ],
+      "weakness_factors": [
+        "Lack of detailed information on the credit agency's specific actions or inactions post-verification."
+      ]
+    },
+    "duration_ms": 4437
+  },
+  {
+    "case_id": "complex_4_01",
+    "intent": "Home Improvement – Contractor Issues",
+    "narrative_snippet": "We were so excited to get our kitchen redone. The contractor seemed so reliable at first, and the te...",
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.6,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:1",
+      "urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:2"
+    ],
+    "analysis": {
+      "summary": "The facts suggest a potential violation of the Truth in Lending Act, specifically regarding the payment terms and the contractor's demand for additional funds. However, the evidence is not conclusive without further details on the payment method and agreement terms.",
+      "missing_elements": [
+        "Evidence of the payment method used (instrument or escrow)",
+        "Written agreement signed by all parties before payment"
+      ],
+      "strength_factors": [
+        "Contractor stopped work and demanded more money, which may indicate a breach of agreed terms."
+      ],
+      "weakness_factors": [
+        "Lack of specific evidence showing the payment method aligns with SECTION [urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:1] or SECTION [urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:2].",
+        "No explicit mention of a third-party escrow agent or a signed agreement involving all parties."
+      ]
+    },
+    "duration_ms": 4407
+  },
+  {
+    "case_id": "complex_5_01",
+    "intent": "Credit Reporting – Mixed Files",
+    "narrative_snippet": "It was shocking to see someone else's debt on my credit report. I filed disputes in good faith, yet ...",
+    "expected_bias": "CLEAR LOSER",
+    "actual_verdict": "UNLIKELY_VIOLATION",
+    "confidence": 0.8,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:3009_4f3f:a_0e6c"
+    ],
+    "analysis": {
+      "summary": "The facts presented do not indicate a violation of the Truth in Lending Act (TILA) as described in SECTION [urn:lex:fed:truth_in_lending_act__tila_:3009_4f3f:a_0e6c]. The credit bureau followed the required procedures to resolve the dispute, and there is no evidence of deceptive practices by a credit repair organization.",
+      "missing_elements": [
+        "Evidence of deceptive practices by a credit repair organization."
+      ],
+      "strength_factors": [
+        "The client successfully disputed the incorrect debt, and it was removed from the credit report."
+      ],
+      "weakness_factors": [
+        "There is no indication that a credit repair organization was involved or that any deceptive practices occurred."
+      ]
+    },
+    "duration_ms": 4815
+  },
+  {
+    "case_id": "complex_2_01",
+    "intent": "Auto Sales – Lemon Law",
+    "narrative_snippet": "I bought this car thinking it was reliable. Three days later, the light comes on. The dealer brushed...",
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.85,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "analysis": {
+      "summary": "The facts suggest a likely violation of the warranty provisions under SECTION [urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b]. The claimant experienced significant issues with the vehicle shortly after purchase, and the dealer's attempts to repair the transmission have been unsuccessful, potentially rendering the warranty illusory.",
+      "missing_elements": [
+        "Detailed terms of the warranty provided by the dealer."
+      ],
+      "strength_factors": [
+        "The vehicle experienced a major issue (transmission failure) shortly after purchase.",
+        "Multiple unsuccessful repair attempts were made, indicating a persistent defect.",
+        "The repair costs incurred are significant relative to the purchase price."
+      ],
+      "weakness_factors": [
+        "The dealer's claim that the vehicle was driven too hard, although this is not substantiated by the facts provided."
+      ]
+    },
+    "duration_ms": 4047
+  },
+  {
+    "case_id": "complex_2_02",
+    "intent": "Debt Collection – Harassment",
+    "narrative_snippet": "These people won't stop calling me at work! I told them to stop, and I even sent a written dispute b...",
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_04:1",
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_04:1:b",
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_07:2"
+    ],
+    "analysis": {
+      "summary": "The debt collector's actions likely constitute unfair or deceptive acts under Massachusetts debt collection regulations. The collector continued to contact the debtor at their workplace after a written dispute was sent, used threatening language, and provided incorrect debt amounts.",
+      "missing_elements": [
+        "Confirmation of the collector's receipt of the dispute letter."
+      ],
+      "strength_factors": [
+        "Continued workplace contact after written dispute (urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_04:1).",
+        "Threatening voicemail (urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_04:1:b).",
+        "Incorrect debt amount in email (urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_07:2)."
+      ],
+      "weakness_factors": [
+        "Lack of evidence showing the collector received the dispute letter."
+      ]
+    },
+    "duration_ms": 5384
+  },
+  {
+    "case_id": "complex_2_03",
+    "intent": "Credit Reporting – Mixed Files",
+    "narrative_snippet": "I was denied credit because of accounts I know nothing about. I checked my report and it's a mess! I...",
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:3009_4f3f:a_0e6c"
+    ],
+    "analysis": {
+      "summary": "The credit bureau's failure to correct inaccurate information after a dispute may constitute a violation of the consumer's rights under the Truth in Lending Act, specifically regarding the requirement for credit bureaus to reinvestigate and correct inaccurate information.",
+      "missing_elements": [
+        "Confirmation of the credit bureau's reinvestigation process and outcome."
+      ],
+      "strength_factors": [
+        "The client was denied credit due to inaccurate information, which they promptly disputed.",
+        "The client provided evidence of the dispute and the denial of credit.",
+        "The credit bureau's response did not resolve the dispute to the client's satisfaction, suggesting a potential failure to comply with reinvestigation obligations."
+      ],
+      "weakness_factors": [
+        "Lack of detailed evidence on the credit bureau's reinvestigation process and whether it was conducted reasonably."
+      ]
+    },
+    "duration_ms": 7245
+  },
+  {
+    "case_id": "complex_2_04",
+    "intent": "Home Improvement – Contractor Issues",
+    "narrative_snippet": "We signed a contract for a kitchen remodel back in November. The contractor started with demolition,...",
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:1",
+      "urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:2"
+    ],
+    "analysis": {
+      "summary": "The facts suggest a potential violation of the Truth in Lending Act regarding payment terms, but further evidence is needed to confirm compliance with the specific payment methods outlined in the law.",
+      "missing_elements": [
+        "Evidence of the payment method used, specifically whether it was through an instrument payable to the consumer or jointly, or through a third-party escrow agent as per a written agreement."
+      ],
+      "strength_factors": [
+        "The contractor requested additional funds after the contract was signed, which may indicate a deviation from agreed payment terms."
+      ],
+      "weakness_factors": [
+        "There is no clear evidence provided that the payment method violated the specific requirements of SECTION [urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:1] or SECTION [urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:2]."
+      ]
+    },
+    "duration_ms": 3854
+  },
+  {
+    "case_id": "complex_2_05",
+    "intent": "Auto Sales – Misrepresentation",
+    "narrative_snippet": "I bought this Honda because they swore it was in perfect condition. Just days later, I hear this awf...",
+    "expected_bias": "LOSER (Statute of Limitations)",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.95,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "analysis": {
+      "summary": "The claim is ineligible due to the expiration of the statute of limitations for bringing a claim related to the sale of goods, which is typically four years under the Uniform Commercial Code (UCC) as adopted in Massachusetts.",
+      "missing_elements": [
+        "Current evidence of ongoing issues or recent attempts to resolve the matter."
+      ],
+      "strength_factors": [
+        "The client promptly notified the dealer of the issue within days of purchase."
+      ],
+      "weakness_factors": [
+        "The claim was not pursued within the typical four-year statute of limitations for contract claims related to the sale of goods."
+      ]
+    },
+    "duration_ms": 4640
+  },
+  {
+    "case_id": "complex_3_01",
+    "intent": "Auto Sales – Lemon Law",
+    "narrative_snippet": "I bought this car thinking it was reliable. Three days later, the light comes on. The dealer brushed...",
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.85,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "analysis": {
+      "summary": "The facts suggest a likely violation of the law regarding deceptive acts in warranties. The claimant experienced significant issues with the vehicle shortly after purchase, and the dealer's response appears inadequate. The repair costs incurred and the repeated unresolved issues suggest the warranty may be illusory, as per SECTION [urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b].",
+      "missing_elements": [
+        "Detailed terms of the warranty or guarantee provided at purchase."
+      ],
+      "strength_factors": [
+        "The vehicle experienced issues almost immediately after purchase.",
+        "The dealer failed to resolve the transmission issue despite multiple attempts.",
+        "Repair costs incurred are significant relative to the purchase price."
+      ],
+      "weakness_factors": [
+        "Lack of explicit warranty terms in the provided evidence.",
+        "Dealer's claim of misuse by the claimant, though not substantiated."
+      ]
+    },
+    "duration_ms": 4881
+  },
+  {
+    "case_id": "complex_3_02",
+    "intent": "Debt Collection – Harassment",
+    "narrative_snippet": "I've been paying my debts, but these collectors think they own my life. They called my work! How emb...",
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_05:3:f",
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_07:2"
+    ],
+    "analysis": {
+      "summary": "The debt collector's actions likely constitute a violation of Massachusetts debt collection regulations. The collector contacted the debtor's workplace after a debt validation request was sent, and the validation provided was incorrect.",
+      "missing_elements": [
+        "Confirmation of whether the collector was informed not to contact the workplace."
+      ],
+      "strength_factors": [
+        "The collector contacted the debtor's workplace, which can be considered an unfair or deceptive act under SECTION [urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_05:3:f].",
+        "The debt validation provided was incorrect, which may violate SECTION [urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_07:2]."
+      ],
+      "weakness_factors": [
+        "Lack of explicit evidence that the debtor requested no workplace contact."
+      ]
+    },
+    "duration_ms": 4418
+  },
+  {
+    "case_id": "complex_3_03",
+    "intent": "Credit Reporting – Identity Theft",
+    "narrative_snippet": "I was checking my credit report and saw an account I never opened. It was shocking. I filed a police...",
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.85,
+    "citations": [
+      "urn:lex:fed:fair_credit_reporting_act__fcra__:15:b"
+    ],
+    "analysis": {
+      "summary": "The facts suggest a likely violation of the Fair Credit Reporting Act's requirement for consumer reporting agencies to adopt reasonable procedures to ensure the accuracy and confidentiality of consumer information. The client promptly reported the identity theft and the credit agency's failure to prevent or rectify the fraudulent account indicates a potential breach of their obligations under the Act.",
+      "missing_elements": [
+        "Detailed response from the credit agency regarding the steps taken post-reporting."
+      ],
+      "strength_factors": [
+        "The client reported the issue to the credit agency promptly after discovery.",
+        "There is documented evidence of the fraudulent account and the client's actions to address it."
+      ],
+      "weakness_factors": [
+        "Lack of detailed information on the credit agency's response and actions taken after the report."
+      ]
+    },
+    "duration_ms": 5527
+  },
+  {
+    "case_id": "complex_3_04",
+    "intent": "Home Improvement – Bad Work",
+    "narrative_snippet": "I hired this contractor to remodel my kitchen. He started and then disappeared, leaving everything a...",
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.85,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_09:2",
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_09:4"
+    ],
+    "analysis": {
+      "summary": "The contractor's actions likely constitute a violation of unfair and deceptive acts under the law, specifically failing to complete the contracted work and not disclosing the full nature of the transaction.",
+      "missing_elements": [
+        "Evidence of contractor's intent to deceive or mislead."
+      ],
+      "strength_factors": [
+        "Contractor walked off the job without completing the work.",
+        "Client paid a significant portion of the contract amount.",
+        "Contractor failed to communicate or return calls."
+      ],
+      "weakness_factors": [
+        "Lack of direct evidence showing contractor's intent to deceive.",
+        "No explicit misrepresentation documented in the provided evidence."
+      ]
+    },
+    "duration_ms": 8477
+  },
+  {
+    "case_id": "complex_3_05",
+    "intent": "Auto Sales – Misrepresentation",
+    "narrative_snippet": "I bought this used car a few years back. It was sold to me as accident-free. I found out recently it...",
+    "expected_bias": "LOSER",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "analysis": {
+      "summary": "The claim is ineligible due to the expiration of the statute of limitations for contract claims, which is typically four years.",
+      "missing_elements": [
+        "Timely filing within the statute of limitations."
+      ],
+      "strength_factors": [
+        "The vehicle was sold as accident-free, which was later discovered to be false."
+      ],
+      "weakness_factors": [
+        "The discovery of the issue occurred more than four years after the purchase date, exceeding the typical statute of limitations for contract claims."
+      ]
+    },
+    "duration_ms": 3079
+  }
+]

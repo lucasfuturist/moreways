@@ -8,6 +8,7 @@ pnpm-debug.log*
 
 # --- Context Control ---
 .Context/
+.context/
 .CORE-CONTEXT/
 
 # Block mixed lockfiles (Enforce pnpm)

@@ -1,0 +1,1716 @@
+[
+  {
+    "case_id": "batch_0_case_01",
+    "intent": "Credit Reporting – Identity Theft",
+    "scenario": {
+      "date_noticed": "2024-02-01",
+      "issue": "Unknown credit card account on report",
+      "bureau_response": "Refused to investigate"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:fair_credit_reporting_act__fcra__:15:b"
+    ],
+    "summary": "The refusal of the consumer reporting agency to investigate an unknown credit card account on the claimant's report likely violates the Fair Credit Reporting Act's requirement for reasonable procedures to ensure accuracy and proper utilization of consumer information.",
+    "duration_ms": 6294
+  },
+  {
+    "case_id": "batch_0_case_02",
+    "intent": "Auto Sales & Repairs – Lemon Law",
+    "scenario": {
+      "date_noticed": "2023-10-10",
+      "issue": "Recurrent engine failure after multiple repairs",
+      "dealer_response": "Refused replacement"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.85,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "summary": "The facts suggest a likely violation of warranty laws as the dealer's refusal to replace the vehicle after recurrent engine failures may render the warranty illusory, aligning with the prohibited acts under the law.",
+    "duration_ms": 5478
+  },
+  {
+    "case_id": "batch_0_case_03",
+    "intent": "Debt Collection – Harassment",
+    "scenario": {
+      "date_noticed": "2022-07-15",
+      "issue": "Repeated calls at work despite requests to stop",
+      "collector_response": "Claims compliance with FDCPA"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_04:1:f"
+    ],
+    "summary": "The facts suggest a likely violation of debt collection regulations due to repeated calls at the debtor's workplace despite requests to cease such communications. This behavior aligns with prohibited acts under the Massachusetts debt collection regulations.",
+    "duration_ms": 3352
+  },
+  {
+    "case_id": "batch_0_case_04",
+    "intent": "Robocalls & Telemarketing – Do Not Call",
+    "scenario": {
+      "date_noticed": "2024-03-22",
+      "issue": "Unsolicited calls from a telemarketer",
+      "company_response": "Said number was not on Do Not Call list"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_4:10",
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_4:11"
+    ],
+    "summary": "The claim involves unsolicited calls from a telemarketer, which may violate telemarketing regulations if the recipient's number was indeed on the Do Not Call list. The company's response that the number was not on the list does not conclusively resolve the issue without further evidence.",
+    "duration_ms": 4138
+  },
+  {
+    "case_id": "batch_0_case_05",
+    "intent": "Credit Billing Errors – Unauthorized Charges",
+    "scenario": {
+      "date_noticed": "2019-11-05",
+      "issue": "Unauthorized purchase on credit card",
+      "creditor_response": "Refused to remove charge"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 1,
+    "citations": [
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:a",
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:b:1"
+    ],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations. The notice of the unauthorized purchase was given on November 5, 2019, and today's date is December 13, 2025, which is well beyond any reasonable statute of limitations for such claims under the Fair Credit Billing Act.",
+    "duration_ms": 5697
+  },
+  {
+    "case_id": "batch_0_case_06",
+    "intent": "Electronic Fund Transfers – Unauthorized Withdrawal",
+    "scenario": {
+      "date_noticed": "2025-01-30",
+      "issue": "Stolen debit card used for withdrawal",
+      "bank_response": "Refused to reimburse"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:electronic_fund_transfer_act__efta___reg_e__:111_7bdb:a:2"
+    ],
+    "summary": "The claimant's facts suggest a likely violation of the Electronic Fund Transfer Act, as the bank refused to reimburse for a stolen debit card used for unauthorized withdrawal, and the consumer reported the issue within the required timeframe.",
+    "duration_ms": 3901
+  },
+  {
+    "case_id": "batch_0_case_07",
+    "intent": "Home Improvement – Contractor Disputes",
+    "scenario": {
+      "date_noticed": "2023-05-17",
+      "issue": "Incomplete work despite full payment",
+      "contractor_response": "Claims work was completed"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:1",
+      "urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:2"
+    ],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations for contract-related disputes.",
+    "duration_ms": 2570
+  },
+  {
+    "case_id": "batch_0_case_08",
+    "intent": "Online Shopping – Subscription Traps",
+    "scenario": {
+      "date_noticed": "2024-06-11",
+      "issue": "Unable to cancel subscription after trial",
+      "company_response": "Automatic renewal policy"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.6,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_14:3"
+    ],
+    "summary": "The claim involves an issue with canceling a subscription after a trial period, which may relate to misrepresentation of the nature of business practices. However, the facts provided are vague regarding whether there was a misrepresentation by the seller.",
+    "duration_ms": 3410
+  },
+  {
+    "case_id": "batch_0_case_09",
+    "intent": "Landlord/Tenant – Security Deposits",
+    "scenario": {
+      "date_noticed": "2023-08-14",
+      "issue": "Failure to return security deposit",
+      "landlord_response": "Claims damage to property"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_17:b_a021"
+    ],
+    "summary": "The claim involves a failure to return a security deposit, which may constitute an unfair or deceptive practice under the cited law if the landlord did not comply with the requirements for handling and returning the deposit.",
+    "duration_ms": 4357
+  },
+  {
+    "case_id": "batch_0_case_10",
+    "intent": "Auto Sales & Repairs – Warranty",
+    "scenario": {
+      "date_noticed": "2025-02-25",
+      "issue": "Denied warranty service for transmission",
+      "dealer_response": "Claims issue not covered"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "summary": "The claimant alleges a denial of warranty service for a transmission issue, which may align with the law prohibiting illusory warranties. However, the facts are vague regarding the specific terms of the warranty and whether the denial was justified under those terms.",
+    "duration_ms": 3971
+  },
+  {
+    "case_id": "batch_0_case_11",
+    "intent": "Debt Collection – Workplace Calls",
+    "scenario": {
+      "date_noticed": "2020-09-30",
+      "issue": "Debt collector contacted employer",
+      "collector_response": "Said it was legal"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 1,
+    "citations": [],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations. The alleged debt collection violation occurred on 2020-09-30, and today's date is 2025-12-13, which is more than five years later. This exceeds the typical statute of limitations for debt collection claims, which is generally four years.",
+    "duration_ms": 3037
+  },
+  {
+    "case_id": "batch_0_case_12",
+    "intent": "Credit Reporting – Incorrect Information",
+    "scenario": {
+      "date_noticed": "2018-04-09",
+      "issue": "Old debt showing as current",
+      "bureau_response": "Correcting information"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.95,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:3009_4f3f:a_0e6c"
+    ],
+    "summary": "The claim regarding the old debt showing as current is ineligible due to the expiration of the statute of limitations.",
+    "duration_ms": 3114
+  },
+  {
+    "case_id": "batch_0_case_13",
+    "intent": "Robocalls & Telemarketing – TCPA",
+    "scenario": {
+      "date_noticed": "2023-12-01",
+      "issue": "Automated calls without consent",
+      "company_response": "Claims prior consent was given"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_3:a"
+    ],
+    "summary": "The claim involves automated calls made without consent, which could potentially violate telemarketing laws if consent was not properly obtained or documented. The company's defense is that prior consent was given, but this needs verification.",
+    "duration_ms": 4380
+  },
+  {
+    "case_id": "batch_0_case_14",
+    "intent": "Credit Billing Errors – Disputes",
+    "scenario": {
+      "date_noticed": "2024-11-20",
+      "issue": "Incorrect billing amount",
+      "creditor_response": "Refused to adjust bill"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:a",
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:a:2",
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:i"
+    ],
+    "summary": "The creditor's refusal to adjust the bill after receiving a notice of incorrect billing amount likely constitutes a violation of the Fair Credit Billing Act. The obligor provided notice of a billing error, and the creditor failed to make appropriate corrections or provide a valid explanation within the required timeframe.",
+    "duration_ms": 5327
+  },
+  {
+    "case_id": "batch_0_case_15",
+    "intent": "Electronic Fund Transfers – Stolen Debit Card",
+    "scenario": {
+      "date_noticed": "2022-02-15",
+      "issue": "Unauthorized online purchases",
+      "bank_response": "Investigating the issue"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:111_85f8:i_3796:ii_e672"
+    ],
+    "summary": "The claim regarding unauthorized online purchases is ineligible due to the expiration of the statute of limitations.",
+    "duration_ms": 2913
+  },
+  {
+    "case_id": "batch_0_case_16",
+    "intent": "Home Improvement – Contract Violations",
+    "scenario": {
+      "date_noticed": "2021-07-18",
+      "issue": "Contractor failed to meet deadlines",
+      "contractor_response": "Cites supply chain issues"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.95,
+    "citations": [],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations. The issue was noticed on 2021-07-18, and today's date is 2025-12-13, which exceeds a typical 4-year statute of limitations for contract-related claims.",
+    "duration_ms": 2862
+  },
+  {
+    "case_id": "batch_0_case_17",
+    "intent": "Online Shopping – Negative Option Marketing",
+    "scenario": {
+      "date_noticed": "2023-03-03",
+      "issue": "Charged for service not opted for",
+      "company_response": "Claims customer agreed"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_3:v:vii"
+    ],
+    "summary": "The facts suggest a potential violation of the negative option feature disclosure requirements under SECTION [urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_3:v:vii]. The customer claims they were charged for a service not opted for, which may indicate a failure to disclose material terms of a negative option feature.",
+    "duration_ms": 4800
+  },
+  {
+    "case_id": "batch_0_case_18",
+    "intent": "Landlord/Tenant – Lease Violations",
+    "scenario": {
+      "date_noticed": "2025-05-10",
+      "issue": "Landlord entered apartment without notice",
+      "landlord_response": "Claims it was an emergency"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_17:f_1f3e"
+    ],
+    "summary": "The claim involves a potential violation of M.G.L. c. 186, § 14, as referenced in SECTION [urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_17:f_1f3e], due to the landlord's entry without notice. The landlord's defense of an emergency needs further substantiation.",
+    "duration_ms": 4105
+  },
+  {
+    "case_id": "batch_0_case_19",
+    "intent": "Auto Sales & Repairs – 940 CMR 5.00",
+    "scenario": {
+      "date_noticed": "2020-06-26",
+      "issue": "Misleading advertising of vehicle features",
+      "dealer_response": "Claims no misrepresentation"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.95,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "summary": "The claim regarding misleading advertising of vehicle features is ineligible due to the expiration of the statute of limitations.",
+    "duration_ms": 2973
+  },
+  {
+    "case_id": "batch_0_case_20",
+    "intent": "Debt Collection – 940 CMR 7.00",
+    "scenario": {
+      "date_noticed": "2024-08-21",
+      "issue": "Debt collector used false representation",
+      "collector_response": "Denies allegations"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.85,
+    "citations": [
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_07:2",
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_07:8"
+    ],
+    "summary": "The claim of false representation by the debt collector aligns with the prohibited acts under the debt collection regulations, specifically regarding false or misleading representations.",
+    "duration_ms": 3619
+  },
+  {
+    "case_id": "batch_1_case_01",
+    "intent": "Credit Reporting – Identity Theft",
+    "scenario": {
+      "date_noticed": "2024-02-01",
+      "issue": "Unknown credit card account on report",
+      "bureau_response": "Refused to investigate"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:fair_credit_reporting_act__fcra__:15:b"
+    ],
+    "summary": "The refusal of the consumer reporting agency to investigate an unknown credit card account on the claimant's report likely violates the Fair Credit Reporting Act's requirement for reasonable procedures to ensure accuracy and proper utilization of consumer information.",
+    "duration_ms": 4116
+  },
+  {
+    "case_id": "batch_1_case_02",
+    "intent": "Auto Sales & Repairs – Lemon Law",
+    "scenario": {
+      "date_noticed": "2023-06-15",
+      "issue": "Car repeatedly breaks down despite multiple repairs",
+      "dealer_response": "Claimed repairs are sufficient"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "summary": "The facts suggest a potential violation of warranty terms under SECTION [urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b] due to repeated car breakdowns despite multiple repairs, which may indicate that the warranty is illusory if the repairs are insufficient.",
+    "duration_ms": 3479
+  },
+  {
+    "case_id": "batch_1_case_03",
+    "intent": "Debt Collection – Harassment",
+    "scenario": {
+      "date_noticed": "2022-11-20",
+      "issue": "Repeated calls at work despite requests to stop",
+      "collector_response": "Ignored requests and continued calls"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_04:1",
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_04:1:f"
+    ],
+    "summary": "The facts indicate a likely violation of debt collection regulations due to repeated calls at the debtor's workplace despite requests to cease such communications.",
+    "duration_ms": 3451
+  },
+  {
+    "case_id": "batch_1_case_04",
+    "intent": "Robocalls & Telemarketing – Do Not Call",
+    "scenario": {
+      "date_noticed": "2021-03-12",
+      "issue": "Receiving robocalls despite being on the Do Not Call list",
+      "company_response": "Claimed technical error"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_4:10",
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_4:11"
+    ],
+    "summary": "The claimant's issue of receiving robocalls despite being on the Do Not Call list aligns with a potential violation of telemarketing regulations, specifically regarding the maintenance and use of the Do Not Call registry.",
+    "duration_ms": 3945
+  },
+  {
+    "case_id": "batch_1_case_05",
+    "intent": "Credit Billing Errors – Unauthorized Charges",
+    "scenario": {
+      "date_noticed": "2020-05-10",
+      "issue": "Unauthorized charge on credit card",
+      "creditor_response": "Refused to remove charge"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.95,
+    "citations": [
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:b:1"
+    ],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations. The notice of the unauthorized charge was given on 2020-05-10, and the current date is 2025-12-13, which exceeds the typical statute of limitations for such claims under the Fair Credit Billing Act.",
+    "duration_ms": 4633
+  },
+  {
+    "case_id": "batch_1_case_06",
+    "intent": "Electronic Fund Transfers – Unauthorized Withdrawal",
+    "scenario": {
+      "date_noticed": "2025-01-05",
+      "issue": "Stolen debit card used for withdrawal",
+      "bank_response": "Investigating but no refund yet"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:electronic_fund_transfer_act__efta___reg_e__:111_7bdb:a:2"
+    ],
+    "summary": "The claimant reported the unauthorized use of a stolen debit card within a reasonable time frame, but the bank has not yet issued a refund. The facts suggest a potential violation of the Electronic Fund Transfer Act, but further details are needed to confirm compliance with notification requirements and the bank's investigation process.",
+    "duration_ms": 3023
+  },
+  {
+    "case_id": "batch_1_case_07",
+    "intent": "Home Improvement – Contractor Dispute",
+    "scenario": {
+      "date_noticed": "2023-08-22",
+      "issue": "Contractor failed to complete work as per contract",
+      "contractor_response": "Claimed work was completed"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.6,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:1",
+      "urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:2"
+    ],
+    "summary": "The facts suggest a potential issue with the contractor's performance under the contract, but there is insufficient information to determine if the payment terms under the Truth in Lending Act were violated.",
+    "duration_ms": 3893
+  },
+  {
+    "case_id": "batch_1_case_08",
+    "intent": "Online Shopping – Subscription Trap",
+    "scenario": {
+      "date_noticed": "2022-02-14",
+      "issue": "Charged monthly fee after free trial without consent",
+      "company_response": "Claimed user agreed to terms"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.85,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_14:3"
+    ],
+    "summary": "The facts suggest a likely violation of unfair trade practices due to misrepresentation as to the nature of business, specifically regarding the continuation of charges after a free trial without explicit consent.",
+    "duration_ms": 2704
+  },
+  {
+    "case_id": "batch_1_case_09",
+    "intent": "Landlord/Tenant – Security Deposit Dispute",
+    "scenario": {
+      "date_noticed": "2019-07-01",
+      "issue": "Landlord refused to return deposit without reason",
+      "landlord_response": "Cited damages not in lease agreement"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_17:b_a021"
+    ],
+    "summary": "The landlord's refusal to return the security deposit without providing an itemized list of damages and evidence of repair costs likely constitutes a violation of the law.",
+    "duration_ms": 4210
+  },
+  {
+    "case_id": "batch_1_case_10",
+    "intent": "Credit Reporting – Incorrect Information",
+    "scenario": {
+      "date_noticed": "2021-09-09",
+      "issue": "Incorrect address and employer information",
+      "bureau_response": "Corrected after dispute"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "UNLIKELY_VIOLATION",
+    "confidence": 0.8,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:3009_4f3f:a_0e6c"
+    ],
+    "summary": "The facts indicate that the credit bureau corrected the inaccurate information after a dispute, which aligns with the requirements of the law. There is no indication of a violation by the credit repair organization or the credit bureau.",
+    "duration_ms": 3501
+  },
+  {
+    "case_id": "batch_1_case_11",
+    "intent": "Auto Sales & Repairs – Warranty Issue",
+    "scenario": {
+      "date_noticed": "2024-11-30",
+      "issue": "Warranty claim denied for covered part",
+      "dealer_response": "Claimed part was not covered"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "summary": "The claim involves a warranty issue where the dealer denied coverage for a part that the claimant believes should be covered. The law under SECTION [urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b] addresses warranties that are illusory due to prohibitive costs or limitations. The facts suggest a potential misrepresentation of warranty coverage, but further details are needed to determine if the warranty terms were indeed misleading or if the part was explicitly excluded.",
+    "duration_ms": 4365
+  },
+  {
+    "case_id": "batch_1_case_12",
+    "intent": "Debt Collection – Statute of Limitations",
+    "scenario": {
+      "date_noticed": "2025-03-15",
+      "issue": "Collector pursuing debt beyond statute of limitations",
+      "collector_response": "Argued debt is still valid"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.5,
+    "citations": [
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations"
+    ],
+    "summary": "AI analysis unavailable after multiple attempts. Defaulting to manual review.",
+    "duration_ms": 4918
+  },
+  {
+    "case_id": "batch_1_case_13",
+    "intent": "Robocalls & Telemarketing – Consent Issues",
+    "scenario": {
+      "date_noticed": "2018-06-18",
+      "issue": "Receiving texts from a company without giving consent",
+      "company_response": "Claimed implied consent"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 1,
+    "citations": [],
+    "summary": "The claim regarding receiving texts without consent is ineligible due to the expiration of the statute of limitations.",
+    "duration_ms": 3661
+  },
+  {
+    "case_id": "batch_1_case_14",
+    "intent": "Credit Billing Errors – Disputed Charge",
+    "scenario": {
+      "date_noticed": "2020-12-25",
+      "issue": "Disputed charge not resolved after 60 days",
+      "creditor_response": "Requested further documentation"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 1,
+    "citations": [
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:a",
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:e"
+    ],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations. The notice of the disputed charge was given on December 25, 2020, and today's date is December 13, 2025, which is nearly five years later. This exceeds the typical statute of limitations for such claims under the Fair Credit Billing Act.",
+    "duration_ms": 4948
+  },
+  {
+    "case_id": "batch_1_case_15",
+    "intent": "Electronic Fund Transfers – ATM Error",
+    "scenario": {
+      "date_noticed": "2023-04-01",
+      "issue": "ATM withdrawal not reflected in account",
+      "bank_response": "Investigating the issue"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.6,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:111_85f8:i_3796:ii_e672"
+    ],
+    "summary": "The issue involves an ATM withdrawal not reflected in the account, which may relate to an electronic fund transfer as defined under the Truth in Lending Act. However, the facts are vague regarding whether a balance inquiry or a transfer was initiated.",
+    "duration_ms": 3275
+  },
+  {
+    "case_id": "batch_1_case_16",
+    "intent": "Home Improvement – Contract Violation",
+    "scenario": {
+      "date_noticed": "2021-11-11",
+      "issue": "Contractor used substandard materials",
+      "contractor_response": "Materials met contractual standards"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 1,
+    "citations": [],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations.",
+    "duration_ms": 3492
+  },
+  {
+    "case_id": "batch_1_case_17",
+    "intent": "Online Shopping – Negative Option Marketing",
+    "scenario": {
+      "date_noticed": "2024-07-20",
+      "issue": "Enrolled in a product bundle without explicit consent",
+      "company_response": "Claimed terms were clear"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_3:v:vii"
+    ],
+    "summary": "The facts suggest a potential violation of the negative option feature disclosure requirements, as the claimant alleges enrollment without explicit consent, which may indicate a lack of clear communication of material terms.",
+    "duration_ms": 3113
+  },
+  {
+    "case_id": "batch_1_case_18",
+    "intent": "Landlord/Tenant – Lease Violation",
+    "scenario": {
+      "date_noticed": "2025-06-05",
+      "issue": "Landlord entered property without notice",
+      "landlord_response": "Claimed it was an emergency"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_17:f_1f3e"
+    ],
+    "summary": "The landlord's entry without notice could potentially violate M.G.L. c. 186, § 14, which is incorporated by reference in SECTION [urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_17:f_1f3e]. However, the landlord's claim of an emergency might justify the entry, depending on the circumstances.",
+    "duration_ms": 3897
+  },
+  {
+    "case_id": "batch_1_case_19",
+    "intent": "Credit Reporting – Mixed File",
+    "scenario": {
+      "date_noticed": "2017-03-03",
+      "issue": "Credit report contains information from another person",
+      "bureau_response": "Corrected after lengthy process"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.95,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:3009_4f3f:a_0e6c"
+    ],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations. The issue was noticed in 2017, and the current date is 2025, which exceeds typical statutory periods for such claims.",
+    "duration_ms": 4872
+  },
+  {
+    "case_id": "batch_1_case_20",
+    "intent": "Auto Sales & Repairs – Misrepresentation",
+    "scenario": {
+      "date_noticed": "2019-09-30",
+      "issue": "Vehicle sold as new but was previously used",
+      "dealer_response": "Denied the claim"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.95,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "summary": "The claim regarding the vehicle sold as new but previously used is ineligible due to the expiration of the statute of limitations.",
+    "duration_ms": 3455
+  },
+  {
+    "case_id": "batch_2_case_01",
+    "intent": "Credit Reporting – Identity Theft",
+    "scenario": {
+      "date_noticed": "2024-02-01",
+      "issue": "Unknown credit card account on report",
+      "bureau_response": "Refused to investigate"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:fair_credit_reporting_act__fcra__:15:b"
+    ],
+    "summary": "The refusal of the consumer reporting agency to investigate an unknown credit card account on the claimant's report likely violates the Fair Credit Reporting Act's requirement for reasonable procedures to ensure accuracy and proper utilization of consumer information.",
+    "duration_ms": 4630
+  },
+  {
+    "case_id": "batch_2_case_02",
+    "intent": "Auto Sales & Repairs – Lemon Law",
+    "scenario": {
+      "date_noticed": "2023-12-15",
+      "issue": "Car repeatedly fails to start",
+      "dealer_response": "Refused refund after three repairs"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.85,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "summary": "The facts suggest a likely violation of the law regarding warranties, as the dealer refused a refund after three repair attempts, which may render the warranty illusory under SECTION [urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b]. The claim is timely as it was noticed within two years of the issue.",
+    "duration_ms": 3664
+  },
+  {
+    "case_id": "batch_2_case_03",
+    "intent": "Debt Collection – Harassment",
+    "scenario": {
+      "date_noticed": "2024-04-01",
+      "issue": "Repeated calls at work despite request to stop",
+      "collector_response": "Ignored cease communication request"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_04:1",
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_04:1:f"
+    ],
+    "summary": "The facts indicate a likely violation of debt collection regulations due to repeated calls at work despite a request to cease communication, which aligns with prohibited acts under the law.",
+    "duration_ms": 3918
+  },
+  {
+    "case_id": "batch_2_case_04",
+    "intent": "Robocalls & Telemarketing – TCPA",
+    "scenario": {
+      "date_noticed": "2025-01-10",
+      "issue": "Unsolicited robocalls on Do Not Call list",
+      "company_response": "Claimed no record of calls"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_4:10",
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_4:11"
+    ],
+    "summary": "The facts suggest a likely violation of telemarketing regulations due to unsolicited robocalls made to a number on the Do Not Call list, with the company unable to provide records of such calls.",
+    "duration_ms": 4944
+  },
+  {
+    "case_id": "batch_2_case_05",
+    "intent": "Credit Billing Errors – FCBA",
+    "scenario": {
+      "date_noticed": "2022-05-21",
+      "issue": "Unauthorized charge from unknown vendor",
+      "creditor_response": "Dispute not resolved within 90 days"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:a:3",
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:b:1"
+    ],
+    "summary": "The creditor failed to resolve the billing dispute within the required 90-day period, which constitutes a likely violation of the Fair Credit Billing Act.",
+    "duration_ms": 4842
+  },
+  {
+    "case_id": "batch_2_case_06",
+    "intent": "Electronic Fund Transfers – Unauthorized Withdrawal",
+    "scenario": {
+      "date_noticed": "2021-03-15",
+      "issue": "Stolen debit card used for large withdrawal",
+      "bank_response": "Delayed investigation beyond 60 days"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.95,
+    "citations": [
+      "urn:lex:fed:electronic_fund_transfer_act__efta___reg_e__:111_7bdb:a:2"
+    ],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations. The incident was noticed on 2021-03-15, and the current date is 2025-12-13, which is well beyond the typical statute of limitations for such claims.",
+    "duration_ms": 4126
+  },
+  {
+    "case_id": "batch_2_case_07",
+    "intent": "Home Improvement – Contractor Dispute",
+    "scenario": {
+      "date_noticed": "2020-11-20",
+      "issue": "Incomplete kitchen renovation",
+      "contractor_response": "Refused to complete work"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.95,
+    "citations": [],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations for contract-related disputes.",
+    "duration_ms": 2602
+  },
+  {
+    "case_id": "batch_2_case_08",
+    "intent": "Online Shopping – Negative Option Marketing",
+    "scenario": {
+      "date_noticed": "2023-08-05",
+      "issue": "Charged monthly for cancelled subscription",
+      "company_response": "Terms not clearly disclosed"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_3:v:vii"
+    ],
+    "summary": "The company's failure to clearly disclose the terms of the negative option feature likely violates the requirements of SECTION [urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_3:v:vii], which mandates clear disclosure of all material terms, including the fact that the customer's account will be charged unless they take affirmative action to avoid the charge.",
+    "duration_ms": 3757
+  },
+  {
+    "case_id": "batch_2_case_09",
+    "intent": "Landlord/Tenant – Security Deposits",
+    "scenario": {
+      "date_noticed": "2018-02-10",
+      "issue": "Security deposit not returned post-lease",
+      "landlord_response": "Claimed excessive damages without proof"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_17:b_a021"
+    ],
+    "summary": "The landlord's failure to return the security deposit and provide an itemized list of damages with evidence likely constitutes a violation of the law.",
+    "duration_ms": 3148
+  },
+  {
+    "case_id": "batch_2_case_10",
+    "intent": "Credit Reporting – Incorrect Info",
+    "scenario": {
+      "date_noticed": "2019-07-12",
+      "issue": "Incorrect late payment reported",
+      "bureau_response": "Corrected after multiple disputes"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.85,
+    "citations": [
+      "urn:lex:fed:fair_credit_reporting_act__fcra__:15:b"
+    ],
+    "summary": "The facts suggest a likely violation of the Fair Credit Reporting Act's requirement for consumer reporting agencies to adopt reasonable procedures to ensure the accuracy of consumer information. The incorrect late payment was only corrected after multiple disputes, indicating a potential failure in maintaining accuracy and proper utilization of consumer information.",
+    "duration_ms": 4151
+  },
+  {
+    "case_id": "batch_2_case_11",
+    "intent": "Auto Sales & Repairs – Warranty",
+    "scenario": {
+      "date_noticed": "2017-09-18",
+      "issue": "Battery failure not covered under warranty",
+      "dealer_response": "Warranty expired by a month"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 1,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "summary": "The claim regarding the battery failure not covered under warranty is ineligible due to the expiration of the statute of limitations.",
+    "duration_ms": 4183
+  },
+  {
+    "case_id": "batch_2_case_12",
+    "intent": "Debt Collection – Statute of Limitations",
+    "scenario": {
+      "date_noticed": "2025-02-25",
+      "issue": "Attempt to collect expired debt",
+      "collector_response": "Continued collection efforts"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_07:8",
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_07:16"
+    ],
+    "summary": "The continued collection efforts on an expired debt likely constitute an unfair or deceptive act under the debt collection regulations.",
+    "duration_ms": 4293
+  },
+  {
+    "case_id": "batch_2_case_13",
+    "intent": "Robocalls & Telemarketing – Gray Area",
+    "scenario": {
+      "date_noticed": "2023-06-10",
+      "issue": "Robocall received, not sure if on Do Not Call list",
+      "company_response": "Provided opt-out mechanism"
+    },
+    "expected_bias": "Gray Area",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.6,
+    "citations": [
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_4:10",
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_4:11"
+    ],
+    "summary": "The facts suggest a potential violation of telemarketing regulations due to the receipt of a robocall, but the lack of clarity on whether the recipient was on the Do Not Call list and the company's provision of an opt-out mechanism complicate the assessment.",
+    "duration_ms": 4693
+  },
+  {
+    "case_id": "batch_2_case_14",
+    "intent": "Credit Billing Errors – User Error",
+    "scenario": {
+      "date_noticed": "2024-07-14",
+      "issue": "Authorized charge disputed due to miscommunication",
+      "creditor_response": "Charge was authorized"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:a"
+    ],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations for disputing a billing error under the Fair Credit Billing Act.",
+    "duration_ms": 4913
+  },
+  {
+    "case_id": "batch_2_case_15",
+    "intent": "Electronic Fund Transfers – Gray Area",
+    "scenario": {
+      "date_noticed": "2024-10-01",
+      "issue": "Unauthorized small transaction on debit card",
+      "bank_response": "Reimbursed but took 90 days"
+    },
+    "expected_bias": "Gray Area",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:electronic_fund_transfer_act__efta___reg_e__:111:d_2c68:2"
+    ],
+    "summary": "The facts suggest a potential violation of the Electronic Fund Transfer Act (EFTA) due to the delay in reimbursement for an unauthorized transaction. However, the specific provisions of the law regarding the timeliness of reimbursement are not detailed in the provided section.",
+    "duration_ms": 3463
+  },
+  {
+    "case_id": "batch_2_case_16",
+    "intent": "Home Improvement – Gray Area",
+    "scenario": {
+      "date_noticed": "2023-01-23",
+      "issue": "Contractor delayed bathroom renovation",
+      "contractor_response": "Cited supply chain issues"
+    },
+    "expected_bias": "Gray Area",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 1,
+    "citations": [
+      "urn:lex:fed:940_cmr_10_00___home_improvement_contractor_practices:10_01:common_areas_and_facilities"
+    ],
+    "summary": "The facts presented do not pertain to the legal section provided, which concerns common areas and facilities in a manufactured housing community. Additionally, the issue of a contractor delaying a bathroom renovation does not fall under the jurisdiction of the cited law.",
+    "duration_ms": 2956
+  },
+  {
+    "case_id": "batch_2_case_17",
+    "intent": "Online Shopping – Subscription Traps",
+    "scenario": {
+      "date_noticed": "2025-03-12",
+      "issue": "Continued charges after cancelling free trial",
+      "company_response": "Cancellation process unclear"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.6,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_14:3"
+    ],
+    "summary": "The facts suggest a potential misrepresentation regarding the cancellation process of a free trial, which could constitute an unfair trade practice under the cited law. However, the details are insufficient to definitively conclude a violation.",
+    "duration_ms": 2926
+  },
+  {
+    "case_id": "batch_2_case_18",
+    "intent": "Landlord/Tenant – Lease Violations",
+    "scenario": {
+      "date_noticed": "2016-05-30",
+      "issue": "Landlord entered apartment without notice",
+      "landlord_response": "Claimed emergency repair"
+    },
+    "expected_bias": "Gray Area",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 1,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_17:f_1f3e"
+    ],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations.",
+    "duration_ms": 2688
+  },
+  {
+    "case_id": "batch_2_case_19",
+    "intent": "Debt Collection – Misidentified Debtor",
+    "scenario": {
+      "date_noticed": "2023-11-02",
+      "issue": "Collection attempts for debt of different person",
+      "collector_response": "Refused to correct error"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_07:8",
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_07:2"
+    ],
+    "summary": "The facts suggest a likely violation of debt collection regulations due to the collector's refusal to correct an error regarding the collection attempts for a debt of a different person. This aligns with unfair or deceptive practices as outlined in the regulations.",
+    "duration_ms": 4353
+  },
+  {
+    "case_id": "batch_2_case_20",
+    "intent": "Credit Reporting – Obsolete Info",
+    "scenario": {
+      "date_noticed": "2015-10-15",
+      "issue": "Old bankruptcy still on report",
+      "bureau_response": "Claimed valid due to extended timeframe"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.95,
+    "citations": [
+      "urn:lex:fed:fair_credit_reporting_act__fcra__:15:b"
+    ],
+    "summary": "The claim regarding the old bankruptcy on the credit report is ineligible due to the statute of limitations. The issue was noticed on October 15, 2015, and today's date is December 13, 2025, which is over 10 years later. The Fair Credit Reporting Act typically allows for a 7-year reporting period for bankruptcies, and any legal action regarding this issue would likely be barred by the statute of limitations.",
+    "duration_ms": 4008
+  },
+  {
+    "case_id": "batch_3_case_01",
+    "intent": "Credit Reporting – Identity Theft",
+    "scenario": {
+      "date_noticed": "2024-02-01",
+      "issue": "Unknown credit card account on report",
+      "bureau_response": "Refused to investigate"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:fair_credit_reporting_act__fcra__:15:b"
+    ],
+    "summary": "The refusal of the consumer reporting agency to investigate an unknown credit card account on the claimant's report likely violates the Fair Credit Reporting Act's requirement for reasonable procedures to ensure accuracy and proper utilization of consumer information.",
+    "duration_ms": 3761
+  },
+  {
+    "case_id": "batch_3_case_02",
+    "intent": "Auto Sales – Lemon Law",
+    "scenario": {
+      "date_noticed": "2023-11-15",
+      "issue": "Repeated transmission failure in new car",
+      "dealer_response": "Refused replacement"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "summary": "The facts suggest a potential violation of warranty obligations under the law, as the dealer's refusal to replace a car with repeated transmission failures may render the warranty illusory. However, more information is needed regarding the specific terms of the warranty and any costs imposed on the consumer.",
+    "duration_ms": 4462
+  },
+  {
+    "case_id": "batch_3_case_03",
+    "intent": "Debt Collection – Harassment",
+    "scenario": {
+      "date_noticed": "2025-03-10",
+      "issue": "Collection agency calls multiple times daily",
+      "agency_response": "Continued harassment"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_04:1:f"
+    ],
+    "summary": "The facts indicate a likely violation of debt collection regulations due to the collection agency's repeated calls, which may exceed the permissible frequency of contact with the debtor.",
+    "duration_ms": 3145
+  },
+  {
+    "case_id": "batch_3_case_04",
+    "intent": "Robocalls & Telemarketing – TCPA",
+    "scenario": {
+      "date_noticed": "2022-06-01",
+      "issue": "Received robocalls despite being on Do Not Call list",
+      "company_response": "Ignored requests to stop"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_4:10",
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_4:11"
+    ],
+    "summary": "The facts indicate a likely violation of telemarketing regulations as the claimant received robocalls despite being on the Do Not Call list, and the company ignored requests to stop. This aligns with the prohibited conduct under the law.",
+    "duration_ms": 3623
+  },
+  {
+    "case_id": "batch_3_case_05",
+    "intent": "Credit Billing Errors – FCBA",
+    "scenario": {
+      "date_noticed": "2020-01-15",
+      "issue": "Unauthorized charge on credit card",
+      "issuer_response": "Failed to remove charge"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.95,
+    "citations": [
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:a",
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:b:1"
+    ],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations. The notice of the unauthorized charge was given on January 15, 2020, and today's date is December 13, 2025, which is well beyond the typical statute of limitations for such claims under the Fair Credit Billing Act.",
+    "duration_ms": 4727
+  },
+  {
+    "case_id": "batch_3_case_06",
+    "intent": "Electronic Fund Transfers – EFTA",
+    "scenario": {
+      "date_noticed": "2024-09-20",
+      "issue": "Unauthorized withdrawal from bank account",
+      "bank_response": "Refused to reimburse"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.6,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:111_85f8:i_3796:ii_e672"
+    ],
+    "summary": "The facts suggest a potential issue with an unauthorized withdrawal, which may fall under the definition of an 'electronic fund transfer' as per the Truth in Lending Act. However, the facts provided are insufficient to conclusively determine a violation.",
+    "duration_ms": 3964
+  },
+  {
+    "case_id": "batch_3_case_07",
+    "intent": "Home Improvement – Contractor Disputes",
+    "scenario": {
+      "date_noticed": "2023-05-30",
+      "issue": "Incomplete roofing work",
+      "contractor_response": "Denied responsibility"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:1",
+      "urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:2"
+    ],
+    "summary": "The claim regarding incomplete roofing work is ineligible due to the expiration of the statute of limitations.",
+    "duration_ms": 4141
+  },
+  {
+    "case_id": "batch_3_case_08",
+    "intent": "Online Shopping – ROSCA",
+    "scenario": {
+      "date_noticed": "2021-07-15",
+      "issue": "Unexpected subscription charges",
+      "company_response": "Refused to cancel subscription"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:ma:201_cmr_12_00__the_massachusetts_do_not_call_registry_:201_69b7:d"
+    ],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations.",
+    "duration_ms": 2890
+  },
+  {
+    "case_id": "batch_3_case_09",
+    "intent": "Landlord/Tenant – Security Deposits",
+    "scenario": {
+      "date_noticed": "2022-09-01",
+      "issue": "Security deposit not returned post-lease",
+      "landlord_response": "Failed to provide itemized deductions"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_17:b_a021"
+    ],
+    "summary": "The landlord's failure to provide an itemized list of deductions from the security deposit constitutes a likely violation of the law governing unfair or deceptive practices in rental agreements.",
+    "duration_ms": 3509
+  },
+  {
+    "case_id": "batch_3_case_10",
+    "intent": "Auto Sales – Warranty",
+    "scenario": {
+      "date_noticed": "2019-11-10",
+      "issue": "Defective air conditioning system",
+      "dealer_response": "Warranty expired"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.95,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "summary": "The claim regarding the defective air conditioning system is ineligible due to the expiration of the statute of limitations.",
+    "duration_ms": 3132
+  },
+  {
+    "case_id": "batch_3_case_11",
+    "intent": "Debt Collection – Workplace Calls",
+    "scenario": {
+      "date_noticed": "2024-12-05",
+      "issue": "Collection agency calling workplace",
+      "employer_response": "Received complaints from employer"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_05:3",
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_06:1"
+    ],
+    "summary": "The facts suggest a likely violation of debt collection regulations due to the collection agency contacting the debtor's workplace, which is generally prohibited unless specific conditions are met.",
+    "duration_ms": 3540
+  },
+  {
+    "case_id": "batch_3_case_12",
+    "intent": "Robocalls & Telemarketing – 16 CFR 310",
+    "scenario": {
+      "date_noticed": "2023-03-22",
+      "issue": "Automated sales calls without consent",
+      "company_response": "Continued calls"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_3:a"
+    ],
+    "summary": "The facts indicate a likely violation of telemarketing laws due to automated sales calls made without consent, which aligns with prohibited deceptive telemarketing practices.",
+    "duration_ms": 4198
+  },
+  {
+    "case_id": "batch_3_case_13",
+    "intent": "Credit Reporting – Incorrect Information",
+    "scenario": {
+      "date_noticed": "2021-05-18",
+      "issue": "Incorrect delinquency report on credit profile",
+      "bureau_response": "Delayed correction"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.95,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:3009_4f3f:a_0e6c"
+    ],
+    "summary": "The claim regarding the incorrect delinquency report on the credit profile is ineligible due to the expiration of the statute of limitations. The issue was noticed on 2021-05-18, and as of today's date, 2025-12-13, more than four years have passed, which exceeds the typical statute of limitations for such claims.",
+    "duration_ms": 4012
+  },
+  {
+    "case_id": "batch_3_case_14",
+    "intent": "Credit Billing Errors – Disputes",
+    "scenario": {
+      "date_noticed": "2018-02-14",
+      "issue": "Billing error not addressed",
+      "issuer_response": "Claimed dispute period expired"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 1,
+    "citations": [
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:a"
+    ],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations. The notice of the billing error was given on 2018-02-14, and the current date is 2025-12-13, which is well beyond any reasonable statute of limitations for such claims under the Fair Credit Billing Act.",
+    "duration_ms": 4524
+  },
+  {
+    "case_id": "batch_3_case_15",
+    "intent": "Electronic Fund Transfers – Stolen Debit Card",
+    "scenario": {
+      "date_noticed": "2025-04-09",
+      "issue": "Multiple unauthorized transactions on debit card",
+      "bank_response": "Delayed investigation"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.6,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:111_85f8:i_3796:ii_e672"
+    ],
+    "summary": "The facts suggest a potential issue with unauthorized electronic fund transfers, but the connection to the specific legal definition under the Truth in Lending Act is not explicit.",
+    "duration_ms": 5044
+  },
+  {
+    "case_id": "batch_3_case_16",
+    "intent": "Home Improvement – 940 CMR 10.00",
+    "scenario": {
+      "date_noticed": "2023-01-12",
+      "issue": "Contractor used substandard materials",
+      "contractor_response": "Disputed quality claim"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.6,
+    "citations": [
+      "urn:lex:fed:940_cmr_10_00___home_improvement_contractor_practices:10_14"
+    ],
+    "summary": "The claim involves the use of substandard materials by a contractor, which could potentially be considered an unfair practice under 940 CMR 10.00. However, the contractor disputes the quality claim, and the facts provided are not sufficiently detailed to determine a clear violation.",
+    "duration_ms": 3435
+  },
+  {
+    "case_id": "batch_3_case_17",
+    "intent": "Online Shopping – Negative Option Marketing",
+    "scenario": {
+      "date_noticed": "2023-08-11",
+      "issue": "Trapped in a negative option marketing scheme",
+      "company_response": "Refused to cancel membership"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_3:v:vii"
+    ],
+    "summary": "The facts suggest a potential violation of the negative option marketing scheme requirements, as the company allegedly refused to cancel the membership, which may indicate a failure to disclose material terms and conditions as required by law.",
+    "duration_ms": 4240
+  },
+  {
+    "case_id": "batch_3_case_18",
+    "intent": "Landlord/Tenant – Lease Violations",
+    "scenario": {
+      "date_noticed": "2020-11-23",
+      "issue": "Landlord entered property without notice",
+      "landlord_response": "Claimed no notice was necessary"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_17:f_1f3e"
+    ],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations.",
+    "duration_ms": 2766
+  },
+  {
+    "case_id": "batch_3_case_19",
+    "intent": "Auto Repairs – 940 CMR 5.00",
+    "scenario": {
+      "date_noticed": "2023-04-15",
+      "issue": "Overcharged for car repairs",
+      "repair_shop_response": "Refused itemized bill"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "summary": "The refusal to provide an itemized bill for car repairs may constitute an unfair or deceptive act under the law if it effectively limits the scope of any warranty or guarantee, rendering it illusory. The facts suggest a potential violation, but more information is needed to determine if the costs were prohibitive or if a warranty was involved.",
+    "duration_ms": 4417
+  },
+  {
+    "case_id": "batch_3_case_20",
+    "intent": "Debt Collection – FDCPA",
+    "scenario": {
+      "date_noticed": "2021-10-30",
+      "issue": "Threatened with legal action for unpaid debt",
+      "agency_response": "No validation of debt provided"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_08:1"
+    ],
+    "summary": "The creditor's failure to provide validation of the debt within the required timeframe constitutes a likely violation of debt collection regulations.",
+    "duration_ms": 4291
+  },
+  {
+    "case_id": "batch_4_case_01",
+    "intent": "Auto Sales & Repairs – Lemon Law",
+    "scenario": {
+      "date_noticed": "2023-11-15",
+      "issue": "Recurrent engine failure despite multiple repairs",
+      "dealer_response": "Refused to replace or refund"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.85,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "summary": "The facts suggest a likely violation of the law regarding warranties, as the dealer's refusal to replace or refund despite recurrent engine failures may render the warranty illusory under SECTION [urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b]. The claim is timely, as the issue was noticed in 2023 and the current date is 2025, which is within a reasonable period for warranty claims.",
+    "duration_ms": 8686
+  },
+  {
+    "case_id": "batch_4_case_02",
+    "intent": "Debt Collection – Harassment",
+    "scenario": {
+      "date_noticed": "2020-07-22",
+      "issue": "Aggressive calls outside permissible hours",
+      "collector_response": "Ignored cease-and-desist request"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:7_04:1:g",
+      "urn:lex:ma:940_cmr_7_00___debt_collection_regulations:14:2"
+    ],
+    "summary": "The facts indicate a likely violation of debt collection regulations due to aggressive calls outside permissible hours and ignoring a cease-and-desist request.",
+    "duration_ms": 4027
+  },
+  {
+    "case_id": "batch_4_case_03",
+    "intent": "Robocalls & Telemarketing – TCPA Violation",
+    "scenario": {
+      "date_noticed": "2024-03-10",
+      "issue": "Repeated robocalls despite being on Do Not Call list",
+      "company_response": "Claimed technical error"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_4:10"
+    ],
+    "summary": "The facts indicate a likely violation of telemarketing regulations due to repeated robocalls to a person on the Do Not Call list, which is prohibited under the law.",
+    "duration_ms": 3500
+  },
+  {
+    "case_id": "batch_4_case_04",
+    "intent": "Credit Reporting – Incorrect Info",
+    "scenario": {
+      "date_noticed": "2025-06-01",
+      "issue": "Outdated bankruptcy still showing on report",
+      "bureau_response": "Delayed update beyond 30 days"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.85,
+    "citations": [
+      "urn:lex:fed:fair_credit_reporting_act__fcra__:15:b"
+    ],
+    "summary": "The facts suggest a likely violation of the Fair Credit Reporting Act's requirement for consumer reporting agencies to adopt reasonable procedures to ensure the accuracy and relevancy of consumer information. The delayed update of an outdated bankruptcy on the consumer's report beyond 30 days indicates a failure to maintain accurate and timely information.",
+    "duration_ms": 3733
+  },
+  {
+    "case_id": "batch_4_case_05",
+    "intent": "Credit Billing Errors – Unauthorized Charges",
+    "scenario": {
+      "date_noticed": "2019-12-20",
+      "issue": "Fraudulent charges on credit card",
+      "card_issuer_response": "Failed to investigate within 60 days"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 1,
+    "citations": [
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:a",
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:e"
+    ],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations. The notice of the issue was given on 2019-12-20, and today's date is 2025-12-13, which is well beyond any reasonable statute of limitations for such claims under the Fair Credit Billing Act.",
+    "duration_ms": 5012
+  },
+  {
+    "case_id": "batch_4_case_06",
+    "intent": "Electronic Fund Transfers – Unauthorized Withdrawal",
+    "scenario": {
+      "date_noticed": "2024-01-15",
+      "issue": "Unauthorized ATM withdrawals",
+      "bank_response": "Claimed user negligence"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:electronic_fund_transfer_act__efta___reg_e__:111_7bdb:a:2"
+    ],
+    "summary": "The claim involves unauthorized ATM withdrawals, and the bank alleges user negligence. The timeliness of the consumer's notification to the bank is crucial under SECTION [urn:lex:fed:electronic_fund_transfer_act__efta___reg_e__:111_7bdb:a:2]. The consumer reported the issue on 2024-01-15, which is within a reasonable time frame if the unauthorized transactions appeared on a statement sent within 60 days prior to this date. However, the bank's claim of negligence could affect the outcome if the consumer failed to report the loss or theft of the card within two business days of learning about it.",
+    "duration_ms": 3978
+  },
+  {
+    "case_id": "batch_4_case_07",
+    "intent": "Home Improvement – Contractor Disputes",
+    "scenario": {
+      "date_noticed": "2024-09-01",
+      "issue": "Incomplete roof repair",
+      "contractor_response": "Refused correction or refund"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.6,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:1",
+      "urn:lex:fed:truth_in_lending_act__tila_:111_1e1c:i_9400:2"
+    ],
+    "summary": "The facts suggest a potential issue with the payment method for the roof repair, which may not comply with the Truth in Lending Act requirements. However, the details regarding the payment method and agreement are not provided.",
+    "duration_ms": 3190
+  },
+  {
+    "case_id": "batch_4_case_08",
+    "intent": "Online Shopping – Subscription Traps",
+    "scenario": {
+      "date_noticed": "2023-08-05",
+      "issue": "Unauthorized subscription renewal",
+      "company_response": "Denied cancellation request"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.6,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_14:3"
+    ],
+    "summary": "The claim involves an unauthorized subscription renewal, which may constitute a misrepresentation of the nature of business under the cited law. However, the facts provided are vague regarding how the company's actions specifically misrepresented the nature of their business.",
+    "duration_ms": 3076
+  },
+  {
+    "case_id": "batch_4_case_09",
+    "intent": "Landlord/Tenant – Security Deposits",
+    "scenario": {
+      "date_noticed": "2021-04-12",
+      "issue": "Deposit not returned after lease end",
+      "landlord_response": "Cited unfounded damages"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_17:b_a021"
+    ],
+    "summary": "The landlord's failure to return the security deposit and citing unfounded damages aligns with the prohibited acts under the law, specifically regarding the handling and return of security deposits.",
+    "duration_ms": 3211
+  },
+  {
+    "case_id": "batch_4_case_10",
+    "intent": "Credit Reporting – Identity Theft",
+    "scenario": {
+      "date_noticed": "2024-02-01",
+      "issue": "Unknown credit card account on report",
+      "bureau_response": "Refused to investigate"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:fair_credit_reporting_act__fcra__:15:b"
+    ],
+    "summary": "The refusal of the consumer reporting agency to investigate an unknown credit card account on the claimant's report likely violates the Fair Credit Reporting Act's requirement for reasonable procedures to ensure accuracy and proper utilization of consumer information.",
+    "duration_ms": 4202
+  },
+  {
+    "case_id": "batch_4_case_11",
+    "intent": "Auto Sales & Repairs – Warranty Issue",
+    "scenario": {
+      "date_noticed": "2022-05-17",
+      "issue": "Warranty not honored for transmission failure",
+      "dealer_response": "Claimed misuse"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.6,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "summary": "The claim involves a warranty not being honored due to alleged misuse, which may fall under deceptive acts if the warranty terms are illusory. However, the facts are vague regarding the specific terms of the warranty and the nature of the alleged misuse.",
+    "duration_ms": 5149
+  },
+  {
+    "case_id": "batch_4_case_12",
+    "intent": "Debt Collection – Workplace Calls",
+    "scenario": {
+      "date_noticed": "2015-11-11",
+      "issue": "Collector contacted employer about debt",
+      "collector_response": "Denied claim"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 1,
+    "citations": [],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations. The alleged incident occurred on 2015-11-11, which is more than 10 years prior to today's date, 2025-12-13. This exceeds the typical statute of limitations for debt collection claims.",
+    "duration_ms": 3942
+  },
+  {
+    "case_id": "batch_4_case_13",
+    "intent": "Robocalls & Telemarketing – Unauthorized Texts",
+    "scenario": {
+      "date_noticed": "2025-02-14",
+      "issue": "Frequent marketing texts without prior consent",
+      "company_response": "Opt-out not processed"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_3:a",
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_4:10"
+    ],
+    "summary": "The facts suggest a likely violation of telemarketing laws due to the company's failure to process an opt-out request, which aligns with prohibited deceptive telemarketing practices.",
+    "duration_ms": 4417
+  },
+  {
+    "case_id": "batch_4_case_14",
+    "intent": "Credit Billing Errors – Disputes",
+    "scenario": {
+      "date_noticed": "2023-12-25",
+      "issue": "Failure to resolve disputed charge",
+      "card_issuer_response": "Claimed late dispute filing"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:a",
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:a:1",
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:a:2",
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:a:3",
+      "urn:lex:fed:fair_credit_billing_act__fcba_:15:e"
+    ],
+    "summary": "The claimant's notice of a billing error was timely, and the card issuer's response of 'claimed late dispute filing' does not align with the requirements of the Fair Credit Billing Act. The creditor appears to have failed to comply with the statutory obligations to acknowledge and investigate the dispute.",
+    "duration_ms": 5995
+  },
+  {
+    "case_id": "batch_4_case_15",
+    "intent": "Electronic Fund Transfers – Stolen Debit Card",
+    "scenario": {
+      "date_noticed": "2020-09-30",
+      "issue": "Stolen card used before reporting",
+      "bank_response": "Denied reimbursement"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.95,
+    "citations": [
+      "urn:lex:fed:truth_in_lending_act__tila_:111_85f8:i_3796:ii_e672"
+    ],
+    "summary": "The claim is ineligible due to the expiration of the statute of limitations.",
+    "duration_ms": 3058
+  },
+  {
+    "case_id": "batch_4_case_16",
+    "intent": "Home Improvement – Contract Violation",
+    "scenario": {
+      "date_noticed": "2024-08-20",
+      "issue": "Contractor used substandard materials",
+      "contractor_response": "Refused to rectify"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.9,
+    "citations": [],
+    "summary": "The facts presented do not align with the specific provisions of the Truth in Lending Act (TILA) sections provided, which pertain to payment methods rather than the quality of materials used by a contractor. Additionally, the issue of substandard materials and the contractor's refusal to rectify do not fall under the purview of the cited sections of TILA.",
+    "duration_ms": 3190
+  },
+  {
+    "case_id": "batch_4_case_17",
+    "intent": "Online Shopping – Negative Option Marketing",
+    "scenario": {
+      "date_noticed": "2025-05-25",
+      "issue": "Difficulty canceling subscription",
+      "company_response": "Obstructed cancellation"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_3:v:vii"
+    ],
+    "summary": "The facts suggest a potential violation of the negative option feature disclosure requirements under SECTION [urn:lex:fed:16_cfr_part_310__up_to_date_as_of_10_28_2025_:310_3:v:vii]. The issue of 'difficulty canceling subscription' and 'obstructed cancellation' by the company may indicate that the company did not adequately disclose the material terms and conditions of the negative option feature, particularly the steps required to avoid charges.",
+    "duration_ms": 4302
+  },
+  {
+    "case_id": "batch_4_case_18",
+    "intent": "Landlord/Tenant – Lease Violations",
+    "scenario": {
+      "date_noticed": "2023-03-10",
+      "issue": "Landlord entered without notice",
+      "landlord_response": "Cited emergency"
+    },
+    "expected_bias": "GRAY AREA",
+    "actual_verdict": "POSSIBLE_VIOLATION",
+    "confidence": 0.7,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_17:f_1f3e"
+    ],
+    "summary": "The facts suggest a potential violation of M.G.L. c. 186, § 14 due to the landlord's entry without notice, but the landlord's claim of an emergency could justify the action.",
+    "duration_ms": 3009
+  },
+  {
+    "case_id": "batch_4_case_19",
+    "intent": "Credit Reporting – Incorrect Info",
+    "scenario": {
+      "date_noticed": "2017-07-15",
+      "issue": "Incorrect late payment noted",
+      "bureau_response": "Provided outdated information"
+    },
+    "expected_bias": "WEAK",
+    "actual_verdict": "INELIGIBLE",
+    "confidence": 0.95,
+    "citations": [
+      "urn:lex:fed:fair_credit_reporting_act__fcra__:15:b"
+    ],
+    "summary": "The claim regarding the incorrect late payment noted and the bureau's response with outdated information is ineligible due to the expiration of the statute of limitations.",
+    "duration_ms": 3749
+  },
+  {
+    "case_id": "batch_4_case_20",
+    "intent": "Auto Sales & Repairs – Warranty Issue",
+    "scenario": {
+      "date_noticed": "2021-10-05",
+      "issue": "Warranty voided without valid reason",
+      "dealer_response": "Cited non-existent clause"
+    },
+    "expected_bias": "VIOLATION",
+    "actual_verdict": "LIKELY_VIOLATION",
+    "confidence": 0.9,
+    "citations": [
+      "urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b"
+    ],
+    "summary": "The facts suggest a likely violation of the law regarding warranties, as the dealer voided the warranty without a valid reason, citing a non-existent clause. This aligns with the prohibited acts under SECTION [urn:lex:fed:940_cmr_3_00___unfair___deceptive_acts:3_01:b], which addresses warranties that are rendered illusory.",
+    "duration_ms": 3369
+  }
+]

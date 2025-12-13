@@ -1,35 +1,56 @@
 /**
- * Executes a function with exponential backoff.
- * Usage: await withRetry(() => apiCall(), 3, 1000, "Context");
+ * Executes a function with exponential backoff retries.
+ * Stops if the total time exceeds maxDurationMs.
  */
 export async function withRetry<T>(
-  operation: () => Promise<T>,
-  retries = 3,
-  delayMs = 1000,
-  context = 'Operation'
+    operation: () => Promise<T>,
+    options: { 
+        maxRetries?: number; 
+        maxDurationMs?: number; 
+        initialDelayMs?: number;
+        backoffFactor?: number;
+    } = {}
 ): Promise<T> {
-  try {
-    return await operation();
-  } catch (error: any) {
-    if (retries <= 0) {
-      console.error(`❌ [${context}] Final Failure:`, error.message);
-      throw error;
+    const {
+        maxRetries = 5,
+        maxDurationMs = 30000, // 30 seconds max
+        initialDelayMs = 1000,
+        backoffFactor = 2
+    } = options;
+
+    const startTime = Date.now();
+    let lastError: any;
+    let attempt = 0;
+    let delay = initialDelayMs;
+
+    while (attempt <= maxRetries) {
+        try {
+            // Check global timeout
+            if (Date.now() - startTime > maxDurationMs) {
+                throw new Error(`Timeout: Operation exceeded ${maxDurationMs}ms`);
+            }
+
+            return await operation();
+
+        } catch (error: any) {
+            lastError = error;
+            attempt++;
+
+            // If we hit the limit, stop
+            if (attempt > maxRetries || (Date.now() - startTime + delay > maxDurationMs)) {
+                break;
+            }
+
+            // Only log if it's a retryable error (optional: filter by error type)
+            console.warn(`[Resilience] Attempt ${attempt} failed. Retrying in ${delay}ms... (Error: ${error.message})`);
+            
+            // Wait
+            await new Promise(resolve => setTimeout(resolve, delay));
+            
+            // Increase delay (Exponential Backoff)
+            delay *= backoffFactor;
+        }
     }
 
-    // Identify retryable errors (Rate Limits, Server Errors, Timeouts)
-    const status = error.status || error.statusCode || 500;
-    const isRetryable = status === 429 || status >= 500 || error.code === 'ECONNRESET';
-
-    if (!isRetryable) {
-      throw error;
-    }
-
-    console.warn(`⚠️ [${context}] Failed (${status}). Retrying in ${delayMs}ms... (${retries} retries left)`);
-    
-    // Wait
-    await new Promise(r => setTimeout(r, delayMs));
-
-    // Recursive Retry with exponential backoff (1s -> 2s -> 4s)
-    return withRetry(operation, retries - 1, delayMs * 2, context);
-  }
+    throw lastError;
 }

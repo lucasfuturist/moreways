@@ -8,12 +8,17 @@ import { SupabaseGraphReader } from '../src/infra/supabase/infra.supabase.reader
 import { HybridSearchService } from '../src/retrieve/svc/retrieve.svc.hybridSearch';
 import { JudgeService } from '../src/validate/svc/validate.svc.judge';
 import { SupabaseOverrideRepo } from '../src/graph/repo/graph.repo.overrideRepo';
+import { withRetry } from '../src/shared/utils/resilience';
 
 // --- CONFIG ---
-const TARGET_SAMPLE_SIZE = 100;
-const BATCH_SIZE = 20; // Generate in chunks to prevent LLM timeouts
-const OUTPUT_FILE = path.join(__dirname, 'magistrate_report.json');
-const RESULT_FILE = path.join(__dirname, 'magistrate_results.json');
+const TARGET_SAMPLE_SIZE = 20; // 20 High-Fidelity Cases
+const BATCH_SIZE = 5;
+
+// 1. Staging File (Static): Keeps the generated cases so we can re-run logic without paying for generation again
+const STAGING_FILE = path.join(__dirname, 'staging_complex_scenarios.json');
+
+// 2. Results Directory: Where the final reports go
+const RESULTS_DIR = path.join(__dirname, 'magistrate-results');
 
 // --- FACTORIES ---
 const reader = new SupabaseGraphReader();
@@ -21,60 +26,76 @@ const overrideRepo = new SupabaseOverrideRepo();
 const searcher = new HybridSearchService();
 const judge = new JudgeService(searcher, reader, overrideRepo);
 
+// Helper to format filename timestamp (YYYY-MM-DD_HH-mm-ss)
+const getTimestamp = () => {
+    const now = new Date();
+    return now.toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g, '-');
+};
+
 /**
- * Generates a specific chunk of cases
+ * Generates a specific chunk of HIGH-COMPLEXITY cases
  */
 async function generateChunk(chunkIndex: number, count: number) {
-    console.log(`[Generator] creating batch ${chunkIndex + 1} (${count} cases)...`);
+    console.log(`[Generator] Creating Complex Batch ${chunkIndex + 1} (${count} cases)...`);
     
     const prompt = `
-    Generate ${count} diverse legal scenarios involving US Consumer Protection laws.
+    Generate ${count} COMPLEX, REALISTIC legal intake scenarios.
     
-    EXPANDED FOCUS AREAS (Match these to real regulations):
-    1. Auto Sales & Repairs (Lemon Law, Warranty, 940 CMR 5.00).
-    2. Debt Collection (Harassment, Workplace Calls, 940 CMR 7.00, FDCPA).
-    3. Robocalls & Telemarketing (TCPA, Do Not Call, 16 CFR 310, 47 CFR 64.1200).
-    4. Credit Reporting (FCRA - Incorrect info, Identity Theft).
-    5. Credit Billing Errors (FCBA - Unauthorized charges, disputes).
-    6. Electronic Fund Transfers (EFTA/Reg E - Stolen debit card, unauthorized withdrawal).
-    7. Home Improvement (Contractor disputes, 940 CMR 10.00).
-    8. Online Shopping (ROSCA - Subscription traps, negative option marketing).
-    9. Landlord/Tenant (Security deposits, lease violations - Article 2A).
+    CRITERIA:
+    1. **Detailed Data:** Do not use simple key-value pairs. Use nested objects, arrays, and long strings.
+    2. **Messy Narratives:** The 'client_narrative' should sound like a real person—frustrated, maybe including irrelevant details, but containing the core facts.
+    3. **Timelines:** Include a list of events with dates.
+    4. **Variety:** Mix obvious violations, clear losers (statute of limitations), and complex gray areas.
+
+    FOCUS AREAS:
+    1. Auto Sales (Lemon Law, Warranty, Misrepresentation, 940 CMR 5.00).
+    2. Debt Collection (Harassment, Workplace Calls, Validation, 940 CMR 7.00).
+    3. Credit Reporting (Identity Theft, Mixed Files, Disputes, FCRA).
+    4. Home Improvement (Contractor walked off job, bad work, 940 CMR 10.00).
     
     OUTPUT FORMAT (JSON):
     {
       "cases": [
         {
-          "id": "batch_${chunkIndex}_case_01",
-          "intent": "Credit Reporting – Identity Theft", 
+          "id": "complex_${chunkIndex}_01",
+          "intent": "Auto Sales – Lemon Law", 
           "formData": {
-             "date_noticed": "2024-02-01",
-             "issue": "Unknown credit card account on report",
-             "bureau_response": "Refused to investigate"
+             "client_info": { "state": "MA", "age": 45 },
+             "key_dates": {
+                "purchase_date": "2023-01-15",
+                "first_issue": "2023-01-20",
+                "dealer_notice": "2023-02-01"
+             },
+             "financials": {
+                "purchase_price": 24000,
+                "repair_costs_incurred": 1500,
+                "finance_company": "Ally"
+             },
+             "timeline": [
+                { "date": "2023-01-15", "event": "Purchased Ford Explorer" },
+                { "date": "2023-01-20", "event": "Check engine light came on" },
+                { "date": "2023-01-22", "event": "Dealer said it was just a loose cap" }
+             ],
+             "evidence_held": ["Sales Contract", "Repair Order #123"],
+             "client_narrative": "I bought this car thinking it was reliable. Three days later, the light comes on. The dealer brushed me off. Now it's been in the shop 4 times for the same transmission issue. They are refusing to refund me and say I drove it too hard."
           },
           "expected_bias": "VIOLATION" 
         }
       ]
     }
-    
-    IMPORTANT:
-    - Make cases REALISTIC.
-    - Mix "VIOLATION" (Clear win), "WEAK" (User error/Statute of Limitations), and "Gray Area".
-    - VARY THE DATES. Some should be recent (2024-2025), some old (2015-2020) to test statute of limitations logic.
     `;
 
     try {
-        const response = await openai.chat.completions.create({
+        const response = await withRetry(() => openai.chat.completions.create({
             model: "gpt-4o",
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },
-            temperature: 0.7 // Higher temp for variety
-        });
+            temperature: 0.8 // High creativity
+        }));
     
         const rawContent = response.choices[0].message.content || "{}";
         const data = JSON.parse(rawContent);
 
-        // Robust extraction
         if (data.cases && Array.isArray(data.cases)) return data.cases;
         if (Array.isArray(data)) return data;
         
@@ -86,46 +107,50 @@ async function generateChunk(chunkIndex: number, count: number) {
 }
 
 async function runBatch() {
-    console.log(`--- MAGISTRATE BATCH RUNNER (${TARGET_SAMPLE_SIZE} CASES) ---`);
+    console.log(`--- COMPLEX MAGISTRATE RUNNER (${TARGET_SAMPLE_SIZE} CASES) ---`);
 
-    // 1. DATA GENERATION / LOADING
+    // 0. Ensure Results Directory Exists
+    if (!fs.existsSync(RESULTS_DIR)) {
+        fs.mkdirSync(RESULTS_DIR, { recursive: true });
+        console.log(`Created output directory: ${RESULTS_DIR}`);
+    }
+
+    // 1. DATA GENERATION / LOADING (Using Staging File for caching)
     let cases: any[] = [];
     
-    // Check if we have a full dataset already
-    if (fs.existsSync(OUTPUT_FILE)) {
+    if (fs.existsSync(STAGING_FILE)) {
         try {
-            const existing = JSON.parse(fs.readFileSync(OUTPUT_FILE, 'utf-8'));
+            const existing = JSON.parse(fs.readFileSync(STAGING_FILE, 'utf-8'));
             if (Array.isArray(existing) && existing.length >= TARGET_SAMPLE_SIZE) {
-                console.log(`Loaded ${existing.length} existing cases from disk.`);
+                console.log(`Loaded ${existing.length} complex cases from staging.`);
                 cases = existing;
             } else {
-                console.log("Existing file is partial or invalid. Regenerating fresh dataset...");
+                console.log("Staging file is partial. Regenerating...");
             }
         } catch (e) {
-            console.log("Error reading file. Regenerating...");
+            console.log("Error reading staging file. Regenerating...");
         }
     }
 
-    // If we need to generate
     if (cases.length < TARGET_SAMPLE_SIZE) {
         const needed = TARGET_SAMPLE_SIZE;
         const batches = Math.ceil(needed / BATCH_SIZE);
         
-        console.log(`Generating ${needed} cases in ${batches} batches...`);
+        console.log(`Generating ${needed} complex cases...`);
         
         for (let i = 0; i < batches; i++) {
             const chunk = await generateChunk(i, BATCH_SIZE);
             cases = [...cases, ...chunk];
-            console.log(`   Batch ${i+1}/${batches} done. Total so far: ${cases.length}`);
+            console.log(`   Batch ${i+1}/${batches} done. Total: ${cases.length}`);
         }
         
-        // Save immediately
-        fs.writeFileSync(OUTPUT_FILE, JSON.stringify(cases, null, 2));
+        // Update Staging
+        fs.writeFileSync(STAGING_FILE, JSON.stringify(cases, null, 2));
     }
 
-    // Limit to target if we went over
+    // Slice to exact target
     cases = cases.slice(0, TARGET_SAMPLE_SIZE);
-    console.log(`\n⚖️ DOCKET READY: ${cases.length} CASES queued for judgment.\n`);
+    console.log(`\n⚖️ DOCKET READY: ${cases.length} COMPLEX CASES.\n`);
 
     // 2. EXECUTION LOOP
     const results: any[] = [];
@@ -136,27 +161,27 @@ async function runBatch() {
         const progress = `[${i + 1}/${cases.length}]`;
         
         try {
-            process.stdout.write(`${progress} Judging ${c.id} (${c.intent})... `);
+            process.stdout.write(`${progress} Judging ${c.id}... `);
             const start = Date.now();
             
+            // The JudgeService handles the nested 'formData' automatically
             const verdict = await judge.evaluate(c.intent, c.formData);
             const duration = Date.now() - start;
 
             const resultEntry = {
                 case_id: c.id,
                 intent: c.intent,
-                scenario: c.formData,
+                narrative_snippet: c.formData.client_narrative?.substring(0, 100) + "...",
                 expected_bias: c.expected_bias,
                 actual_verdict: verdict.status,
                 confidence: verdict.confidence_score,
                 citations: verdict.relevant_citations,
-                summary: verdict.analysis.summary,
+                analysis: verdict.analysis, // Full analysis object for complex cases
                 duration_ms: duration
             };
 
             results.push(resultEntry);
             
-            // Console Feedback
             let icon = '⚪';
             if (verdict.status.includes('LIKELY')) { icon = '🔴'; stats.violations++; }
             else if (verdict.status.includes('POSSIBLE')) { icon = '🟠'; }
@@ -173,17 +198,18 @@ async function runBatch() {
         }
     }
 
-    // 3. FINAL REPORT
-    fs.writeFileSync(RESULT_FILE, JSON.stringify(results, null, 2));
+    // 3. FINAL REPORT (Timestamped)
+    const timestamp = getTimestamp();
+    const filename = `magistrate_results_${timestamp}.json`;
+    const fullPath = path.join(RESULTS_DIR, filename);
+
+    fs.writeFileSync(fullPath, JSON.stringify(results, null, 2));
     
     console.log(`\n---------------------------------------`);
     console.log(`✅ COURT ADJOURNED.`);
     console.log(`---------------------------------------`);
-    console.log(`Total Cases: ${cases.length}`);
-    console.log(`Violations Found: ${stats.violations}`);
-    console.log(`Ineligible/Dismissed: ${stats.ineligible}`);
-    console.log(`Errors: ${stats.errors}`);
-    console.log(`Detailed Report: ${RESULT_FILE}`);
+    console.log(`Violations: ${stats.violations} | Dismissals: ${stats.ineligible} | Errors: ${stats.errors}`);
+    console.log(`Saved Report To: ${fullPath}`);
 }
 
 runBatch().catch(console.error);

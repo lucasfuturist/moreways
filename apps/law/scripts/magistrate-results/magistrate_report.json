@@ -1,0 +1,1002 @@
+[
+  {
+    "id": "batch_0_case_01",
+    "intent": "Credit Reporting – Identity Theft",
+    "formData": {
+      "date_noticed": "2024-02-01",
+      "issue": "Unknown credit card account on report",
+      "bureau_response": "Refused to investigate"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_0_case_02",
+    "intent": "Auto Sales & Repairs – Lemon Law",
+    "formData": {
+      "date_noticed": "2023-10-10",
+      "issue": "Recurrent engine failure after multiple repairs",
+      "dealer_response": "Refused replacement"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_0_case_03",
+    "intent": "Debt Collection – Harassment",
+    "formData": {
+      "date_noticed": "2022-07-15",
+      "issue": "Repeated calls at work despite requests to stop",
+      "collector_response": "Claims compliance with FDCPA"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_0_case_04",
+    "intent": "Robocalls & Telemarketing – Do Not Call",
+    "formData": {
+      "date_noticed": "2024-03-22",
+      "issue": "Unsolicited calls from a telemarketer",
+      "company_response": "Said number was not on Do Not Call list"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_0_case_05",
+    "intent": "Credit Billing Errors – Unauthorized Charges",
+    "formData": {
+      "date_noticed": "2019-11-05",
+      "issue": "Unauthorized purchase on credit card",
+      "creditor_response": "Refused to remove charge"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_0_case_06",
+    "intent": "Electronic Fund Transfers – Unauthorized Withdrawal",
+    "formData": {
+      "date_noticed": "2025-01-30",
+      "issue": "Stolen debit card used for withdrawal",
+      "bank_response": "Refused to reimburse"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_0_case_07",
+    "intent": "Home Improvement – Contractor Disputes",
+    "formData": {
+      "date_noticed": "2023-05-17",
+      "issue": "Incomplete work despite full payment",
+      "contractor_response": "Claims work was completed"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_0_case_08",
+    "intent": "Online Shopping – Subscription Traps",
+    "formData": {
+      "date_noticed": "2024-06-11",
+      "issue": "Unable to cancel subscription after trial",
+      "company_response": "Automatic renewal policy"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_0_case_09",
+    "intent": "Landlord/Tenant – Security Deposits",
+    "formData": {
+      "date_noticed": "2023-08-14",
+      "issue": "Failure to return security deposit",
+      "landlord_response": "Claims damage to property"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_0_case_10",
+    "intent": "Auto Sales & Repairs – Warranty",
+    "formData": {
+      "date_noticed": "2025-02-25",
+      "issue": "Denied warranty service for transmission",
+      "dealer_response": "Claims issue not covered"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_0_case_11",
+    "intent": "Debt Collection – Workplace Calls",
+    "formData": {
+      "date_noticed": "2020-09-30",
+      "issue": "Debt collector contacted employer",
+      "collector_response": "Said it was legal"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_0_case_12",
+    "intent": "Credit Reporting – Incorrect Information",
+    "formData": {
+      "date_noticed": "2018-04-09",
+      "issue": "Old debt showing as current",
+      "bureau_response": "Correcting information"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_0_case_13",
+    "intent": "Robocalls & Telemarketing – TCPA",
+    "formData": {
+      "date_noticed": "2023-12-01",
+      "issue": "Automated calls without consent",
+      "company_response": "Claims prior consent was given"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_0_case_14",
+    "intent": "Credit Billing Errors – Disputes",
+    "formData": {
+      "date_noticed": "2024-11-20",
+      "issue": "Incorrect billing amount",
+      "creditor_response": "Refused to adjust bill"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_0_case_15",
+    "intent": "Electronic Fund Transfers – Stolen Debit Card",
+    "formData": {
+      "date_noticed": "2022-02-15",
+      "issue": "Unauthorized online purchases",
+      "bank_response": "Investigating the issue"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_0_case_16",
+    "intent": "Home Improvement – Contract Violations",
+    "formData": {
+      "date_noticed": "2021-07-18",
+      "issue": "Contractor failed to meet deadlines",
+      "contractor_response": "Cites supply chain issues"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_0_case_17",
+    "intent": "Online Shopping – Negative Option Marketing",
+    "formData": {
+      "date_noticed": "2023-03-03",
+      "issue": "Charged for service not opted for",
+      "company_response": "Claims customer agreed"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_0_case_18",
+    "intent": "Landlord/Tenant – Lease Violations",
+    "formData": {
+      "date_noticed": "2025-05-10",
+      "issue": "Landlord entered apartment without notice",
+      "landlord_response": "Claims it was an emergency"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_0_case_19",
+    "intent": "Auto Sales & Repairs – 940 CMR 5.00",
+    "formData": {
+      "date_noticed": "2020-06-26",
+      "issue": "Misleading advertising of vehicle features",
+      "dealer_response": "Claims no misrepresentation"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_0_case_20",
+    "intent": "Debt Collection – 940 CMR 7.00",
+    "formData": {
+      "date_noticed": "2024-08-21",
+      "issue": "Debt collector used false representation",
+      "collector_response": "Denies allegations"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_1_case_01",
+    "intent": "Credit Reporting – Identity Theft",
+    "formData": {
+      "date_noticed": "2024-02-01",
+      "issue": "Unknown credit card account on report",
+      "bureau_response": "Refused to investigate"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_1_case_02",
+    "intent": "Auto Sales & Repairs – Lemon Law",
+    "formData": {
+      "date_noticed": "2023-06-15",
+      "issue": "Car repeatedly breaks down despite multiple repairs",
+      "dealer_response": "Claimed repairs are sufficient"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_1_case_03",
+    "intent": "Debt Collection – Harassment",
+    "formData": {
+      "date_noticed": "2022-11-20",
+      "issue": "Repeated calls at work despite requests to stop",
+      "collector_response": "Ignored requests and continued calls"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_1_case_04",
+    "intent": "Robocalls & Telemarketing – Do Not Call",
+    "formData": {
+      "date_noticed": "2021-03-12",
+      "issue": "Receiving robocalls despite being on the Do Not Call list",
+      "company_response": "Claimed technical error"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_1_case_05",
+    "intent": "Credit Billing Errors – Unauthorized Charges",
+    "formData": {
+      "date_noticed": "2020-05-10",
+      "issue": "Unauthorized charge on credit card",
+      "creditor_response": "Refused to remove charge"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_1_case_06",
+    "intent": "Electronic Fund Transfers – Unauthorized Withdrawal",
+    "formData": {
+      "date_noticed": "2025-01-05",
+      "issue": "Stolen debit card used for withdrawal",
+      "bank_response": "Investigating but no refund yet"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_1_case_07",
+    "intent": "Home Improvement – Contractor Dispute",
+    "formData": {
+      "date_noticed": "2023-08-22",
+      "issue": "Contractor failed to complete work as per contract",
+      "contractor_response": "Claimed work was completed"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_1_case_08",
+    "intent": "Online Shopping – Subscription Trap",
+    "formData": {
+      "date_noticed": "2022-02-14",
+      "issue": "Charged monthly fee after free trial without consent",
+      "company_response": "Claimed user agreed to terms"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_1_case_09",
+    "intent": "Landlord/Tenant – Security Deposit Dispute",
+    "formData": {
+      "date_noticed": "2019-07-01",
+      "issue": "Landlord refused to return deposit without reason",
+      "landlord_response": "Cited damages not in lease agreement"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_1_case_10",
+    "intent": "Credit Reporting – Incorrect Information",
+    "formData": {
+      "date_noticed": "2021-09-09",
+      "issue": "Incorrect address and employer information",
+      "bureau_response": "Corrected after dispute"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_1_case_11",
+    "intent": "Auto Sales & Repairs – Warranty Issue",
+    "formData": {
+      "date_noticed": "2024-11-30",
+      "issue": "Warranty claim denied for covered part",
+      "dealer_response": "Claimed part was not covered"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_1_case_12",
+    "intent": "Debt Collection – Statute of Limitations",
+    "formData": {
+      "date_noticed": "2025-03-15",
+      "issue": "Collector pursuing debt beyond statute of limitations",
+      "collector_response": "Argued debt is still valid"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_1_case_13",
+    "intent": "Robocalls & Telemarketing – Consent Issues",
+    "formData": {
+      "date_noticed": "2018-06-18",
+      "issue": "Receiving texts from a company without giving consent",
+      "company_response": "Claimed implied consent"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_1_case_14",
+    "intent": "Credit Billing Errors – Disputed Charge",
+    "formData": {
+      "date_noticed": "2020-12-25",
+      "issue": "Disputed charge not resolved after 60 days",
+      "creditor_response": "Requested further documentation"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_1_case_15",
+    "intent": "Electronic Fund Transfers – ATM Error",
+    "formData": {
+      "date_noticed": "2023-04-01",
+      "issue": "ATM withdrawal not reflected in account",
+      "bank_response": "Investigating the issue"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_1_case_16",
+    "intent": "Home Improvement – Contract Violation",
+    "formData": {
+      "date_noticed": "2021-11-11",
+      "issue": "Contractor used substandard materials",
+      "contractor_response": "Materials met contractual standards"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_1_case_17",
+    "intent": "Online Shopping – Negative Option Marketing",
+    "formData": {
+      "date_noticed": "2024-07-20",
+      "issue": "Enrolled in a product bundle without explicit consent",
+      "company_response": "Claimed terms were clear"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_1_case_18",
+    "intent": "Landlord/Tenant – Lease Violation",
+    "formData": {
+      "date_noticed": "2025-06-05",
+      "issue": "Landlord entered property without notice",
+      "landlord_response": "Claimed it was an emergency"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_1_case_19",
+    "intent": "Credit Reporting – Mixed File",
+    "formData": {
+      "date_noticed": "2017-03-03",
+      "issue": "Credit report contains information from another person",
+      "bureau_response": "Corrected after lengthy process"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_1_case_20",
+    "intent": "Auto Sales & Repairs – Misrepresentation",
+    "formData": {
+      "date_noticed": "2019-09-30",
+      "issue": "Vehicle sold as new but was previously used",
+      "dealer_response": "Denied the claim"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_2_case_01",
+    "intent": "Credit Reporting – Identity Theft",
+    "formData": {
+      "date_noticed": "2024-02-01",
+      "issue": "Unknown credit card account on report",
+      "bureau_response": "Refused to investigate"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_2_case_02",
+    "intent": "Auto Sales & Repairs – Lemon Law",
+    "formData": {
+      "date_noticed": "2023-12-15",
+      "issue": "Car repeatedly fails to start",
+      "dealer_response": "Refused refund after three repairs"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_2_case_03",
+    "intent": "Debt Collection – Harassment",
+    "formData": {
+      "date_noticed": "2024-04-01",
+      "issue": "Repeated calls at work despite request to stop",
+      "collector_response": "Ignored cease communication request"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_2_case_04",
+    "intent": "Robocalls & Telemarketing – TCPA",
+    "formData": {
+      "date_noticed": "2025-01-10",
+      "issue": "Unsolicited robocalls on Do Not Call list",
+      "company_response": "Claimed no record of calls"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_2_case_05",
+    "intent": "Credit Billing Errors – FCBA",
+    "formData": {
+      "date_noticed": "2022-05-21",
+      "issue": "Unauthorized charge from unknown vendor",
+      "creditor_response": "Dispute not resolved within 90 days"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_2_case_06",
+    "intent": "Electronic Fund Transfers – Unauthorized Withdrawal",
+    "formData": {
+      "date_noticed": "2021-03-15",
+      "issue": "Stolen debit card used for large withdrawal",
+      "bank_response": "Delayed investigation beyond 60 days"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_2_case_07",
+    "intent": "Home Improvement – Contractor Dispute",
+    "formData": {
+      "date_noticed": "2020-11-20",
+      "issue": "Incomplete kitchen renovation",
+      "contractor_response": "Refused to complete work"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_2_case_08",
+    "intent": "Online Shopping – Negative Option Marketing",
+    "formData": {
+      "date_noticed": "2023-08-05",
+      "issue": "Charged monthly for cancelled subscription",
+      "company_response": "Terms not clearly disclosed"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_2_case_09",
+    "intent": "Landlord/Tenant – Security Deposits",
+    "formData": {
+      "date_noticed": "2018-02-10",
+      "issue": "Security deposit not returned post-lease",
+      "landlord_response": "Claimed excessive damages without proof"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_2_case_10",
+    "intent": "Credit Reporting – Incorrect Info",
+    "formData": {
+      "date_noticed": "2019-07-12",
+      "issue": "Incorrect late payment reported",
+      "bureau_response": "Corrected after multiple disputes"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_2_case_11",
+    "intent": "Auto Sales & Repairs – Warranty",
+    "formData": {
+      "date_noticed": "2017-09-18",
+      "issue": "Battery failure not covered under warranty",
+      "dealer_response": "Warranty expired by a month"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_2_case_12",
+    "intent": "Debt Collection – Statute of Limitations",
+    "formData": {
+      "date_noticed": "2025-02-25",
+      "issue": "Attempt to collect expired debt",
+      "collector_response": "Continued collection efforts"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_2_case_13",
+    "intent": "Robocalls & Telemarketing – Gray Area",
+    "formData": {
+      "date_noticed": "2023-06-10",
+      "issue": "Robocall received, not sure if on Do Not Call list",
+      "company_response": "Provided opt-out mechanism"
+    },
+    "expected_bias": "Gray Area"
+  },
+  {
+    "id": "batch_2_case_14",
+    "intent": "Credit Billing Errors – User Error",
+    "formData": {
+      "date_noticed": "2024-07-14",
+      "issue": "Authorized charge disputed due to miscommunication",
+      "creditor_response": "Charge was authorized"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_2_case_15",
+    "intent": "Electronic Fund Transfers – Gray Area",
+    "formData": {
+      "date_noticed": "2024-10-01",
+      "issue": "Unauthorized small transaction on debit card",
+      "bank_response": "Reimbursed but took 90 days"
+    },
+    "expected_bias": "Gray Area"
+  },
+  {
+    "id": "batch_2_case_16",
+    "intent": "Home Improvement – Gray Area",
+    "formData": {
+      "date_noticed": "2023-01-23",
+      "issue": "Contractor delayed bathroom renovation",
+      "contractor_response": "Cited supply chain issues"
+    },
+    "expected_bias": "Gray Area"
+  },
+  {
+    "id": "batch_2_case_17",
+    "intent": "Online Shopping – Subscription Traps",
+    "formData": {
+      "date_noticed": "2025-03-12",
+      "issue": "Continued charges after cancelling free trial",
+      "company_response": "Cancellation process unclear"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_2_case_18",
+    "intent": "Landlord/Tenant – Lease Violations",
+    "formData": {
+      "date_noticed": "2016-05-30",
+      "issue": "Landlord entered apartment without notice",
+      "landlord_response": "Claimed emergency repair"
+    },
+    "expected_bias": "Gray Area"
+  },
+  {
+    "id": "batch_2_case_19",
+    "intent": "Debt Collection – Misidentified Debtor",
+    "formData": {
+      "date_noticed": "2023-11-02",
+      "issue": "Collection attempts for debt of different person",
+      "collector_response": "Refused to correct error"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_2_case_20",
+    "intent": "Credit Reporting – Obsolete Info",
+    "formData": {
+      "date_noticed": "2015-10-15",
+      "issue": "Old bankruptcy still on report",
+      "bureau_response": "Claimed valid due to extended timeframe"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_3_case_01",
+    "intent": "Credit Reporting – Identity Theft",
+    "formData": {
+      "date_noticed": "2024-02-01",
+      "issue": "Unknown credit card account on report",
+      "bureau_response": "Refused to investigate"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_3_case_02",
+    "intent": "Auto Sales – Lemon Law",
+    "formData": {
+      "date_noticed": "2023-11-15",
+      "issue": "Repeated transmission failure in new car",
+      "dealer_response": "Refused replacement"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_3_case_03",
+    "intent": "Debt Collection – Harassment",
+    "formData": {
+      "date_noticed": "2025-03-10",
+      "issue": "Collection agency calls multiple times daily",
+      "agency_response": "Continued harassment"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_3_case_04",
+    "intent": "Robocalls & Telemarketing – TCPA",
+    "formData": {
+      "date_noticed": "2022-06-01",
+      "issue": "Received robocalls despite being on Do Not Call list",
+      "company_response": "Ignored requests to stop"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_3_case_05",
+    "intent": "Credit Billing Errors – FCBA",
+    "formData": {
+      "date_noticed": "2020-01-15",
+      "issue": "Unauthorized charge on credit card",
+      "issuer_response": "Failed to remove charge"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_3_case_06",
+    "intent": "Electronic Fund Transfers – EFTA",
+    "formData": {
+      "date_noticed": "2024-09-20",
+      "issue": "Unauthorized withdrawal from bank account",
+      "bank_response": "Refused to reimburse"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_3_case_07",
+    "intent": "Home Improvement – Contractor Disputes",
+    "formData": {
+      "date_noticed": "2023-05-30",
+      "issue": "Incomplete roofing work",
+      "contractor_response": "Denied responsibility"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_3_case_08",
+    "intent": "Online Shopping – ROSCA",
+    "formData": {
+      "date_noticed": "2021-07-15",
+      "issue": "Unexpected subscription charges",
+      "company_response": "Refused to cancel subscription"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_3_case_09",
+    "intent": "Landlord/Tenant – Security Deposits",
+    "formData": {
+      "date_noticed": "2022-09-01",
+      "issue": "Security deposit not returned post-lease",
+      "landlord_response": "Failed to provide itemized deductions"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_3_case_10",
+    "intent": "Auto Sales – Warranty",
+    "formData": {
+      "date_noticed": "2019-11-10",
+      "issue": "Defective air conditioning system",
+      "dealer_response": "Warranty expired"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_3_case_11",
+    "intent": "Debt Collection – Workplace Calls",
+    "formData": {
+      "date_noticed": "2024-12-05",
+      "issue": "Collection agency calling workplace",
+      "employer_response": "Received complaints from employer"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_3_case_12",
+    "intent": "Robocalls & Telemarketing – 16 CFR 310",
+    "formData": {
+      "date_noticed": "2023-03-22",
+      "issue": "Automated sales calls without consent",
+      "company_response": "Continued calls"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_3_case_13",
+    "intent": "Credit Reporting – Incorrect Information",
+    "formData": {
+      "date_noticed": "2021-05-18",
+      "issue": "Incorrect delinquency report on credit profile",
+      "bureau_response": "Delayed correction"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_3_case_14",
+    "intent": "Credit Billing Errors – Disputes",
+    "formData": {
+      "date_noticed": "2018-02-14",
+      "issue": "Billing error not addressed",
+      "issuer_response": "Claimed dispute period expired"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_3_case_15",
+    "intent": "Electronic Fund Transfers – Stolen Debit Card",
+    "formData": {
+      "date_noticed": "2025-04-09",
+      "issue": "Multiple unauthorized transactions on debit card",
+      "bank_response": "Delayed investigation"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_3_case_16",
+    "intent": "Home Improvement – 940 CMR 10.00",
+    "formData": {
+      "date_noticed": "2023-01-12",
+      "issue": "Contractor used substandard materials",
+      "contractor_response": "Disputed quality claim"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_3_case_17",
+    "intent": "Online Shopping – Negative Option Marketing",
+    "formData": {
+      "date_noticed": "2023-08-11",
+      "issue": "Trapped in a negative option marketing scheme",
+      "company_response": "Refused to cancel membership"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_3_case_18",
+    "intent": "Landlord/Tenant – Lease Violations",
+    "formData": {
+      "date_noticed": "2020-11-23",
+      "issue": "Landlord entered property without notice",
+      "landlord_response": "Claimed no notice was necessary"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_3_case_19",
+    "intent": "Auto Repairs – 940 CMR 5.00",
+    "formData": {
+      "date_noticed": "2023-04-15",
+      "issue": "Overcharged for car repairs",
+      "repair_shop_response": "Refused itemized bill"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_3_case_20",
+    "intent": "Debt Collection – FDCPA",
+    "formData": {
+      "date_noticed": "2021-10-30",
+      "issue": "Threatened with legal action for unpaid debt",
+      "agency_response": "No validation of debt provided"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_4_case_01",
+    "intent": "Auto Sales & Repairs – Lemon Law",
+    "formData": {
+      "date_noticed": "2023-11-15",
+      "issue": "Recurrent engine failure despite multiple repairs",
+      "dealer_response": "Refused to replace or refund"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_4_case_02",
+    "intent": "Debt Collection – Harassment",
+    "formData": {
+      "date_noticed": "2020-07-22",
+      "issue": "Aggressive calls outside permissible hours",
+      "collector_response": "Ignored cease-and-desist request"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_4_case_03",
+    "intent": "Robocalls & Telemarketing – TCPA Violation",
+    "formData": {
+      "date_noticed": "2024-03-10",
+      "issue": "Repeated robocalls despite being on Do Not Call list",
+      "company_response": "Claimed technical error"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_4_case_04",
+    "intent": "Credit Reporting – Incorrect Info",
+    "formData": {
+      "date_noticed": "2025-06-01",
+      "issue": "Outdated bankruptcy still showing on report",
+      "bureau_response": "Delayed update beyond 30 days"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_4_case_05",
+    "intent": "Credit Billing Errors – Unauthorized Charges",
+    "formData": {
+      "date_noticed": "2019-12-20",
+      "issue": "Fraudulent charges on credit card",
+      "card_issuer_response": "Failed to investigate within 60 days"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_4_case_06",
+    "intent": "Electronic Fund Transfers – Unauthorized Withdrawal",
+    "formData": {
+      "date_noticed": "2024-01-15",
+      "issue": "Unauthorized ATM withdrawals",
+      "bank_response": "Claimed user negligence"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_4_case_07",
+    "intent": "Home Improvement – Contractor Disputes",
+    "formData": {
+      "date_noticed": "2024-09-01",
+      "issue": "Incomplete roof repair",
+      "contractor_response": "Refused correction or refund"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_4_case_08",
+    "intent": "Online Shopping – Subscription Traps",
+    "formData": {
+      "date_noticed": "2023-08-05",
+      "issue": "Unauthorized subscription renewal",
+      "company_response": "Denied cancellation request"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_4_case_09",
+    "intent": "Landlord/Tenant – Security Deposits",
+    "formData": {
+      "date_noticed": "2021-04-12",
+      "issue": "Deposit not returned after lease end",
+      "landlord_response": "Cited unfounded damages"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_4_case_10",
+    "intent": "Credit Reporting – Identity Theft",
+    "formData": {
+      "date_noticed": "2024-02-01",
+      "issue": "Unknown credit card account on report",
+      "bureau_response": "Refused to investigate"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_4_case_11",
+    "intent": "Auto Sales & Repairs – Warranty Issue",
+    "formData": {
+      "date_noticed": "2022-05-17",
+      "issue": "Warranty not honored for transmission failure",
+      "dealer_response": "Claimed misuse"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_4_case_12",
+    "intent": "Debt Collection – Workplace Calls",
+    "formData": {
+      "date_noticed": "2015-11-11",
+      "issue": "Collector contacted employer about debt",
+      "collector_response": "Denied claim"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_4_case_13",
+    "intent": "Robocalls & Telemarketing – Unauthorized Texts",
+    "formData": {
+      "date_noticed": "2025-02-14",
+      "issue": "Frequent marketing texts without prior consent",
+      "company_response": "Opt-out not processed"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_4_case_14",
+    "intent": "Credit Billing Errors – Disputes",
+    "formData": {
+      "date_noticed": "2023-12-25",
+      "issue": "Failure to resolve disputed charge",
+      "card_issuer_response": "Claimed late dispute filing"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_4_case_15",
+    "intent": "Electronic Fund Transfers – Stolen Debit Card",
+    "formData": {
+      "date_noticed": "2020-09-30",
+      "issue": "Stolen card used before reporting",
+      "bank_response": "Denied reimbursement"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_4_case_16",
+    "intent": "Home Improvement – Contract Violation",
+    "formData": {
+      "date_noticed": "2024-08-20",
+      "issue": "Contractor used substandard materials",
+      "contractor_response": "Refused to rectify"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_4_case_17",
+    "intent": "Online Shopping – Negative Option Marketing",
+    "formData": {
+      "date_noticed": "2025-05-25",
+      "issue": "Difficulty canceling subscription",
+      "company_response": "Obstructed cancellation"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "batch_4_case_18",
+    "intent": "Landlord/Tenant – Lease Violations",
+    "formData": {
+      "date_noticed": "2023-03-10",
+      "issue": "Landlord entered without notice",
+      "landlord_response": "Cited emergency"
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "batch_4_case_19",
+    "intent": "Credit Reporting – Incorrect Info",
+    "formData": {
+      "date_noticed": "2017-07-15",
+      "issue": "Incorrect late payment noted",
+      "bureau_response": "Provided outdated information"
+    },
+    "expected_bias": "WEAK"
+  },
+  {
+    "id": "batch_4_case_20",
+    "intent": "Auto Sales & Repairs – Warranty Issue",
+    "formData": {
+      "date_noticed": "2021-10-05",
+      "issue": "Warranty voided without valid reason",
+      "dealer_response": "Cited non-existent clause"
+    },
+    "expected_bias": "VIOLATION"
+  }
+]
