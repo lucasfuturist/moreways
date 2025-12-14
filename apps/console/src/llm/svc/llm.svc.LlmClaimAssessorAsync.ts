@@ -1,90 +1,91 @@
-import { openaiClient } from "@/llm/adapter/llm.adapter.openai";
-import { jsonParseSafe } from "@/llm/util/llm.util.jsonParseSafe";
-import type { ClaimAssessment } from "@/llm/schema/llm.schema.ClaimAssessment";
-import { ClaimAssessmentSchema } from "@/llm/schema/llm.schema.ClaimAssessment";
+/**
+ * llm.svc.LlmClaimAssessorAsync
+ * 
+ * Orchestrates the legal merit assessment by delegating to the 
+ * specialized 'apps/law' service.
+ * 
+ * Related docs:
+ * - 00-theoretical-basis.md (Law App)
+ * - 04-retrieval-logic.md (Law App)
+ */
 
-interface AssessmentInput {
-  formTitle: string;
-  formData: Record<string, any>;
+import { logger } from "@/infra/logging/infra.svc.logger";
+import { env } from "@/infra/config/infra.svc.envConfig";
+
+/**
+ * Matches the VerdictSchema defined in apps/law
+ */
+export interface ClaimAssessment {
+  status: 'LIKELY_VIOLATION' | 'POSSIBLE_VIOLATION' | 'UNLIKELY_VIOLATION' | 'INELIGIBLE';
+  confidence_score: number; // 0.0 to 1.0
+  analysis: {
+    summary: string;
+    missing_elements: string[];
+    strength_factors?: string[];
+    weakness_factors?: string[];
+  };
+  relevant_citations: string[];
 }
 
-export async function LlmClaimAssessorAsync(input: AssessmentInput): Promise<ClaimAssessment> {
-  // 1. Flatten Data for the LLM
-  const facts = Object.entries(input.formData)
-    .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
-    .join("\n");
-
-  const prompt = `
-    SYSTEM:
-    You are a Senior Intake Attorney. Your job is to evaluate the LEGITIMACY and MERIT of a potential legal claim based on raw intake data.
-    You are skeptical but fair. You look for the "Prima Facie" elements of a tort/case.
-
-    CONTEXT:
-    Form Type: ${input.formTitle}
-
-    CLAIMANT FACTS:
-    ${facts}
-
-    YOUR TASK:
-    Analyze these facts. Determine if this represents a viable legal claim.
-
-    CRITERIA:
-    1. **Merit Score (0-100):**
-       - 90-100: Clear liability, significant damages, solid evidence mentioned.
-       - 50-89: Plausible, but needs investigation or damages are unclear.
-       - 20-49: Weak liability, minor damages, or huge gaps in the story.
-       - 0-19: Frivolous, incoherent, or no legal basis (e.g. "My neighbor looked at me wrong").
-
-    2. **Prima Facie Analysis:**
-       - Breakdown Duty, Breach, Causation, and Damages based *strictly* on the text provided.
-
-    3. **Credibility:**
-       - Flag inconsistencies (e.g. "Says they can't walk, but admits to playing soccer").
-       - Flag vagueness (e.g. "I was hurt bad" with no specifics).
-
-    OUTPUT JSON:
-    Return a JSON object matching this TypeScript interface:
-    {
-      meritScore: number,
-      category: "high_merit" | "potential" | "low_merit" | "frivolous" | "insufficient_data",
-      primaFacieAnalysis: { duty: string, breach: string, causation: string, damages: string },
-      credibilityFlags: string[],
-      summary: string
-    }
-  `;
+export async function LlmClaimAssessorAsync(
+  submissionData: Record<string, any>, 
+  formName: string
+): Promise<ClaimAssessment> {
+  
+  // 1. Construct the payload for the Law Magistrate
+  const payload = {
+    intent: formName, // e.g. "Used Car Issues" or "Debt Collection"
+    formData: submissionData,
+    jurisdiction: "MA" // Default for V1, can be dynamic based on data
+  };
 
   try {
-    const raw = await openaiClient(prompt);
-    const parsed = jsonParseSafe<ClaimAssessment>(raw);
+    logger.info("[ClaimAssessor] Delegating to Law Service Magistrate...", { 
+      target: `${env.lawServiceUrl}/api/v1/validate` 
+    });
 
-    if (!parsed.success) {
-      throw new Error("Failed to parse assessment JSON");
+    // 2. Execute call to Law App
+    const response = await fetch(`${env.lawServiceUrl}/api/v1/validate`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        // Add API Key header here if apps/law middleware requires it in the future
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Law Service Error (${response.status}): ${errorText}`);
     }
 
-    // Runtime Validation
-    const validated = ClaimAssessmentSchema.safeParse(parsed.value);
+    const result = await response.json();
+
+    // 3. Extract the Verdict from the Law App response envelope
+    // Note: apps/law returns { data: Verdict, meta: { ... } }
+    const verdict = result.data as ClaimAssessment;
+
+    logger.info("[ClaimAssessor] Received verdict from Magistrate", { 
+      status: verdict.status,
+      score: verdict.confidence_score 
+    });
+
+    return verdict;
+
+  } catch (error: any) {
+    logger.error("[ClaimAssessor] Law Service Delegation Failed", { error: error.message });
     
-    if (!validated.success) {
-        // Fallback for partial failures
-        return {
-            meritScore: 0,
-            category: "insufficient_data",
-            primaFacieAnalysis: { duty: "?", breach: "?", causation: "?", damages: "?" },
-            credibilityFlags: ["System Error: Validation Failed"],
-            summary: "Automated assessment failed to validate."
-        };
-    }
-
-    return validated.data;
-
-  } catch (err) {
-    console.error("[ClaimAssessor] Error:", err);
+    // 4. Fail-Open Fallback
+    // Returns a neutral "Manual Review" status if the legal engine is down
     return {
-        meritScore: 0,
-        category: "insufficient_data",
-        primaFacieAnalysis: { duty: "N/A", breach: "N/A", causation: "N/A", damages: "N/A" },
-        credibilityFlags: ["System Error"],
-        summary: "Assessment unavailable."
+      status: "POSSIBLE_VIOLATION",
+      confidence_score: 0.5,
+      analysis: {
+        summary: "Automated legal analysis is currently unavailable. This claim has been flagged for immediate manual review by a legal professional.",
+        missing_elements: ["System connection to Legal Knowledge Base"],
+        strength_factors: ["Submission successfully recorded in database"]
+      },
+      relevant_citations: []
     };
   }
 }

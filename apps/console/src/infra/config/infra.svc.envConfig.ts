@@ -1,3 +1,13 @@
+/**
+ * infra.svc.envConfig
+ *
+ * Centralized configuration loader.
+ * Validates environment variables against Zod schema on startup.
+ *
+ * Related docs:
+ * - 03-security-and-data-handling.md (Section 3.5)
+ */
+
 import { z } from "zod";
 
 const EnvSchema = z.object({
@@ -14,14 +24,16 @@ const EnvSchema = z.object({
   // Security
   ENCRYPTION_KEY: z.string().length(64, "ENCRYPTION_KEY must be 64 hex characters (32 bytes)").optional(),
   
-  // Auth (NextAuth standard)
-  NEXTAUTH_URL: z.string().url().optional(),
-  NEXTAUTH_SECRET: z.string().optional(),
+  // Supabase (Auth)
+  NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional(),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
+
+  // [NEW] Law Service Connection
+  LAW_SERVICE_URL: z.string().url().default("http://localhost:3004"),
 });
 
-// [INTERNAL] Parser
 function parseEnv() {
-  // 1. Gather raw env
   const raw = {
     NODE_ENV: process.env.NODE_ENV,
     APP_BASE_URL: process.env.APP_BASE_URL,
@@ -29,11 +41,12 @@ function parseEnv() {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     LLM_MOCK_MODE: process.env.LLM_MOCK_MODE,
     ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    LAW_SERVICE_URL: process.env.LAW_SERVICE_URL,
   };
 
-  // 2. Validate
   const parsed = EnvSchema.safeParse(raw);
 
   if (!parsed.success) {
@@ -41,17 +54,14 @@ function parseEnv() {
     parsed.error.issues.forEach((issue) => {
       console.error(`   - ${issue.path.join(".")}: ${issue.message}`);
     });
-    
-    // In Test mode, we don't want to crash the runner if config is partial
-    if (process.env.NODE_ENV !== "test") {
-        throw new Error("Environment validation failed. See logs.");
+    // [SECURITY] Fail fast in production if config is invalid
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("Environment validation failed.");
     }
-    // Fallback for test runner if needed (mock values)
+    // Allow partial config in test/dev for build steps
     return {} as any; 
   }
 
-  // 3. Map to CamelCase (The Fix)
-  // The rest of the app expects env.databaseUrl, env.llmApiKey, etc.
   return {
     nodeEnv: parsed.data.NODE_ENV,
     appBaseUrl: parsed.data.APP_BASE_URL,
@@ -59,8 +69,10 @@ function parseEnv() {
     llmApiKey: parsed.data.OPENAI_API_KEY,
     llmMockMode: parsed.data.LLM_MOCK_MODE,
     encryptionKey: parsed.data.ENCRYPTION_KEY,
-    nextAuthUrl: parsed.data.NEXTAUTH_URL,
-    nextAuthSecret: parsed.data.NEXTAUTH_SECRET,
+    supabaseUrl: parsed.data.NEXT_PUBLIC_SUPABASE_URL,
+    supabaseAnonKey: parsed.data.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    supabaseServiceKey: parsed.data.SUPABASE_SERVICE_ROLE_KEY,
+    lawServiceUrl: parsed.data.LAW_SERVICE_URL,
   };
 }
 

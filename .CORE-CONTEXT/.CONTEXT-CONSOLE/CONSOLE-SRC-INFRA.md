@@ -1,3 +1,5 @@
+--- START OF FILE CONSOLE-SRC-INFRA.md ---
+
 # High-Resolution Interface Map
 
 ## Tree: `apps/console/src/infra`
@@ -44,7 +46,7 @@ infra/
 ### `config/infra.svc.envConfig.ts`
 **Role:** Validates runtime environment variables against a strict schema and maps them to a normalized camelCase configuration object.
 **Key Exports:**
-- `env` - The global configuration object containing keys like `databaseUrl`, `encryptionKey`, and `nodeEnv`.
+- `env` - The global configuration object containing keys like `databaseUrl`, `encryptionKey`, `nodeEnv`, and `lawServiceUrl`.
 **Dependencies:** `zod`.
 
 ### `db/infra.repo.dbClient.ts`

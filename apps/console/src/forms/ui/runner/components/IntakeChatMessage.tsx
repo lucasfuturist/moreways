@@ -1,7 +1,7 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import { clsx } from "clsx";
 import { motion } from "framer-motion";
-import { Layers, User, FileText, Edit, Send, Sparkles, AlertTriangle } from "lucide-react";
+import { Layers, FileText, Edit, Send, Sparkles, AlertTriangle } from "lucide-react";
 
 export type MessageVariant =
   | "system"
@@ -24,21 +24,15 @@ interface IntakeChatMessageProps {
   onSubmit?: () => void;
 }
 
-export function IntakeChatMessage({
-  variant,
-  content,
-  label,
-  description,
-  isLatest,
-  data,
-  onReview,
-  onSubmit
-}: IntakeChatMessageProps) {
+// [FIX] Use forwardRef to allow AnimatePresence to measure this component
+export const IntakeChatMessage = forwardRef<HTMLDivElement, IntakeChatMessageProps>(
+  ({ variant, content, isLatest, data, onReview, onSubmit }, ref) => {
   
   // --- USER MESSAGE ---
   if (variant === "user") {
     return (
       <motion.div
+        ref={ref} // [FIX] Attach ref
         initial={{ opacity: 0, y: 10, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         className="flex justify-end mb-6 pl-12"
@@ -53,10 +47,11 @@ export function IntakeChatMessage({
     );
   }
 
-  // --- SPECIAL UI BLOCKS (Summary, Options, etc) ---
+  // --- COMPLETION OPTIONS ---
   if (variant === "completion_options") {
     return (
       <motion.div
+        ref={ref} // [FIX] Attach ref
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         className="flex flex-wrap gap-3 mt-4 mb-16 ml-12"
@@ -80,10 +75,12 @@ export function IntakeChatMessage({
     );
   }
 
+  // --- REVIEW SUMMARY ---
   if (variant === "review_summary") {
     const entries = Object.entries(data || {});
     return (
       <motion.div
+        ref={ref} // [FIX] Attach ref
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-6 ml-12 max-w-md"
@@ -106,9 +103,11 @@ export function IntakeChatMessage({
     );
   }
 
+  // --- SECTION DIVIDER ---
   if (variant === "section") {
     return (
       <motion.div
+        ref={ref} // [FIX] Attach ref
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="my-8 flex items-center justify-center gap-3 opacity-60"
@@ -123,9 +122,11 @@ export function IntakeChatMessage({
     );
   }
 
+  // --- WARNING ---
   if (variant === "warning") {
     return (
       <motion.div
+        ref={ref} // [FIX] Attach ref
         initial={{ opacity: 0, y: -5 }}
         animate={{ opacity: 1, y: 0 }}
         className="ml-12 mr-8 my-2 p-3 rounded-lg border border-amber-500/20 bg-amber-500/10 flex gap-3"
@@ -139,6 +140,7 @@ export function IntakeChatMessage({
   // --- AI ASSISTANT MESSAGE (Default) ---
   return (
     <motion.div
+      ref={ref} // [FIX] Attach ref
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       className={clsx(
@@ -159,9 +161,10 @@ export function IntakeChatMessage({
         )}>
           {content}
         </div>
-        {/* [FIX] Renamed to Moreways Assistant */}
         <span className="text-[10px] font-bold text-slate-400 ml-1 uppercase tracking-wider opacity-60">Moreways Assistant</span>
       </div>
     </motion.div>
   );
-}
+});
+
+IntakeChatMessage.displayName = "IntakeChatMessage";

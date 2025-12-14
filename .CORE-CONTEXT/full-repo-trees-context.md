@@ -1,6 +1,6 @@
 ## CURRENT WORKING COMMAND:
 
-python "C:\dev-utils\list_tree.py" "C:\projects\moreways-ecosystem\apps\web\src\app\(intake)" --depth 10 --ignore node_modules .expo .git __pycache__ dist build --list-scripts .ts .tsx .js .jsx .py .html .css .json .txt .sql .toml .ps1 .ejs --include-readme --output "C:\projects\moreways-ecosystem\WEBINTAKE-context.md"
+python "C:\dev-utils\list_tree.py" "C:\projects\moreways-ecosystem\apps\console\src\forms" --depth 10 --ignore node_modules .expo .git __pycache__ dist build --list-scripts .ts .tsx .js .jsx .py .html .css .json .txt .sql .toml .ps1 .ejs --include-readme --output "C:\projects\moreways-ecosystem\.context\CONSOLE-FORMS-context.md"
 
 
 ## FULL TREE MOREWAYS PIXEL

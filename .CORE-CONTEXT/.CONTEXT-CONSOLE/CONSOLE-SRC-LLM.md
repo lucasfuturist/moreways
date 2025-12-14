@@ -1,3 +1,5 @@
+--- START OF FILE CONSOLE-SRC-LLM.md ---
+
 # High-Resolution Interface Map
 
 ## Tree: `apps/console/src/llm`
@@ -30,7 +32,7 @@ llm/
 ## File Summaries
 
 ### `adapter/llm.adapter.openai.ts`
-**Role:** Singleton wrapper for the OpenAI API client, managing API keys and default configuration.
+**Role:** Singleton wrapper for the OpenAI API client, managing API keys, mock mode (for dev), and default configuration.
 **Key Exports:**
 - `openaiClient(fullPrompt, options): Promise<string>` - Executes a completion request (text or JSON mode) and returns the content string.
 **Dependencies:** `openai` (package), `env`, `logger`.
@@ -77,10 +79,10 @@ llm/
 **Dependencies:** `FormSchemaJsonShape`.
 
 ### `svc/llm.svc.LlmClaimAssessorAsync.ts`
-**Role:** AI Agent service that evaluates completed intake data for legal merit and credibility.
+**Role:** Orchestrates the legal merit assessment by delegating to the specialized `apps/law` service (Magistrate) via HTTP.
 **Key Exports:**
-- `LlmClaimAssessorAsync(input): Promise<ClaimAssessment>` - Generates a Prima Facie analysis and merit score.
-**Dependencies:** `openaiClient`, `ClaimAssessmentSchema`.
+- `LlmClaimAssessorAsync(submissionData, formName): Promise<ClaimAssessment>` - Calls the Law Service API and returns the verdict or a fail-open fallback.
+**Dependencies:** `fetch` (Law Service), `env`, `logger`.
 
 ### `svc/llm.svc.LlmGenerateFormFromPromptAsync.ts`
 **Role:** AI Agent service (Architect) that transforms natural language prompts into form schemas (Create or Edit modes).

@@ -1,118 +1,77 @@
 import { openaiClient } from "@/llm/adapter/llm.adapter.openai";
+import { logger } from "@/infra/logging/infra.svc.logger";
 import { jsonParseSafe } from "@/llm/util/llm.util.jsonParseSafe";
 
-export interface SimpleMessage {
-  role: "user" | "assistant";
-  text: string;
-}
-
 interface IntakeAgentInput {
-  fieldTitle: string;
-  fieldKey: string; 
-  fieldKind: string;
-  fieldDescription?: string;
+  field: { title: string; kind: string; description?: string };
   userMessage: string;
-  formContext: string;
-  recentHistory: SimpleMessage[];
+  formName: string;
+  history: { role: string; text: string }[];
   schemaSummary: string;
-  formDataSummary?: string;
+  formData: Record<string, any>;
 }
 
 export interface IntakeAgentResponse {
   type: "answer" | "question" | "chitchat";
   extractedValue?: any;
-  replyMessage: string;
   updates?: Record<string, any>;
+  replyMessage?: string;
 }
 
 export async function LlmIntakeAgentAsync(input: IntakeAgentInput): Promise<IntakeAgentResponse> {
-  const historyText = input.recentHistory
-    .map(m => `${m.role.toUpperCase()}: "${m.text}"`)
-    .join("\n");
+  const { field, userMessage, formName, history, formData } = input;
 
-  // [NEW] Provide context so AI can resolve "Yesterday" or "Last week"
-  const todayISO = new Date().toISOString().split('T')[0];
+  // 1. Detect Context
+  const lastAgentMsg = history.filter(h => h.role === 'assistant').pop()?.text || "";
+  const isClarificationContext = lastAgentMsg.toLowerCase().includes("clarify") || lastAgentMsg.toLowerCase().includes("earlier you mentioned");
 
-  const prompt = `
-    SYSTEM:
-    You are an intelligent legal intake engine designed for "Deep Listening".
-    You are currently filling out: "${input.formContext}".
+  const systemPrompt = `
+    ROLE: You are an intelligent Intake Assistant for a law firm.
+    GOAL: Extract data for the field: "${field.title}" (${field.kind}).
     
-    TODAY'S DATE: ${todayISO}
+    CURRENT STATE:
+    - Form: ${formName}
+    - Field Description: ${field.description || "N/A"}
+    - Current Known Data: ${JSON.stringify(formData)}
+    - Context: ${isClarificationContext ? "⚠️ YOU JUST ASKED FOR CLARIFICATION." : "Standard data collection."}
 
-    --- FORMATTING RULES (STRICT) ---
-    1. **Dates:** MUST be ISO 8601 (YYYY-MM-DD). If user says "Yesterday", calculate it based on today's date.
-    2. **Phone:** Standardize to (XXX) XXX-XXXX.
-    3. **Address:** Try to format as "Street, City, State Zip".
-    4. **Currency:** Remove symbols, return raw number (e.g. 50000, not $50k).
-    5. **Booleans:** Return true/false (not "yes"/"no" strings).
+    USER INPUT: "${userMessage}"
 
-    --- CONTEXT ---
-    
-    1. CURRENT TARGET: 
-       Extract data for: "${input.fieldTitle}" (Key: "${input.fieldKey}", Type: ${input.fieldKind}).
-       Context: ${input.fieldDescription || "None"}.
+    LOGIC GATES:
+    1. RESOLUTION CHECK: If Context is clarification, did they resolve it? (Yes/Correct/Explanation) -> ACCEPT.
+    2. EXTRACTION: Can you extract a valid answer? -> type="answer".
+    3. CLARIFICATION: Only if explicit contradiction with PREVIOUSLY SAVED fact. Adding detail is NOT a conflict.
 
-    2. ALL AVAILABLE SCHEMA FIELDS (Key: Title):
-    ${input.schemaSummary}
-
-    3. DATA ALREADY COLLECTED (Read this to check for contradictions):
-    ${input.formDataSummary || "(No data collected yet)"}
-
-    4. RECENT CHAT:
-    ${historyText || "(No recent history)"}
-
-    5. USER INPUT:
-    "${input.userMessage}"
-
-    --- MISSION ---
-
-    Your job is to harvest data. The user might answer the current question, but they might also provide information for OTHER fields, or correct previous information.
-
-    RULES:
-    1. **Primary Extraction:** Try to extract the value for the CURRENT TARGET ("${input.fieldTitle}").
-    2. **Side-Loading:** Aggressively scan the USER INPUT for data matching ANY OTHER field in the SCHEMA. If found, include it in the "updates" object.
-       - Example: If asked for "First Name" and user says "I'm Jane Doe", extract "Jane" for current, and add { "lastName": "Doe" } to updates.
-    3. **Contradiction Check:** If the user provides new info that conflicts with "DATA ALREADY COLLECTED", do NOT overwrite silently. 
-       - Return type "question" and ask for clarification (e.g. "Wait, earlier you said X, but now you're saying Y...").
-
-    --- RESPONSE FORMAT (JSON) ---
-
-    { 
+    OUTPUT FORMAT (JSON):
+    {
       "type": "answer" | "question" | "chitchat",
-      
-      // The value for the CURRENT TARGET (${input.fieldKey})
-      "extractedValue": ... or null,
-      
-      // Any OTHER fields discovered in this turn (Key: Value)
-      "updates": { 
-        "otherFieldKey": "value",
-        "anotherFieldKey": "value" 
-      },
-      
-      // What to say to the user.
-      // If "answer": Acknowledge briefly (e.g. "Got it."). 
-      // If "question": Ask the clarification.
-      "replyMessage": "..." 
+      "extractedValue": any | null,
+      "updates": { "otherFieldKey": "value" },
+      "replyMessage": string
     }
   `;
 
   try {
-    const raw = await openaiClient(prompt);
+    const raw = await openaiClient(systemPrompt, {
+      model: "gpt-4o", 
+      temperature: 0,
+      jsonMode: true
+    });
+
+    // [FIX] Unwrap the safe parse result
     const parsed = jsonParseSafe<IntakeAgentResponse>(raw);
     
-    if (parsed.success) return parsed.value;
+    if (parsed.success) {
+        return parsed.value;
+    }
     
+    logger.warn("Intake Agent JSON Parse Failed", { error: parsed.error });
     // Fallback
-    return { 
-        type: "question", 
-        replyMessage: "I missed that. Could you say it again?" 
-    };
-  } catch (e) {
-    console.error("Intake Agent Error:", e);
-    return { 
-        type: "question", 
-        replyMessage: "I'm having trouble connecting right now. Please try again." 
-    };
+    return { type: "answer", extractedValue: userMessage };
+
+  } catch (err) {
+    logger.error("Intake Agent Error", err);
+    // Fallback
+    return { type: "answer", extractedValue: userMessage };
   }
 }

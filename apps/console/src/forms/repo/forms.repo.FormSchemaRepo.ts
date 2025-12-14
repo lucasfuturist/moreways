@@ -16,14 +16,12 @@ import {
 } from "../schema/forms.schema.FormSchemaModel";
 import { migrateSchemaToV15 } from "@/forms/util/forms.util.migrateSchema";
 
-// Extended Type for Dashboard
 export interface FormSchemaWithStats extends FormSchema {
   _count: {
     formSubmissions: number;
   };
 }
 
-// Lightweight summary for history sliders
 export interface FormVersionSummary {
   id: string;
   version: number;
@@ -35,24 +33,26 @@ export interface FormSchemaRepo {
   getLatestByName(params: { organizationId: string; name: string }): Promise<FormSchema | null>;
   getById(params: { organizationId: string; id: string }): Promise<FormSchema | null>;
   getPublicById(id: string): Promise<FormSchema | null>;
-  // [NEW] Added this method to the Interface
   getBySlug(slug: string): Promise<FormSchema | null>;
   listByOrg(orgId: string): Promise<FormSchemaWithStats[]>;
   listVersionsByName(params: { organizationId: string; name: string }): Promise<FormVersionSummary[]>;
+  
+  // [NEW] Soft Delete & Publish
+  softDelete(params: { organizationId: string; id: string }): Promise<void>;
+  publishVersion(params: { organizationId: string; id: string }): Promise<void>;
 }
 
 class PrismaFormSchemaRepo implements FormSchemaRepo {
   async createVersion(input: FormSchemaCreateInput): Promise<FormSchema> {
     const { organizationId, name, schemaJson } = input;
 
+    // Find the absolute latest version number (even if deprecated) to ensure uniqueness
     const latest = await db.formSchema.findFirst({
       where: { organizationId, name },
       orderBy: { version: "desc" },
     });
 
     const nextVersion = (latest?.version ?? 0) + 1;
-
-    // Ensure we are persisting a clean schema
     const cleanSchema = migrateSchemaToV15(schemaJson);
 
     try {
@@ -63,6 +63,8 @@ class PrismaFormSchemaRepo implements FormSchemaRepo {
           version: nextVersion,
           schemaJson: cleanSchema as unknown as Prisma.InputJsonValue,
           isDeprecated: false,
+          // [FIX] Default to Draft (false). Only explicit publish sets true.
+          isPublished: false 
         },
       });
 
@@ -79,54 +81,38 @@ class PrismaFormSchemaRepo implements FormSchemaRepo {
 
       if (isFkError && isDev) {
         logger.warn("[FormSchemaRepo] FK Error detected in DEV. Attempting to seed missing organization...", { organizationId });
-        
         try {
             await db.organization.upsert({
               where: { id: organizationId },
               update: {},
-              create: {
-                id: organizationId,
-                name: "Local Dev Org",
-                slug: "local-dev"
-              }
+              create: { id: organizationId, name: "Local Dev Org", slug: "local-dev" }
             });
-
-            // Retry the create
+            // Retry
             const retry = await db.formSchema.create({
               data: {
-                organizationId,
-                name,
-                version: nextVersion,
+                organizationId, name, version: nextVersion,
                 schemaJson: cleanSchema as unknown as Prisma.InputJsonValue,
-                isDeprecated: false,
+                isDeprecated: false, isPublished: false
               },
             });
-            
-            logger.info("[FormSchemaRepo] Auto-heal successful. Schema created.");
-            
-            const domain = mapDbFormSchemaRowToDomain(retry);
-            domain.schemaJson = migrateSchemaToV15(domain.schemaJson);
-            return domain;
-
+            return mapDbFormSchemaRowToDomain(retry);
         } catch (innerErr) {
             logger.error("[FormSchemaRepo] Auto-heal failed.", { error: innerErr });
         }
       }
-      
       throw e;
     }
   }
 
   async getLatestByName(params: { organizationId: string; name: string }): Promise<FormSchema | null> {
     const { organizationId, name } = params;
+    // Get latest non-deprecated version (regardless of publish status for internal use)
     const row = await db.formSchema.findFirst({
-      where: { organizationId, name },
+      where: { organizationId, name, isDeprecated: false },
       orderBy: { version: "desc" },
     });
     if (!row) return null;
-    const domain = mapDbFormSchemaRowToDomain(row);
-    domain.schemaJson = migrateSchemaToV15(domain.schemaJson);
-    return domain;
+    return mapDbFormSchemaRowToDomain(row);
   }
 
   async getById(params: { organizationId: string; id: string }): Promise<FormSchema | null> {
@@ -135,33 +121,35 @@ class PrismaFormSchemaRepo implements FormSchemaRepo {
       where: { id, organizationId },
     });
     if (!row) return null;
-    const domain = mapDbFormSchemaRowToDomain(row);
-    domain.schemaJson = migrateSchemaToV15(domain.schemaJson);
-    return domain;
+    return mapDbFormSchemaRowToDomain(row);
   }
 
-  // [NEW] Implementation for Fetching by Slug
+  // Used by Public Runner
+  async getPublicById(id: string): Promise<FormSchema | null> {
+    const row = await db.formSchema.findUnique({
+      where: { id },
+    });
+    // Strict check: Must exist, not be deprecated, and be PUBLISHED
+    if (!row || row.isDeprecated || !row.isPublished) return null;
+    return mapDbFormSchemaRowToDomain(row);
+  }
+
+  // Used by Marketing Site / Router
   async getBySlug(slug: string): Promise<FormSchema | null> {
     const row = await db.formSchema.findFirst({
-      where: { 
-        slug: slug,
-        isPublished: true 
-      },
-      orderBy: { version: 'desc' }, // Get latest published version
+      where: { slug, isPublished: true, isDeprecated: false },
+      orderBy: { version: 'desc' },
     });
-
     if (!row) return null;
-
-    const domain = mapDbFormSchemaRowToDomain(row);
-    domain.schemaJson = migrateSchemaToV15(domain.schemaJson);
-    return domain;
+    return mapDbFormSchemaRowToDomain(row);
   }
 
+  // Used by Admin Dashboard
   async listByOrg(orgId: string): Promise<FormSchemaWithStats[]> {
     const rows = await db.formSchema.findMany({
-      where: { organizationId: orgId },
+      where: { organizationId: orgId, isDeprecated: false },
       orderBy: { updatedAt: 'desc' },
-      distinct: ['name'],
+      distinct: ['name'], 
       include: {
         _count: {
           select: { formSubmissions: true }
@@ -169,42 +157,63 @@ class PrismaFormSchemaRepo implements FormSchemaRepo {
       }
     });
     
-    return rows.map(row => {
-      const domain = mapDbFormSchemaRowToDomain(row);
-      domain.schemaJson = migrateSchemaToV15(domain.schemaJson);
-      return {
-        ...domain,
+    return rows.map(row => ({
+        ...mapDbFormSchemaRowToDomain(row),
         _count: { formSubmissions: row._count.formSubmissions }
-      };
-    });
+    }));
   }
 
   async listVersionsByName(params: { organizationId: string; name: string }): Promise<FormVersionSummary[]> {
     const rows = await db.formSchema.findMany({
       where: { 
         organizationId: params.organizationId,
-        name: params.name 
+        name: params.name,
+        isDeprecated: false
       },
       orderBy: { version: 'asc' },
-      select: {
-        id: true,
-        version: true,
-        createdAt: true
-      }
+      select: { id: true, version: true, createdAt: true }
     });
     return rows;
   }
 
-  async getPublicById(id: string): Promise<FormSchema | null> {
-    const row = await db.formSchema.findUnique({
-      where: { id },
+  // [NEW] Soft Delete
+  async softDelete(params: { organizationId: string; id: string }): Promise<void> {
+    const target = await db.formSchema.findFirst({
+        where: { id: params.id, organizationId: params.organizationId }
+    });
+    if (!target) return;
+
+    await db.formSchema.updateMany({
+        where: { organizationId: params.organizationId, name: target.name },
+        data: { isDeprecated: true, isPublished: false }
+    });
+    logger.info("Soft deleted form family", { name: target.name });
+  }
+
+  // [NEW] Publish Version
+  async publishVersion(params: { organizationId: string; id: string }): Promise<void> {
+    const target = await db.formSchema.findFirst({
+        where: { id: params.id, organizationId: params.organizationId }
+    });
+    if (!target) throw new Error("Form not found");
+
+    // Unpublish siblings
+    await db.formSchema.updateMany({
+        where: { 
+            organizationId: params.organizationId, 
+            name: target.name,
+            id: { not: params.id } 
+        },
+        data: { isPublished: false }
+    });
+
+    // Publish target
+    await db.formSchema.update({
+        where: { id: params.id },
+        data: { isPublished: true }
     });
     
-    if (!row) return null;
-
-    const domain = mapDbFormSchemaRowToDomain(row);
-    domain.schemaJson = migrateSchemaToV15(domain.schemaJson);
-    return domain;
+    logger.info("Published form version", { name: target.name, version: target.version });
   }
 }
 

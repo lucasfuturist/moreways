@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
-  
-  // CSP: Whitelist sources. 
-  // 'self' allows scripts from own origin.
-  // 'unsafe-inline' and 'unsafe-eval' are often needed for React in Dev, 
-  // but in Prod should be stricter.
+  // 1. Get the Supabase URL from env to whitelist it
+  // (Fallback to wildcard if missing in dev, though it should be there)
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://*.supabase.co";
+
+  // 2. Construct the CSP Header
+  // connect-src: Allows fetching data from Supabase
+  // script-src/style-src: 'unsafe-inline' is often needed for Next.js dev mode & UI libs
   const cspHeader = `
     default-src 'self';
     script-src 'self' 'unsafe-eval' 'unsafe-inline';
@@ -20,11 +21,15 @@ export function middleware(request: NextRequest) {
     frame-ancestors 'none';
     block-all-mixed-content;
     upgrade-insecure-requests;
-  `;
+    connect-src 'self' ${supabaseUrl};
+  `
+    .replace(/\s{2,}/g, " ")
+    .trim();
 
+  // 3. Create response and set headers
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-nonce", nonce);
-  requestHeaders.set("Content-Security-Policy", cspHeader.replace(/\s{2,}/g, " ").trim());
+  requestHeaders.set("x-nonce", "NA"); // Placeholder if you use nonces later
+  requestHeaders.set("Content-Security-Policy", cspHeader);
 
   const response = NextResponse.next({
     request: {
@@ -32,13 +37,7 @@ export function middleware(request: NextRequest) {
     },
   });
 
-  // Strict Headers
-  response.headers.set("X-DNS-Prefetch-Control", "on");
-  response.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
-  response.headers.set("X-Frame-Options", "DENY"); // Prevents Clickjacking
-  response.headers.set("X-Content-Type-Options", "nosniff"); // Prevents MIME sniffing
-  response.headers.set("Referrer-Policy", "origin-when-cross-origin");
-  response.headers.set("Content-Security-Policy", cspHeader.replace(/\s{2,}/g, " ").trim());
+  response.headers.set("Content-Security-Policy", cspHeader);
 
   return response;
 }
@@ -46,12 +45,18 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for:
-     * 1. /api/auth (NextAuth)
-     * 2. /_next/ (Next.js internals)
-     * 3. /static (static files)
-     * 4. /favicon.ico, /sitemap.xml (static files)
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
      */
-    "/((?!api/auth|_next/static|_next/image|favicon.ico).*)",
+    {
+      source: "/((?!api|_next/static|_next/image|favicon.ico).*)",
+      missing: [
+        { type: "header", key: "next-router-prefetch" },
+        { type: "header", key: "purpose", value: "prefetch" },
+      ],
+    },
   ],
 };

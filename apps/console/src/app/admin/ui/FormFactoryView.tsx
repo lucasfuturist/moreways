@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { useRouter } from "next/navigation"; // Used for navigation
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Search, Plus } from "lucide-react";
 import Fuse from "fuse.js";
@@ -12,9 +12,32 @@ interface FormFactoryViewProps {
   isLoading: boolean;
 }
 
-export function FormFactoryView({ forms, isLoading }: FormFactoryViewProps) {
+export function FormFactoryView({ forms: initialForms, isLoading }: FormFactoryViewProps) {
   const router = useRouter();
   const [search, setSearch] = useState("");
+  // [FIX] Local state to handle optimistic deletion
+  const [forms, setForms] = useState(initialForms);
+
+  // Sync props to state if props change (e.g. re-fetch)
+  React.useEffect(() => {
+    setForms(initialForms);
+  }, [initialForms]);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to archive this form? Submissions will be preserved, but the form will be hidden.")) return;
+
+    // Optimistic Update
+    setForms(prev => prev.filter(f => f.id !== id));
+
+    try {
+        const res = await fetch(`/api/forms/${id}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("Delete failed");
+    } catch (e) {
+        alert("Failed to delete form.");
+        // Revert on error
+        setForms(initialForms); 
+    }
+  };
 
   const filteredForms = useMemo(() => {
     if (!search.trim()) return forms;
@@ -40,24 +63,25 @@ export function FormFactoryView({ forms, isLoading }: FormFactoryViewProps) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           
-          {/* [NEW] The Create Card is now the first item in the grid */}
           <button 
-                onClick={() => router.push('/forms/new-from-prompt')}
+                onClick={() => router.push('/forms/new-from-prompt?context=admin')}
                 className="group relative h-full min-h-[200px] rounded-2xl border-2 border-dashed border-white/10 bg-white/[0.02] hover:bg-white/5 hover:border-rose-500/30 transition-all duration-300 flex flex-col items-center justify-center gap-4 animate-in fade-in zoom-in-95"
             >
                 <div className="w-14 h-14 rounded-full bg-white/5 group-hover:bg-rose-600 group-hover:scale-110 group-hover:text-white text-slate-500 flex items-center justify-center transition-all duration-300 shadow-lg border border-white/5">
                     <Plus className="w-7 h-7" />
                 </div>
                 <div className="text-center">
-                    <h3 className="text-sm font-bold text-white group-hover:text-rose-400 transition-colors">Create New Template</h3>
-                    <p className="text-xs text-slate-500 mt-1 max-w-[150px] mx-auto">Use AI to generate a master intake form.</p>
+                    <h3 className="text-sm font-bold text-white group-hover:text-rose-400 transition-colors">Create Master Template</h3>
+                    <p className="text-xs text-slate-500 mt-1 max-w-[150px] mx-auto">Use AI to generate a system-wide intake template.</p>
                 </div>
           </button>
 
-          {/* Existing Forms */}
           {filteredForms.map(form => (
             <motion.div layout key={form.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <FormCard form={form} />
+              <FormCard 
+                form={form} 
+                onDelete={() => handleDelete(form.id)} // [NEW] Pass delete handler
+              />
             </motion.div>
           ))}
         </div>

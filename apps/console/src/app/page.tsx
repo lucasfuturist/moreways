@@ -1,6 +1,6 @@
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  // [ROUTING] Default entry point is the Lawyer CRM
-  redirect('/crm');
+  // Redirect root traffic to the login page
+  redirect("/login");
 }

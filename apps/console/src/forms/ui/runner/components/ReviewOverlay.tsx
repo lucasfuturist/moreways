@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Save, Send } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { X, Send } from "lucide-react";
+import { Button } from "@/components/ui/Button"; // Capital B for Console
 import type { FormSchemaJsonShape } from "@/forms/schema/forms.schema.FormSchemaJsonShape";
 
 interface ReviewOverlayProps {
@@ -13,24 +13,22 @@ interface ReviewOverlayProps {
 }
 
 export function ReviewOverlay({ schema, data, onClose, onSubmit }: ReviewOverlayProps) {
-  // Local state for edits before saving
   const [localData, setLocalData] = useState(data);
 
   const handleChange = (key: string, val: any) => {
     setLocalData((prev) => ({ ...prev, [key]: val }));
   };
 
-  // Determine order
   const keys = schema.order || Object.keys(schema.properties);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
       <div 
         className="w-full max-w-2xl h-[85vh] bg-slate-900 border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-slate-950/50">
+        {/* HEADER - Fixed */}
+        <div className="flex-none flex items-center justify-between px-6 py-4 border-b border-white/5 bg-slate-950/50">
           <div>
             <h2 className="text-lg font-bold text-white">Review & Edit</h2>
             <p className="text-xs text-slate-400">Make final corrections before submitting.</p>
@@ -40,8 +38,8 @@ export function ReviewOverlay({ schema, data, onClose, onSubmit }: ReviewOverlay
           </button>
         </div>
 
-        {/* Scrollable Form */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-900">
+        {/* CONTENT - Scrollable */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-900 custom-scrollbar">
           {keys.map((key) => {
             const def = schema.properties[key];
             if (!def || def.kind === "header" || def.kind === "info" || def.kind === "divider") return null;
@@ -52,12 +50,11 @@ export function ReviewOverlay({ schema, data, onClose, onSubmit }: ReviewOverlay
                   {def.title}
                 </label>
                 
-                {/* Input Rendering Logic */}
                 {def.kind === "textarea" ? (
                   <textarea
                     value={localData[key] || ""}
                     onChange={(e) => handleChange(key, e.target.value)}
-                    className="w-full bg-black/20 border border-white/10 rounded-lg p-3 text-sm text-white focus:ring-1 focus:ring-indigo-500 outline-none resize-none"
+                    className="w-full bg-black/20 border border-white/10 rounded-lg p-3 text-sm text-white focus:ring-1 focus:ring-indigo-500 outline-none resize-none min-h-[80px]"
                     rows={3}
                   />
                 ) : (def.kind === "select" || def.kind === "radio") ? (
@@ -86,8 +83,8 @@ export function ReviewOverlay({ schema, data, onClose, onSubmit }: ReviewOverlay
           })}
         </div>
 
-        {/* Footer Actions */}
-        <div className="p-4 border-t border-white/5 bg-slate-950/30 flex justify-end gap-3">
+        {/* FOOTER - Fixed */}
+        <div className="flex-none p-4 border-t border-white/5 bg-slate-950/30 flex justify-end gap-3">
           <Button variant="ghost" onClick={onClose}>
             Cancel
           </Button>

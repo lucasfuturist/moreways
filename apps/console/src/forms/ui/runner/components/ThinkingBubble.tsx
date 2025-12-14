@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { forwardRef } from "react";
 import { motion } from "framer-motion";
 
-export function ThinkingBubble() {
+// [FIX] Use forwardRef to allow AnimatePresence to measure this component
+export const ThinkingBubble = forwardRef<HTMLDivElement>((props, ref) => {
   const dotTransition = {
     duration: 0.6,
     repeat: Infinity,
@@ -12,10 +13,10 @@ export function ThinkingBubble() {
 
   return (
     <motion.div 
+        ref={ref} // [FIX] Attach the ref here
         layout
         initial={{ opacity: 0, y: 5, scale: 0.95 }} 
         animate={{ opacity: 1, y: 0, scale: 1 }} 
-        // Quick exit to allow next message to supplant position immediately
         exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.1 } }}
         className="flex mb-6 ml-2" 
     >
@@ -38,4 +39,6 @@ export function ThinkingBubble() {
         </div>
     </motion.div>
   );
-}
+});
+
+ThinkingBubble.displayName = "ThinkingBubble";

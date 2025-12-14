@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Copy, Trash2, FileEdit, Share2, ShieldCheck, MoreHorizontal } from "lucide-react";
+import { ArrowUpRight, Copy, Trash2, FileEdit, Share2, ShieldCheck } from "lucide-react";
 import { clsx } from "clsx";
 import { motion } from "framer-motion";
 import { GlassMenu, type MenuItem } from "@/components/ui/GlassMenu";
@@ -11,6 +11,8 @@ export interface FormCardProps {
   form: any;
   isPinned?: boolean; 
   onTogglePin?: (id: string) => void;
+  // [FIX] Added onDelete prop definition
+  onDelete?: () => void;
 }
 
 const getStatusColor = (submissions: number) => {
@@ -19,7 +21,7 @@ const getStatusColor = (submissions: number) => {
   return "bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/10";
 };
 
-export function FormCard({ form, isPinned = false, onTogglePin }: FormCardProps) {
+export function FormCard({ form, isPinned = false, onTogglePin, onDelete }: FormCardProps) {
   // Spotlight State
   const divRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -41,7 +43,8 @@ export function FormCard({ form, isPinned = false, onTogglePin }: FormCardProps)
     { label: "Edit Form", icon: <FileEdit className="w-3.5 h-3.5"/>, onClick: () => console.log("Edit", form.id) },
     { label: "Copy Link", icon: <Copy className="w-3.5 h-3.5"/>, onClick: () => { navigator.clipboard.writeText(`${window.location.origin}/s/${form.id}`); alert("Copied!"); } },
     { label: "Share", icon: <Share2 className="w-3.5 h-3.5"/>, onClick: () => console.log("Share", form.id) },
-    { label: "Archive", icon: <Trash2 className="w-3.5 h-3.5"/>, onClick: () => console.log("Delete", form.id), variant: "danger" },
+    // [FIX] Wired up onDelete prop to the Archive action
+    { label: "Archive", icon: <Trash2 className="w-3.5 h-3.5"/>, onClick: () => onDelete?.(), variant: "danger" },
   ];
 
   return (

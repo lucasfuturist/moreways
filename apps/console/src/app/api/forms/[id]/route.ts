@@ -1,64 +1,77 @@
+import { NextRequest, NextResponse } from "next/server";
 import { GetCurrentUserAsync } from "@/auth/svc/auth.svc.GetCurrentUserAsync";
 import { formSchemaRepo } from "@/forms/repo/forms.repo.FormSchemaRepo";
 import { normalizeFormSchemaJsonShape } from "@/forms/util/forms.util.formSchemaNormalizer";
-import { NextRequest, NextResponse } from "next/server";
 
-interface RouteContext {
+interface Context {
   params: { id: string };
 }
 
-// GET: Load a saved form
-export async function GET(req: NextRequest, context: RouteContext) {
+// GET: Fetch single form
+export async function GET(req: NextRequest, { params }: Context) {
   const user = await GetCurrentUserAsync(req);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const form = await formSchemaRepo.getById({
     organizationId: user.organizationId,
-    id: context.params.id,
+    id: params.id
   });
 
-  if (!form) {
-    return NextResponse.json({ error: "Form not found" }, { status: 404 });
-  }
+  if (!form) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   return NextResponse.json(form);
 }
 
-// PUT: Update/Save a form
-export async function PUT(req: NextRequest, context: RouteContext) {
+// PUT: Save (Create New Version)
+export async function PUT(req: NextRequest, { params }: Context) {
   const user = await GetCurrentUserAsync(req);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const body = await req.json();
-    const { schema, name } = body;
-
-    if (!schema) return NextResponse.json({ error: "Schema is required" }, { status: 400 });
-
-    // 1. Check existence
-    const existing = await formSchemaRepo.getById({
-      organizationId: user.organizationId,
-      id: context.params.id,
+    const currentForm = await formSchemaRepo.getById({
+        organizationId: user.organizationId,
+        id: params.id
     });
 
-    if (!existing) {
-      return NextResponse.json({ error: "Form to update not found" }, { status: 404 });
-    }
+    if (!currentForm) return NextResponse.json({ error: "Form not found" }, { status: 404 });
 
-    // 2. Normalize
+    const body = await req.json();
+    const { schema } = body; // Expecting { schema: ... }
+
+    if (!schema) return NextResponse.json({ error: "Schema required" }, { status: 400 });
+
     const safeSchema = normalizeFormSchemaJsonShape(schema);
 
-    // 3. Create new version
+    // [VERSIONING LOGIC]
+    // We create a NEW row with the SAME name but incremented version.
     const newVersion = await formSchemaRepo.createVersion({
-      organizationId: user.organizationId,
-      name: name || existing.name,
-      schemaJson: safeSchema,
+        organizationId: user.organizationId,
+        name: currentForm.name,
+        schemaJson: safeSchema
     });
 
     return NextResponse.json(newVersion);
 
   } catch (err) {
-    console.error("[API] Update Form Error:", err);
+    console.error("Update Form Error:", err);
     return NextResponse.json({ error: "Failed to update form" }, { status: 500 });
+  }
+}
+
+// DELETE: Archive Form
+export async function DELETE(req: NextRequest, { params }: Context) {
+  const user = await GetCurrentUserAsync(req);
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  try {
+    await formSchemaRepo.softDelete({
+        organizationId: user.organizationId,
+        id: params.id
+    });
+    
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("Delete Form Error:", err);
+    return NextResponse.json({ error: "Failed to delete form" }, { status: 500 });
   }
 }

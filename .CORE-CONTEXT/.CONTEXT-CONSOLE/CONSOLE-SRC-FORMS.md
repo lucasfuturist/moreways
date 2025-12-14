@@ -1,3 +1,5 @@
+--- START OF FILE CONSOLE-SRC-FORMS.md ---
+
 # High-Resolution Interface Map
 
 ## Tree: `apps/console/src/forms`
@@ -70,6 +72,7 @@ forms/
 │   │   │   ├── ReviewOverlay.tsx
 │   │   │   ├── SectionSidebar.tsx
 │   │   │   ├── ThinkingBubble.tsx
+│   │   │   ├── VerdictCard.tsx
 │   ├── simulator/
 │   │   ├── AutoFillEngine.ts
 │   │   ├── SimulatorOverlay.tsx
@@ -101,10 +104,10 @@ forms/
 **Dependencies:** `logger`, `ExtractionResult`, `FormSchemaJsonShape`.
 
 ### `logic/forms.logic.naturalizer.ts`
-**Role:** Converts technical field definitions into natural language questions for the chat interface.
+**Role:** Converts technical field definitions into natural language questions for the chat interface, adding conversational bridges.
 **Key Exports:**
-- `generateNaturalQuestion(fieldDef, isFirst): string` - Returns a conversational question based on field kind and label heuristics.
-- `generateNaturalTransition(): string` - Returns random transition phrases (e.g., "Got it.").
+- `generateNaturalQuestion(fieldDef, isFirst): string` - Returns a conversational question using intelligent mapping (detects Name, Date, Phone contexts).
+- `generateNaturalTransition(): string` - Returns random transition phrases (e.g., "Got it. Moving on...").
 **Dependencies:** `FormFieldDefinition`.
 
 ### `logic/forms.logic.schemaIterator.ts`
@@ -114,12 +117,13 @@ forms/
 **Dependencies:** `FormSchemaJsonShape`.
 
 ### `repo/forms.repo.FormSchemaRepo.ts`
-**Role:** Data access layer for Form Schemas, handling versioning, retrieval, and auto-migration of legacy schemas.
+**Role:** Data access layer for Form Schemas, handling versioning, retrieval, soft deletes, and publishing.
 **Key Exports:**
-- `formSchemaRepo` - Singleton instance of the repository.
-- `createVersion(input): Promise<FormSchema>` - Creates a new incremented version of a form.
-- `getLatestByName(params): Promise<FormSchema>` - Fetches the most recent version.
-- `getBySlug(slug): Promise<FormSchema>` - Fetches schema by public slug.
+- `formSchemaRepo` - Singleton instance.
+- `createVersion(input): Promise<FormSchema>` - Creates a new draft version.
+- `publishVersion(params): Promise<void>` - Marks a specific version as live and unpublishes others.
+- `softDelete(params): Promise<void>` - Marks a form family as deprecated.
+- `getPublicById(id): Promise<FormSchema>` - Fetches schema only if published and active.
 **Dependencies:** `db`, `logger`, `migrateSchemaToV15`.
 
 ### `runner/useChatRunnerController.ts`
@@ -223,9 +227,9 @@ forms/
 **Dependencies:** `GlassCard`.
 
 ### `ui/dashboard/FormCard.tsx`
-**Role:** A card component representing a single form in the dashboard grid.
+**Role:** A card component representing a single form in the dashboard grid with spotlight effects and management actions.
 **Key Exports:**
-- `FormCard({ form })` - Renders form metadata, stats, and a context menu.
+- `FormCard({ form, onDelete })` - Renders form stats (leads, conversion), version info, and context menu (Archive).
 **Dependencies:** `GlassMenu`, `framer-motion`.
 
 ### `ui/editor/HistoryControl.tsx`
@@ -241,9 +245,9 @@ forms/
 **Dependencies:** `FormVersionSummary`.
 
 ### `ui/forms.ui.FormEditor.tsx`
-**Role:** The top-level page component for the Form Builder experience.
+**Role:** The top-level page component for the Form Builder experience, managing autosave, publishing, and versioning.
 **Key Exports:**
-- `FormEditor({ formId })` - Manages global editor state, auto-saving, and layout composition.
+- `FormEditor({ formId })` - Manages global state, handles "Publish Live" workflow, and integrates `VersionHistorySlider`.
 **Dependencies:** `ReactiveCanvas`, `AssistantPanel`, `HistoryControl`.
 
 ### `ui/guardrails/PiiWarning.tsx`
@@ -295,10 +299,10 @@ forms/
 **Dependencies:** `Button`.
 
 ### `ui/runner/ChatRunner.tsx`
-**Role:** The conversational engine UI that executes the form schema as a chat.
+**Role:** The conversational engine UI that executes the form schema as a chat, integrating AI question generation and data extraction.
 **Key Exports:**
-- `ChatRunner(props)` - Orchestrates the chat flow, calls the AI agent, and renders the message stream.
-**Dependencies:** `IntakeChatMessage`, `ReviewOverlay`, `fetch`.
+- `ChatRunner(props)` - Orchestrates the loop: Agent asks -> User answers -> AI extracts/validates -> Next Field.
+**Dependencies:** `IntakeChatMessage`, `ReviewOverlay`, `fetch` (/api/intake/agent).
 
 ### `ui/runner/FormRunner.tsx`
 **Role:** A traditional (non-chat) form renderer for linear data entry.
@@ -313,10 +317,10 @@ forms/
 **Dependencies:** `FieldAssistantBubble`.
 
 ### `ui/runner/UnifiedRunner.tsx`
-**Role:** The public-facing container that manages form state and submission for the end-user.
+**Role:** The public-facing container that manages form state, submission, and displays the final verdict/assessment.
 **Key Exports:**
-- `UnifiedRunner(props)` - Handles `formData` state, auto-save, and submission to the API.
-**Dependencies:** `ChatRunner`.
+- `UnifiedRunner(props)` - Handles `formData` state, submission to API, and renders `VerdictCard` on success.
+**Dependencies:** `ChatRunner`, `VerdictCard`.
 
 ### `ui/runner/buildChatContext.ts`
 **Role:** *Placeholder.* Likely intended for constructing the context payload for the chat agent.
@@ -342,15 +346,15 @@ forms/
 **Dependencies:** `fetch`.
 
 ### `ui/runner/components/IntakeChatMessage.tsx`
-**Role:** Renders individual messages (User vs Agent) in the Chat Runner stream.
+**Role:** Renders specialized chat bubbles for the intake runner (System, User, Section Dividers, Review Summaries).
 **Key Exports:**
-- `IntakeChatMessage({ variant, content })` - Renders styled bubbles based on message type.
+- `IntakeChatMessage({ variant, content })` - Handles layout for various message types using `forwardRef` for animations.
 **Dependencies:** `framer-motion`.
 
 ### `ui/runner/components/ReviewOverlay.tsx`
-**Role:** A modal overlay allowing users to review and edit their answers before final submission.
+**Role:** A modal overlay allowing users to review and edit all answers before final submission.
 **Key Exports:**
-- `ReviewOverlay(props)` - Renders a summary form of collected data.
+- `ReviewOverlay(props)` - Renders a scrollable summary form of collected data for quick edits.
 **Dependencies:** `Button`.
 
 ### `ui/runner/components/SectionSidebar.tsx`
@@ -362,8 +366,14 @@ forms/
 ### `ui/runner/components/ThinkingBubble.tsx`
 **Role:** Animated loading indicator for the Chat Runner.
 **Key Exports:**
-- `ThinkingBubble()` - Renders a pulsing dot animation.
+- `ThinkingBubble()` - Renders a pulsing dot animation with exit transitions.
 **Dependencies:** `framer-motion`.
+
+### `ui/runner/components/VerdictCard.tsx`
+**Role:** Displays the AI-generated assessment results (Score, Eligibility) after form submission.
+**Key Exports:**
+- `VerdictCard({ verdict, onReset })` - Visualizes the claim strength, missing elements, and legal citations.
+**Dependencies:** `lucide-react`.
 
 ### `ui/simulator/AutoFillEngine.ts`
 **Role:** Logic for simulating different user personas (Standard, Anxious, Corporate) filling out a form.

@@ -1,3 +1,5 @@
+--- START OF FILE WEB-COMPONENTS.md ---
+
 # High-Resolution Interface Map: `apps/web/src/components`
 
 ## Tree: `apps/web/src/components`
@@ -27,6 +29,7 @@ components/
 ├── StandardComplaintsFab.tsx
 ├── ThemeToggle.tsx
 ├── runner/
+│   ├── IntakeOrchestrator.tsx
 │   ├── UnifiedRunner.tsx
 │   ├── components/
 │   │   ├── ChatRunner.tsx
@@ -196,6 +199,12 @@ components/
 **Dependencies:** `next-themes`.
 
 ---
+
+### `runner/IntakeOrchestrator.tsx`
+**Role:** The entry point for the intake process; uses an LLM router to "triage" the user's situation before handing off to the structured `UnifiedRunner`.
+**Key Exports:**
+- `IntakeOrchestrator({ initialMessage })` - Manages the transition from open-ended chat (Router) to specific form execution (Runner).
+**Dependencies:** `UnifiedRunner`, `IntakeChatMessage`, `fetch` (/api/chat).
 
 ### `runner/UnifiedRunner.tsx`
 **Role:** The top-level orchestrator for the public-facing Form Runner. Handles schema fetching (via proxy), local persistence, layout switching, submission, and AI assessment display.

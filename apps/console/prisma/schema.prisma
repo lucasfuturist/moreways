@@ -1,3 +1,5 @@
+// apps/console/prisma/schema.prisma
+
 // --------------------------------------------------------
 // CONFIG
 // --------------------------------------------------------
@@ -30,6 +32,20 @@ enum MatterStatus {
   REJECTED
 }
 
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
 // --------------------------------------------------------
 // MODELS
 // --------------------------------------------------------
@@ -37,8 +53,14 @@ enum MatterStatus {
 model Organization {
   id        String   @id @default(cuid())
   name      String
-  slug      String?  @unique // e.g. "morgan-morgan" (for vanity URLs)
+  slug      String?  @unique
   
+  // [NEW] CRM Fields for Admin Console > Customers View
+  plan      String   @default("Starter") 
+  status    String   @default("active") // "active", "churned"
+  mrr       Decimal  @default(0.00) @map("monthly_recurring_revenue")
+  seatLimit Int      @default(5) @map("seat_limit")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -48,40 +70,74 @@ model Organization {
   clients         Client[]
   matters         Matter[]
   formSubmissions FormSubmission[]
+  supportTickets  SupportTicket[] // [NEW]
 
   @@map("organizations")
 }
 
+// [EXISTING] Staff / Admin Users (Console Access)
 model User {
   id             String   @id @default(cuid())
   organizationId String   @map("organization_id")
   email          String   @unique
   passwordHash   String?  @map("password_hash")
-  
-  // Unified Role System
   role           UserRole @default(CLIENT)
 
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  clientProfile  Client?
   
-  // If this User is a Client, link to their CRM record
-  clientProfile Client?
+  assignedTickets SupportTicket[] 
 
   @@map("users")
 }
 
-// [NEW] API Keys for external integrations (e.g., the Marketing Site)
+// [NEW] Web App Users (Public Access)
+// This maps to the existing table in the Web App's Supabase instance
+// We define it here so Prisma doesn't try to delete it during migrations
+model PortalUser {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email        String
+  passwordHash String   @map("password_hash")
+  name         String?
+  phoneNumber  String?  @map("phone_number")
+  role         String   @default("client")
+  
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("portal_users")
+}
+
+// [NEW] Support Ticketing System
+model SupportTicket {
+  id             String   @id @default(cuid())
+  organizationId String   @map("organization_id")
+  subject        String
+  description    String?  @db.Text
+  
+  priority       TicketPriority @default(MEDIUM)
+  status         TicketStatus   @default(OPEN)
+  
+  assignedToUserId String? @map("assigned_to_user_id")
+
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  assignedUser   User?        @relation(fields: [assignedToUserId], references: [id])
+
+  @@map("support_tickets")
+}
+
 model ApiKey {
   id             String   @id @default(cuid())
   organizationId String   @map("organization_id")
-  
-  keyPrefix      String   @map("key_prefix") // Store first 4 chars for UI display
-  keyHash        String   @map("key_hash")   // Hashed secret
-  label          String?  // e.g. "Marketing Site Production"
+  keyPrefix      String   @map("key_prefix")
+  keyHash        String   @map("key_hash")
+  label          String?
   lastUsedAt     DateTime? @map("last_used_at")
-
   createdAt      DateTime @default(now()) @map("created_at")
   organization   Organization @relation(fields: [organizationId], references: [id])
 
@@ -91,49 +147,34 @@ model ApiKey {
 model FormSchema {
   id             String   @id @default(cuid())
   organizationId String   @map("organization_id")
-  
   name           String
   version        Int
   schemaJson     Json     @map("schema_json")
-  
-  // [NEW] Integration Fields
-  // "slug" allows the marketing site to find this form via URL (e.g. /issue/car-accident)
   slug           String?  @unique
-  // "isPublished" determines if this version is the one served to the public
   isPublished    Boolean  @default(false) @map("is_published")
   isDeprecated   Boolean  @default(false) @map("is_deprecated")
-
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
-
   organization    Organization     @relation(fields: [organizationId], references: [id])
   formSubmissions FormSubmission[]
 
-  // Ensure an org can't have duplicate versions of the same named form
   @@unique([organizationId, name, version])
-  // Index for fast lookups by slug
   @@index([organizationId, slug, isPublished])
-  
   @@map("form_schemas")
 }
 
 model Client {
   id             String   @id @default(cuid())
   organizationId String   @map("organization_id")
-  
-  // Link to the User Login (optional, created when they register for the portal)
-  userId         String?  @unique @map("user_id")
-  
+  userId         String?  @unique @map("user_id") // Links to Staff User (optional)
   fullName       String   @map("full_name")
   email          String?
   phone          String?
-  
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
   organization    Organization     @relation(fields: [organizationId], references: [id])
   user            User?            @relation(fields: [userId], references: [id])
-  
   matters         Matter[]
   formSubmissions FormSubmission[]
 
@@ -144,10 +185,8 @@ model Matter {
   id             String       @id @default(cuid())
   organizationId String       @map("organization_id")
   clientId       String       @map("client_id")
-  
   name           String
   status         MatterStatus @default(LEAD)
-  
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @updatedAt @map("updated_at")
 
@@ -164,15 +203,9 @@ model FormSubmission {
   formSchemaId   String   @map("form_schema_id")
   clientId       String   @map("client_id")
   matterId       String?  @map("matter_id")
-  
   submissionData Json     @map("submission_data")
-  
-  // Risk/Value Flags detected by AI or Rules
   flags          Json?    @default("[]") 
-  
-  // [NEW] The AI Magistrate's Opinion
   verdict        Json?    @map("verdict")
-
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 

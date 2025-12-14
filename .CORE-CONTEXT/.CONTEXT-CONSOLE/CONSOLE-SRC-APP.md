@@ -1,3 +1,5 @@
+--- START OF FILE CONSOLE-SRC-APP.md ---
+
 # High-Resolution Interface Map: `apps/console/src/app`
 
 ## Tree: `apps/console/src/app`
@@ -17,6 +19,11 @@ app/
 │   │   ├── FormFactoryView.tsx
 │   │   ├── SupportView.tsx
 ├── api/
+│   ├── admin/
+│   │   ├── customers/
+│   │   │   ├── route.ts
+│   │   ├── support/
+│   │   │   ├── route.ts
 │   ├── ai/
 │   │   ├── assess-claim/
 │   │   │   ├── route.ts
@@ -45,11 +52,15 @@ app/
 │   │   │   ├── route.ts
 │   │   ├── seed-form/
 │   │   │   ├── route.ts
+│   │   ├── simulate-user/
+│   │   │   ├── route.ts
 │   ├── forms/
 │   │   ├── [id]/
-│   │   │   ├── route.ts
+│   │   │   ├── publish/
+│   │   │   │   ├── route.ts
 │   │   │   ├── versions/
 │   │   │   │   ├── route.ts
+│   │   │   ├── route.ts
 │   │   ├── route.ts
 │   ├── intake/
 │   │   ├── agent/
@@ -60,6 +71,8 @@ app/
 │   │   ├── review/
 │   │   │   ├── route.ts
 │   │   ├── snapshot/
+│   │   │   ├── route.ts
+│   │   ├── talk/
 │   │   │   ├── route.ts
 │   │   ├── turn/
 │   │   │   ├── route.ts
@@ -116,7 +129,7 @@ app/
 ### `page.tsx`
 **Role:** Root entry point (`/`).
 **Key Exports:**
-- `Home()` - Redirects traffic immediately to `/crm`.
+- `Home()` - Redirects traffic immediately to `/login`.
 **Dependencies:** `redirect`.
 
 ### `template.tsx`
@@ -148,7 +161,7 @@ app/
 ### `admin/ui/FormFactoryView.tsx`
 **Role:** View component for managing master form templates.
 **Key Exports:**
-- `FormFactoryView({ forms, isLoading })` - Displays a grid of `FormCard`s and provides search functionality.
+- `FormFactoryView({ forms, isLoading })` - Displays a searchable grid of `FormCard`s and handles optimistic deletion.
 **Dependencies:** `FormCard`, `fuse.js`.
 
 ### `admin/ui/OpsNavbar.tsx`
@@ -166,11 +179,11 @@ app/
 ### `admin/views/CustomersView.tsx`
 **Role:** UI for viewing tenant/customer data.
 **Key Exports:**
-- `CustomersView()` - Renders a table of customer firms (currently using mock data).
-**Dependencies:** None.
+- `CustomersView()` - Fetches and renders a table of customer firms from `/api/admin/customers`.
+**Dependencies:** `createClient` (Supabase).
 
 ### `admin/views/FormFactoryView.tsx`
-**Role:** *(Duplicate of ui/FormFactoryView.tsx)* - Renders the template management grid.
+**Role:** Wrapper for `ui/FormFactoryView.tsx` used in the admin tabs.
 **Key Exports:**
 - `FormFactoryView(props)` - See `ui/FormFactoryView.tsx`.
 **Dependencies:** `FormCard`.
@@ -178,10 +191,22 @@ app/
 ### `admin/views/SupportView.tsx`
 **Role:** UI for viewing support tickets.
 **Key Exports:**
-- `SupportView()` - Renders a list of active support tickets.
-**Dependencies:** `GlassCard`.
+- `SupportView()` - Fetches and renders a list of active support tickets from `/api/admin/support`.
+**Dependencies:** `GlassCard`, `createClient` (Supabase).
 
 ---
+
+### `api/admin/customers/route.ts`
+**Role:** Fetches the list of tenant organizations/customers.
+**Key Exports:**
+- `GET(req)` - Returns JSON array of customer data.
+**Dependencies:** Supabase Auth (Implicit).
+
+### `api/admin/support/route.ts`
+**Role:** Fetches the list of support tickets.
+**Key Exports:**
+- `GET(req)` - Returns JSON array of ticket data.
+**Dependencies:** Supabase Auth (Implicit).
 
 ### `api/ai/assess-claim/route.ts`
 **Role:** AI endpoint to evaluate the legal merit of a submission.
@@ -255,18 +280,31 @@ app/
 - `GET()` - Upserts a specific schema for testing.
 **Dependencies:** `db`.
 
-### `api/forms/route.ts`
-**Role:** CRUD for Form Schemas.
+### `api/dev/simulate-user/route.ts`
+**Role:** Simulates user interaction with a form for testing/demo purposes.
 **Key Exports:**
-- `GET(req)` - Lists forms via `formSchemaRepo`.
-- `POST(req)` - Creates a new form version via `formSchemaRepo`.
-**Dependencies:** `formSchemaRepo`.
+- `POST(req)` - Runs simulation logic.
+**Dependencies:** None.
+
+### `api/forms/route.ts`
+**Role:** CRUD for Form Schemas (List/Create).
+**Key Exports:**
+- `GET(req)` - Lists forms via `formSchemaRepo.listByOrg`.
+- `POST(req)` - Creates a new form version via `formSchemaRepo.createVersion`.
+**Dependencies:** `formSchemaRepo`, `normalizeFormSchemaJsonShape`.
 
 ### `api/forms/[id]/route.ts`
-**Role:** Operations on a specific Form Schema.
+**Role:** Operations on a specific Form Schema (Get/Update/Archive).
 **Key Exports:**
 - `GET(req, context)` - Retrieves form by ID.
-- `PUT(req, context)` - Updates (creates new version) of a form.
+- `PUT(req, context)` - Creates a new version of the form (does not overwrite).
+- `DELETE(req, context)` - Soft deletes (archives) the form family.
+**Dependencies:** `formSchemaRepo`.
+
+### `api/forms/[id]/publish/route.ts`
+**Role:** Publishes a specific form version, making it the active public version.
+**Key Exports:**
+- `POST(req, context)` - Calls `formSchemaRepo.publishVersion`.
 **Dependencies:** `formSchemaRepo`.
 
 ### `api/forms/[id]/versions/route.ts`
@@ -284,8 +322,8 @@ app/
 ### `api/intake/forms/from-prompt/route.ts`
 **Role:** Generates or edits a form schema based on a text prompt.
 **Key Exports:**
-- `POST(req)` - Delegates logic to `createFormFromPromptRoute`.
-**Dependencies:** `createFormFromPromptRoute`.
+- `POST(req)` - Delegates logic to `IntakeCreateFormFromPromptAsync` with tenant isolation.
+**Dependencies:** `IntakeCreateFormFromPromptAsync`.
 
 ### `api/intake/review/route.ts`
 **Role:** Generates a review summary of collected data.
@@ -298,6 +336,12 @@ app/
 **Key Exports:**
 - `POST(req)` - Calls `buildSimpleIntakeSnapshot`.
 **Dependencies:** `buildSimpleIntakeSnapshot`.
+
+### `api/intake/talk/route.ts`
+**Role:** Generates natural language conversational questions for form fields.
+**Key Exports:**
+- `POST(req)` - Returns a natural phrasing for the next field (e.g., "What is your full name?").
+**Dependencies:** `forms.logic.naturalizer`.
 
 ### `api/intake/turn/route.ts`
 **Role:** Handles a single turn of the "Intake Engine" (Extract -> Merge -> Next).
@@ -339,7 +383,7 @@ app/
 **Role:** Endpoint to trigger AI assessment for a specific submission session.
 **Key Exports:**
 - `POST(req, context)` - Triggers assessment logic for the submission context.
-**Dependencies:** `LlmClaimAssessorAsync` (Inferred).
+**Dependencies:** `LlmClaimAssessorAsync`.
 
 ---
 
@@ -381,4 +425,4 @@ app/
 **Role:** Public-facing form runner page.
 **Key Exports:**
 - `PublicFormPage({ params })` - A dedicated wrapper that renders the `UnifiedRunner` component.
-**Dependencies:** `UnifiedRunner`.
+**Dependencies:** `UnifiedRunner`, `formSchemaRepo`, `normalizeFormSchemaJsonShape`.
