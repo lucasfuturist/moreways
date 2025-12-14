@@ -16,7 +16,7 @@ validate/
 ### `validate.schema.verdict.ts`
 **Role:** Defines the Zod schemas and TypeScript types for the compliance validation request payload and the resulting legal verdict.
 **Key Exports:**
-- `VerdictSchema` - Zod object validating the structure of the Magistrate's decision (status, confidence, analysis, citations).
+- `VerdictSchema` - Zod object validating and normalizing the Magistrate's decision (status, confidence, analysis, citations). Includes robust coercion for missing citations.
 - `Verdict` - Type inference of the output schema.
 - `ValidationRequestSchema` - Zod object validating the input intent and raw form data.
 **Dependencies:** `zod`

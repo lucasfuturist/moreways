@@ -108,11 +108,12 @@ app/
 - `dynamic` - Forced to `"force-dynamic"` to ensure fresh schema retrieval.
 **Dependencies:** `argueosClient`, `UnifiedRunner`, `consumerIssues` (static content), `IssueTracker`.
 
-### `(intake)/start/page.tsx`
-**Role:** Multi-stage entry point that transitions from an AI-driven chat interface to a structured intake form.
+
+### `app/(intake)/start/page.tsx`
+**Role:** The entry point for the general claim intake flow, instantiating the `UnifiedRunner` with a default demo form ID to jumpstart the user experience.
 **Key Exports:**
-- `StartClaim(): JSX.Element` - Manages the transition state between the router chat and the `UnifiedRunner`.
-**Dependencies:** `ChatInterface`, `UnifiedRunner`, `PublicFormResponse` (type).
+- `StartClaim(): JSX.Element` - Renders the full-screen intake runner wrapper.
+**Dependencies:** `UnifiedRunner`.
 
 ### `(portal)/dashboard/page.tsx`
 **Role:** Main authenticated landing page for clients to track active legal claims or redirect to the CRM.

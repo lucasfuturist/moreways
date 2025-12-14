@@ -16,8 +16,8 @@ export function VerdictCard({
   status, 
   confidence, 
   summary, 
-  missingElements = [], // [FIX] Default to empty array to prevent crash
-  citations = []        // [FIX] Default to empty array to prevent crash
+  missingElements = [], 
+  citations = []        
 }: VerdictProps) {
   
   const config = {
@@ -29,6 +29,9 @@ export function VerdictCard({
 
   const theme = config[status] || config.POSSIBLE_VIOLATION;
   const scorePercent = Math.round(confidence * 100);
+
+  // [FIX] Pre-filter citations to remove garbage data (like "ii" or empty strings)
+  const validCitations = citations.filter(c => c && c.length > 5);
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
@@ -60,13 +63,14 @@ export function VerdictCard({
                     </div>
                 )}
 
-                {citations && citations.length > 0 && (
+                {/* [FIX] Render only valid citations */}
+                {validCitations.length > 0 && (
                     <div>
                         <h4 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2 flex items-center gap-2">
                             <BookOpen className="w-3.5 h-3.5" /> Cited Regulations
                         </h4>
                         <div className="flex flex-wrap gap-2">
-                            {citations.map((urn, i) => (
+                            {validCitations.map((urn, i) => (
                                 <span key={i} className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs rounded font-mono border border-slate-200 dark:border-slate-700">
                                     {urn.split(':').pop()}
                                 </span>

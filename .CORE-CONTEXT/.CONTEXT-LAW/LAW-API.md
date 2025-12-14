@@ -44,4 +44,4 @@ api/
 **Key Exports:**
 - `ValidateController` - Class handling the validation endpoint.
 - `handleValidation(req, res, next): Promise<void>` - Parses validation requests and returns a compliance verdict from the JudgeService.
-**Dependencies:** `JudgeService`, `HybridSearchService`, `SupabaseGraphReader`, `ValidationRequestSchema`.
+**Dependencies:** `JudgeService`, `HybridSearchService`, `SupabaseGraphReader`, `SupabaseOverrideRepo`, `ValidationRequestSchema`.

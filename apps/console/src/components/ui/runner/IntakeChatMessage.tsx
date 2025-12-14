@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import { clsx } from "clsx";
 import { motion } from "framer-motion";
 import { Layers, FileText, Edit, Send, MessageSquare, AlertTriangle } from "lucide-react";
@@ -24,21 +24,18 @@ interface IntakeChatMessageProps {
   onSubmit?: () => void;
 }
 
-export function IntakeChatMessage({
-  variant,
-  content,
-  isLatest,
-  data,
-  onReview,
-  onSubmit
-}: IntakeChatMessageProps) {
+export const IntakeChatMessage = forwardRef<HTMLDivElement, IntakeChatMessageProps>(
+  ({ variant, content, isLatest, data, onReview, onSubmit }, ref) => {
   
   // --- USER MESSAGE ---
   if (variant === "user") {
     return (
       <motion.div
+        ref={ref}
+        layout // Ensure smooth layout transitions in AnimatePresence
         initial={{ opacity: 0, y: 10, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
         className="flex justify-end mb-6 pl-12"
       >
         <div className="flex flex-col items-end gap-1 max-w-[85%]">
@@ -55,8 +52,11 @@ export function IntakeChatMessage({
   if (variant === "completion_options") {
     return (
       <motion.div
+        ref={ref}
+        layout
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0 }}
         className="flex flex-wrap gap-3 mt-4 mb-16 ml-12"
       >
         <button 
@@ -82,8 +82,11 @@ export function IntakeChatMessage({
     const entries = Object.entries(data || {});
     return (
       <motion.div
+        ref={ref}
+        layout
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0 }}
         className="mb-6 ml-12 max-w-md"
       >
         <div className="rounded-2xl overflow-hidden bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-slate-200 dark:border-white/10">
@@ -107,8 +110,11 @@ export function IntakeChatMessage({
   if (variant === "section") {
     return (
       <motion.div
+        ref={ref}
+        layout
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0 }}
         className="my-8 flex items-center justify-center gap-3 opacity-60"
       >
         <div className="h-px w-12 bg-indigo-500/50" />
@@ -124,8 +130,11 @@ export function IntakeChatMessage({
   if (variant === "warning") {
     return (
       <motion.div
+        ref={ref}
+        layout
         initial={{ opacity: 0, y: -5 }}
         animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0 }}
         className="ml-12 mr-8 my-2 p-3 rounded-lg border border-amber-500/20 bg-amber-500/10 flex gap-3"
       >
         <AlertTriangle className="w-4 h-4 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
@@ -137,14 +146,16 @@ export function IntakeChatMessage({
   // --- ASSISTANT MESSAGE ---
   return (
     <motion.div
+      ref={ref}
+      layout
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
       className={clsx(
         "flex items-end gap-3 mb-6 max-w-[90%]",
         isLatest ? "mb-8" : "mb-4"
       )}
     >
-      {/* CHANGED: Neutral Icon */}
       <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center shadow-sm flex-none ring-1 ring-white/20 z-10">
         <MessageSquare className="w-4 h-4 text-slate-600 dark:text-slate-300" />
       </div>
@@ -158,9 +169,11 @@ export function IntakeChatMessage({
         )}>
           {content}
         </div>
-        {/* CHANGED: Label */}
         <span className="text-[10px] font-bold text-slate-400 ml-1 uppercase tracking-wider opacity-60">Moreways Assistant</span>
       </div>
     </motion.div>
   );
-}
+});
+
+// Display name helps with debugging in React DevTools
+IntakeChatMessage.displayName = "IntakeChatMessage";

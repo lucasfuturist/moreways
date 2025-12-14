@@ -37,7 +37,7 @@ export function createApp() {
     app.post('/api/v1/search', async (req, res, next) => searchController.handleSearch(req.body).then(d => res.json(d)).catch(next));
     app.get('/api/v1/node/:id', nodeController.handleGetNode);
     
-    // [NEW] Validation Route
+    // [FIX] Match existing endpoint styles (must be /api/v1/validate)
     app.post('/api/v1/validate', validateController.handleValidation);
 
     // Error Handling

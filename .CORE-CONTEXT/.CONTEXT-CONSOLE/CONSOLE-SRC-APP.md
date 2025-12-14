@@ -1,4 +1,4 @@
-# High-Resolution Interface Map
+# High-Resolution Interface Map: `apps/console/src/app`
 
 ## Tree: `apps/console/src/app`
 
@@ -68,11 +68,15 @@ app/
 │   │   │   ├── agent/
 │   │   │   │   ├── route.ts
 │   │   │   ├── forms/
+│   │   │   │   ├── [id]/
+│   │   │   │   │   ├── route.ts
 │   │   │   │   ├── route.ts
 │   │   │   ├── submit/
 │   │   │   │   ├── route.ts
 │   ├── submit/
 │   │   ├── [formId]/
+│   │   │   ├── assess/
+│   │   │   │   ├── route.ts
 │   │   │   ├── route.ts
 ├── crm/
 │   ├── inbox/
@@ -313,6 +317,12 @@ app/
 - `GET(req)` - Validates API key and returns schema JSON.
 **Dependencies:** `formSchemaRepo`.
 
+### `api/public/v1/forms/[id]/route.ts`
+**Role:** Public API to fetch a specific form schema by UUID (rather than slug).
+**Key Exports:**
+- `GET(req)` - Validates API key and returns specific schema JSON.
+**Dependencies:** `formSchemaRepo`.
+
 ### `api/public/v1/submit/route.ts`
 **Role:** Public API for submitting form data (Server-to-Server).
 **Key Exports:**
@@ -324,6 +334,12 @@ app/
 **Key Exports:**
 - `POST(req, context)` - Checks rate limits and honeypots, then saves submission.
 **Dependencies:** `RateLimiter`, `formSubmissionRepo`.
+
+### `api/submit/[formId]/assess/route.ts`
+**Role:** Endpoint to trigger AI assessment for a specific submission session.
+**Key Exports:**
+- `POST(req, context)` - Triggers assessment logic for the submission context.
+**Dependencies:** `LlmClaimAssessorAsync` (Inferred).
 
 ---
 
@@ -364,5 +380,5 @@ app/
 ### `s/[formId]/page.tsx`
 **Role:** Public-facing form runner page.
 **Key Exports:**
-- `PublicFormPage({ params })` - Fetches form data and renders the `UnifiedRunner`.
-**Dependencies:** `UnifiedRunner`, `db`.
+- `PublicFormPage({ params })` - A dedicated wrapper that renders the `UnifiedRunner` component.
+**Dependencies:** `UnifiedRunner`.

@@ -1,4 +1,4 @@
-# High-Resolution Interface Map
+# High-Resolution Interface Map: `apps/console/src/components`
 
 ## Tree: `apps/console/src/components`
 
@@ -193,9 +193,9 @@ components/
 ---
 
 ### `ui/runner/ChatRunner.tsx`
-**Role:** The logic core for the Chat-based Form Runner. Manages the conversation flow based on the schema.
+**Role:** The logic core for the Chat-based Form Runner. Manages the conversation flow based on the schema and handles client-side input validation.
 **Key Exports:**
-- `ChatRunner(props)` - Orchestrates the loop: Ask Question -> Receive Input -> Validate -> Next Field. Calls `/api/intake/validate`.
+- `ChatRunner(props)` - Orchestrates the loop: Ask Question -> Receive Input -> Validate (mock) -> Next Field.
 **Dependencies:** `IntakeChatMessage`, `ReviewOverlay`, `VerdictCard`, `getNextFieldKey`.
 
 ### `ui/runner/FieldAssistantBubble.tsx`
@@ -229,15 +229,15 @@ components/
 **Dependencies:** None.
 
 ### `ui/runner/UnifiedRunner.tsx`
-**Role:** The top-level container for the Form execution. Handles Persistence, layout switching, and final submission.
+**Role:** The top-level container for the Form execution. Handles Schema Fetching, Persistence, Layout Switching, and Final Submission/Assessment.
 **Key Exports:**
-- `UnifiedRunner(props)` - Manages `formData` state, auto-saves to `localStorage`, and submits to `argueosClient`. Switches between `ChatRunner` and `VerdictCard`.
-**Dependencies:** `ChatRunner`, `SectionSidebar`, `VerdictCard`, `argueosClient`, `fetch`.
+- `UnifiedRunner(props)` - Fetches the schema from API, manages `formData` state, auto-saves to `localStorage`, submits to backend, and triggers the AI assessment loop.
+**Dependencies:** `ChatRunner`, `SectionSidebar`, `VerdictCard`, `LegalChatInterface`, `fetch`.
 
 ### `ui/runner/VerdictCard.tsx`
 **Role:** Displays the final analysis results (Score, Status, Citations) after form submission.
 **Key Exports:**
-- `VerdictCard(props)` - Visualizes the `confidence` score and lists `missingElements`.
+- `VerdictCard(props)` - Visualizes the `confidence` score and lists `missingElements` and filtered `citations`.
 **Dependencies:** `lucide-react`.
 
 ---

@@ -169,6 +169,9 @@ model FormSubmission {
   
   // Risk/Value Flags detected by AI or Rules
   flags          Json?    @default("[]") 
+  
+  // [NEW] The AI Magistrate's Opinion
+  verdict        Json?    @map("verdict")
 
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")

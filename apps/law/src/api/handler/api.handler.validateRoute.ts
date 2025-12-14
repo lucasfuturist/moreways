@@ -3,12 +3,16 @@ import { z } from 'zod';
 import { JudgeService } from '../../validate/svc/validate.svc.judge';
 import { HybridSearchService } from '../../retrieve/svc/retrieve.svc.hybridSearch';
 import { SupabaseGraphReader } from '../../infra/supabase/infra.supabase.reader';
+import { SupabaseOverrideRepo } from '../../graph/repo/graph.repo.overrideRepo'; // [FIX] Import added
 import { ValidationRequestSchema } from '../../validate/schema/validate.schema.verdict';
 
 // Dependency Injection
 const searcher = new HybridSearchService();
 const reader = new SupabaseGraphReader();
-const judge = new JudgeService(searcher, reader);
+const overrideRepo = new SupabaseOverrideRepo(); // [FIX] Instantiate Repo
+
+// [FIX] Pass 3rd argument
+const judge = new JudgeService(searcher, reader, overrideRepo);
 
 export class ValidateController {
     

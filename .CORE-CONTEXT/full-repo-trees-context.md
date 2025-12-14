@@ -1,3 +1,8 @@
+## CURRENT WORKING COMMAND:
+
+python "C:\dev-utils\list_tree.py" "C:\projects\moreways-ecosystem\apps\web\src\app\(intake)" --depth 10 --ignore node_modules .expo .git __pycache__ dist build --list-scripts .ts .tsx .js .jsx .py .html .css .json .txt .sql .toml .ps1 .ejs --include-readme --output "C:\projects\moreways-ecosystem\WEBINTAKE-context.md"
+
+
 ## FULL TREE MOREWAYS PIXEL
 
 python "C:\dev-utils\list_tree.py" "C:\projects\moreways\attribution-engine" --depth 10 --ignore node_modules .expo .git __pycache__ dist build --list-scripts .ts .tsx .js .jsx .py .html .css .json .txt .sql .toml .ps1 .ejs --include-readme --output "C:\projects\moreways\context-setting\all-trees\FULL-moreways-pixel-TREE.md" --tree-only
@@ -39,6 +44,8 @@ python "C:\dev-utils\list_tree.py" "C:\projects\moreways-ecosystem\apps\law\scri
 python "C:\dev-utils\list_tree.py" "C:\projects\moreways-ecosystem\apps\law\src\api" --depth 10 --ignore node_modules .expo .git __pycache__ dist build --list-scripts .ts .tsx .js .jsx .py .html .css .json .txt .sql .toml .ps1 .ejs --include-readme --output "C:\projects\moreways-ecosystem\LAW-APIcurrent-context.md" 
 
 python "C:\dev-utils\list_tree.py" "C:\projects\moreways-ecosystem\apps\law\src\graph" --depth 10 --ignore node_modules .expo .git __pycache__ dist build --list-scripts .ts .tsx .js .jsx .py .html .css .json .txt .sql .toml .ps1 .ejs --include-readme --output "C:\projects\moreways-ecosystem\LAW-GRAPHcurrent-context.md" 
+
+python "C:\dev-utils\list_tree.py" "C:\projects\moreways-ecosystem\apps\law\src\infra" --depth 10 --ignore node_modules .expo .git __pycache__ dist build --list-scripts .ts .tsx .js .jsx .py .html .css .json .txt .sql .toml .ps1 .ejs --include-readme --output "C:\projects\moreways-ecosystem\LAW-INFRAcurrent-context.md" 
 
 python "C:\dev-utils\list_tree.py" "C:\projects\moreways-ecosystem\apps\law\src\ingest" --depth 10 --ignore node_modules .expo .git __pycache__ dist build --list-scripts .ts .tsx .js .jsx .py .html .css .json .txt .sql .toml .ps1 .ejs --include-readme --output "C:\projects\moreways-ecosystem\LAW-INGESTcurrent-context.md" 
 

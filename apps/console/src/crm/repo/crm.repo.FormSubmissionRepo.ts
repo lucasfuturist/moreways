@@ -17,11 +17,11 @@
  */
 
 import { db } from "@/infra/db/infra.repo.dbClient";
-import type { FormSubmission } from "@/crm/schema/crm.schema.FormSubmissionModel";
+import type { FormSubmission, Verdict } from "@/crm/schema/crm.schema.FormSubmissionModel";
 import { Prisma } from "@prisma/client";
 import { EncryptionService } from "@/infra/security/security.svc.encryption";
 import type { FormSchemaJsonShape } from "@/forms/schema/forms.schema.FormSchemaJsonShape";
-import { AuditService } from "@/infra/audit/infra.svc.audit"; // [NEW]
+import { AuditService } from "@/infra/audit/infra.svc.audit"; 
 
 /**
  * [INTERNAL] Helper to identify which keys in a schema require encryption.
@@ -140,7 +140,8 @@ export const FormSubmissionRepo = {
         formSchemaId: input.formSchemaId,
         clientId: clientId!, 
         submissionData: securedData as Prisma.InputJsonValue,
-        flags: (input.flags || []) as Prisma.InputJsonValue
+        flags: (input.flags || []) as Prisma.InputJsonValue,
+        verdict: Prisma.JsonNull // Explicitly null on create
       }
     });
 
@@ -149,6 +150,19 @@ export const FormSubmissionRepo = {
         organizationId: record.organizationId,
         createdAt: record.createdAt
     };
+  },
+
+  /**
+   * [NEW] Update a submission with the Magistrate's Verdict.
+   * This is typically called async after the main submission.
+   */
+  async updateVerdict(submissionId: string, verdict: Verdict) {
+    return db.formSubmission.update({
+        where: { id: submissionId },
+        data: {
+            verdict: verdict as Prisma.InputJsonValue
+        }
+    });
   },
 
   /**
@@ -189,7 +203,8 @@ export const FormSubmissionRepo = {
         createdAt: r.createdAt,
         updatedAt: r.updatedAt,
         isDraft: false, 
-        flags: (r.flags as any[]) || [] 
+        flags: (r.flags as any[]) || [],
+        verdict: (r.verdict as Verdict | null)
       };
     });
   },
@@ -238,7 +253,8 @@ export const FormSubmissionRepo = {
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
       isDraft: false,
-      flags: (record.flags as any[]) || []
+      flags: (record.flags as any[]) || [],
+      verdict: (record.verdict as Verdict | null)
     };
   }
 };

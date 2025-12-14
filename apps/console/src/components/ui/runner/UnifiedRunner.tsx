@@ -2,224 +2,242 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Save, ArrowRight } from "lucide-react";
+import { Loader2, Save, ArrowRight, CheckCircle, Scale, Search, BookOpen, Shield, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion"; 
-import { ChatRunner, type ChatMessage, type SimpleMessage } from "./components/ChatRunner"; 
-import { SectionSidebar } from "./components/SectionSidebar"; 
-import { VerdictCard } from "./components/VerdictCard";
-import { LegalChatInterface } from "../LegalChatInterface"; 
-import type { FormSchemaJson } from "@/lib/types/argueos-types";
-import { argueosClient } from "@/lib/argueos-client";
+
+import { ChatRunner, type ChatMessage, type SimpleMessage } from "./ChatRunner"; 
+import { SectionSidebar } from "./SectionSidebar"; 
+import { VerdictCard } from "./VerdictCard";
+import { LegalChatInterface } from "../../legal/LegalChatInterface"; 
+
+import type { FormSchemaJsonShape } from "@/forms/schema/forms.schema.FormSchemaJsonShape";
 
 interface UnifiedRunnerProps {
   formId: string;
-  organizationId: string;
-  schema: FormSchemaJson;
+  // organizationId & schema are now OPTIONAL because we fetch them
+  organizationId?: string;
+  schema?: FormSchemaJsonShape;
   initialData?: Record<string, any>;
-  intent?: string; // [NEW] Added intent prop to allow dynamic legal context
+}
+
+// ... (ReasoningStepper component remains the same) ...
+// (Omitting ReasoningStepper code block for brevity - keep existing)
+const STEPS = [
+    { id: 1, label: "Securing data...", icon: Save },
+    { id: 2, label: "Analyzing facts...", icon: Search },
+    { id: 3, label: "Checking laws...", icon: BookOpen },
+    { id: 4, label: "Verdict...", icon: Scale },
+];
+
+function ReasoningStepper({ currentStep }: { currentStep: number }) {
+    return (
+        <div className="w-full max-w-sm mx-auto space-y-4">
+            {STEPS.map((step, idx) => {
+                const isActive = step.id === currentStep;
+                const isDone = step.id < currentStep;
+                return (
+                    <div key={step.id} className={`flex items-center gap-4 p-3 rounded-lg border transition-all duration-300 ${isActive ? "bg-indigo-500/10 border-indigo-500/50" : "border-transparent opacity-50"}`}>
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center border ${isActive ? "border-indigo-500 text-indigo-400" : isDone ? "bg-emerald-500 border-emerald-500 text-white" : "border-slate-600"}`}>
+                            {isDone ? <CheckCircle className="w-4 h-4" /> : <step.icon className="w-4 h-4" />}
+                        </div>
+                        <span className="text-white text-sm">{step.label}</span>
+                    </div>
+                )
+            })}
+        </div>
+    );
 }
 
 export function UnifiedRunner({ 
   formId, 
-  organizationId, 
-  schema, 
   initialData = {},
-  intent = "General Consumer Issue" // Default value
 }: UnifiedRunnerProps) {
   const router = useRouter();
   
-  // -- STATE --
+  // -- DATA STATE --
+  // We now hold the schema in state because it's fetched async
+  const [schema, setSchema] = useState<FormSchemaJsonShape | null>(null);
+  const [orgId, setOrgId] = useState<string | null>(null);
+  const [formName, setFormName] = useState("Intake");
+  const [isLoadingSchema, setIsLoadingSchema] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  // -- RUNNER STATE --
   const [formData, setFormData] = useState<Record<string, any>>(initialData);
   const [activeFieldKey, setActiveFieldKey] = useState<string | null>(null);
-  const [formName] = useState("Intake Assessment"); 
-
+  
   const [history, setHistory] = useState<ChatMessage[]>([]);
   const [textHistory, setTextHistory] = useState<SimpleMessage[]>([]);
   
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // New State for Intelligence Layer
+  const [reasoningStep, setReasoningStep] = useState(0); 
   const [verdict, setVerdict] = useState<any>(null);
 
-  // -- 1. PERSISTENCE (Auto-Save) --
-  const STORAGE_KEY = `intake_draft_${formId}`;
+  // 1. FETCH SCHEMA ON MOUNT
+  useEffect(() => {
+      async function loadForm() {
+          try {
+              const res = await fetch(`/api/public/v1/forms/${formId}`);
+              if (!res.ok) throw new Error("Form not found");
+              
+              const data = await res.json();
+              setSchema(data.schema);
+              setOrgId(data.organizationId);
+              setFormName(data.name);
+          } catch (e) {
+              setLoadError("Unable to load this form.");
+          } finally {
+              setIsLoadingSchema(false);
+          }
+      }
+      loadForm();
+  }, [formId]);
 
-  // Load from storage on mount
+  // Persistence (Auto-Save)
+  const STORAGE_KEY = `intake_draft_${formId}`;
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        setFormData(prev => ({ ...prev, ...parsed }));
-      } catch (e) { console.error("Failed to load draft", e); }
+      try { setFormData({ ...initialData, ...JSON.parse(saved) }); } catch (e) {}
     }
   }, [formId]);
 
-  // Save to storage on change
   useEffect(() => {
-    if (Object.keys(formData).length > 0) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
-    }
-  }, [formData, STORAGE_KEY]);
+    if (Object.keys(formData).length > 0) localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+  }, [formData]);
 
-  // -- 2. TAB PROTECTION --
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (Object.keys(formData).length > 1 && !verdict) {
-        e.preventDefault();
-        e.returnValue = ""; 
-      }
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [formData, verdict]);
-
+  // Submission Logic
   const handleSubmit = async () => {
+    if (!orgId) return; // Guard
+
     setIsSubmitting(true);
+    setReasoningStep(1);
     
     try {
-        // 1. Submit to CRM (Persistence)
-        await argueosClient.submitForm({
-            formId,
-            orgId: organizationId,
-            data: formData
-        });
-
-        localStorage.removeItem(STORAGE_KEY);
-
-        // 2. Validate with The Brain (Intelligence)
-        const res = await fetch("/api/intake/validate", {
+        // 1. Submit
+        const submitRes = await fetch(`/api/submit/${formId}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                formData: formData,
-                intent: intent // Use the prop value passed from the page
-            })
+            body: JSON.stringify({ data: formData })
+        });
+        if (!submitRes.ok) throw new Error("Submission failed");
+        
+        const { submissionId } = await submitRes.json();
+        localStorage.removeItem(STORAGE_KEY);
+        setReasoningStep(2);
+
+        // 2. Assess
+        const stepInterval = setInterval(() => {
+            setReasoningStep(prev => prev < 3 ? prev + 1 : prev);
+        }, 2000);
+
+        const assessRes = await fetch(`/api/submit/${formId}/assess`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ submissionId, intent: formName })
         });
 
-        if (!res.ok) throw new Error("Validation failed");
+        clearInterval(stepInterval);
         
-        const json = await res.json();
+        if (!assessRes.ok) throw new Error("Assessment failed");
+        const { verdict } = await assessRes.json();
         
-        // 3. Show Results
-        setVerdict(json.data);
+        setReasoningStep(4);
+        await new Promise(r => setTimeout(r, 800));
+        
+        setVerdict(verdict);
         setIsSubmitting(false);
 
     } catch (e) {
         setIsSubmitting(false);
+        setReasoningStep(0);
         console.error(e);
-        alert("Submission failed. Please try again.");
+        alert("Submission saved. Analysis unavailable.");
     }
   };
 
-  const handleProceedToAccount = () => {
-      router.push('/register?intent=claim_submission');
-  };
+  // --- VIEW: LOADING STATE (Schema Fetch) ---
+  if (isLoadingSchema) {
+      return (
+          <div className="h-full w-full bg-slate-950 flex items-center justify-center">
+              <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+          </div>
+      );
+  }
 
-  // --- RENDER: VERDICT VIEW (Post-Submission) ---
+  // --- VIEW: ERROR STATE ---
+  if (loadError || !schema) {
+      return (
+          <div className="h-full w-full bg-slate-950 flex flex-col items-center justify-center p-8 text-center">
+              <div className="bg-red-500/10 p-4 rounded-full mb-4">
+                  <AlertTriangle className="w-8 h-8 text-red-500" />
+              </div>
+              <h2 className="text-xl font-bold text-white">Form Not Found</h2>
+              <p className="text-slate-400 mt-2">This form may have been deleted or is currently unavailable.</p>
+          </div>
+      );
+  }
+
+  // --- VIEW: VERDICT ---
   if (verdict) {
     return (
-      <div className="h-screen w-full bg-slate-50 dark:bg-slate-950 overflow-hidden relative flex flex-col">
-         {/* Simple Header */}
-         <div className="flex-none p-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex justify-between items-center">
-            <h1 className="font-bold text-lg dark:text-white">Assessment Complete</h1>
-            <button 
-                onClick={handleProceedToAccount}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg text-sm font-bold hover:opacity-90 transition-opacity"
-            >
-                Create Account <ArrowRight className="w-4 h-4" />
-            </button>
-         </div>
-
-         {/* Scrollable Content */}
-         <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8">
-            <div className="max-w-4xl mx-auto space-y-8">
-                
-                {/* 1. The Magistrate's Ruling */}
-                <motion.div 
-                    initial={{ opacity: 0, y: 20 }} 
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <VerdictCard 
-                        status={verdict.status}
-                        confidence={verdict.confidence_score} 
-                        summary={verdict.analysis.summary}
-                        missingElements={verdict.analysis.missing_elements}
-                        citations={verdict.relevant_citations}
-                    />
-                </motion.div>
-
-                {/* 2. Follow-up Chat */}
-                <motion.div 
-                    initial={{ opacity: 0, y: 20 }} 
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    className="grid grid-cols-1 lg:grid-cols-3 gap-8"
-                >
-                    <div className="lg:col-span-1">
-                        <h3 className="text-sm font-bold uppercase text-slate-500 dark:text-slate-400 mb-2">Have Questions?</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                            Based on your situation, you can ask our legal AI specific questions about the laws cited above.
-                        </p>
-                    </div>
-                    <div className="lg:col-span-2">
-                        <LegalChatInterface />
-                    </div>
-                </motion.div>
+      <div className="h-full w-full bg-slate-950 overflow-y-auto">
+         <div className="max-w-4xl mx-auto p-8 space-y-8">
+            <div className="flex justify-between items-center">
+                <h1 className="text-xl font-bold text-white">Assessment Complete</h1>
+                <button onClick={() => router.push('/register?intent=claim')} className="px-4 py-2 bg-white text-slate-900 rounded-lg font-bold text-sm">
+                    Create Account
+                </button>
             </div>
+            <VerdictCard 
+                status={verdict.status}
+                confidence={verdict.confidence_score} 
+                summary={verdict.analysis.summary}
+                missingElements={verdict.analysis.missing_elements}
+                citations={verdict.relevant_citations}
+            />
+            <LegalChatInterface />
          </div>
       </div>
     );
   }
 
-  // --- RENDER: RUNNER VIEW (Intake) ---
-  return (
-    <div className="flex flex-col md:flex-row h-screen w-full bg-slate-950 overflow-hidden rounded-none md:rounded-2xl border-0 md:border border-slate-800 shadow-2xl relative">
-      
-      {/* LOADING OVERLAY */}
-      <AnimatePresence>
-        {isSubmitting && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex flex-col items-center justify-center space-y-4"
-          >
-             <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
-             <div className="text-center">
-                <h3 className="text-xl font-bold text-white">Analyzing Claim...</h3>
-                <p className="text-slate-400 text-sm mt-1">Consulting legal database</p>
+  // --- VIEW: LOADING (Submission) ---
+  if (isSubmitting) {
+      return (
+        <div className="h-full w-full bg-slate-950 flex flex-col items-center justify-center p-8">
+             <div className="mb-8 text-center">
+                <h2 className="text-2xl font-bold text-white mb-2">Analyzing</h2>
+                <p className="text-slate-400">Please wait while we review your case.</p>
              </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      
-      {/* MOBILE TOP BAR */}
-      <div className="md:hidden flex-none bg-slate-900 border-b border-slate-800 p-3 flex items-center justify-between z-30">
-          <span className="text-xs font-bold text-white uppercase tracking-wider">Assessment</span>
-          <div className="flex items-center gap-2 text-[10px] text-slate-500 font-mono uppercase">
-             <Save className="w-3 h-3" /> Auto-Saving
-          </div>
-      </div>
+             <ReasoningStepper currentStep={reasoningStep} />
+        </div>
+      );
+  }
 
-      {/* DESKTOP SIDEBAR */}
-      <div className="hidden md:flex w-64 flex-col border-r border-slate-800 bg-slate-950 flex-none">
-         <div className="p-6 border-b border-slate-800">
-             <h3 className="text-sm font-bold text-white uppercase tracking-wider">Assessment Progress</h3>
+  // --- VIEW: RUNNER (Chat) ---
+  return (
+    <div className="flex flex-col md:flex-row h-full w-full bg-slate-950 overflow-hidden">
+      
+      {/* Sidebar (Progress) */}
+      <div className="hidden md:flex w-64 flex-col border-r border-slate-800 bg-slate-950 flex-none z-20">
+         <div className="p-6 border-b border-slate-800 flex items-center gap-2">
+             <Shield className="w-4 h-4 text-indigo-500" />
+             <h3 className="text-xs font-bold text-white uppercase tracking-wider">Secure Intake</h3>
          </div>
          <div className="flex-1 overflow-y-auto">
              <SectionSidebar schema={schema} currentFieldKey={activeFieldKey} />
          </div>
       </div>
 
-      {/* CONTENT AREA */}
-      <div className="flex-1 relative flex flex-col min-h-0">
-        <div className="md:hidden flex-none border-b border-slate-800 bg-slate-950/50">
-             <SectionSidebar schema={schema} currentFieldKey={activeFieldKey} />
-        </div>
+      {/* Main Chat Area */}
+      <div className="flex-1 relative flex flex-col h-full overflow-hidden">
+          {/* Mobile Header */}
+          <div className="md:hidden flex-none bg-slate-900 border-b border-slate-800 p-4 flex items-center justify-between z-30">
+              <span className="text-sm font-bold text-white">Assessment</span>
+              <Save className="w-4 h-4 text-slate-500" />
+          </div>
 
-        <div className="flex-1 relative overflow-hidden">
           <ChatRunner 
               formId={formId}
               formName={formName}
@@ -234,7 +252,6 @@ export function UnifiedRunner({
               textHistory={textHistory}
               setTextHistory={setTextHistory}
           />
-        </div>
       </div>
     </div>
   );

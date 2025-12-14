@@ -1,4 +1,4 @@
-# High-Resolution Interface Map
+# High-Resolution Interface Map: `apps/console/src/crm`
 
 ## Tree: `apps/console/src/crm`
 
@@ -36,6 +36,7 @@ crm/
 **Key Exports:**
 - `FormSubmissionRepo` - Object containing retrieval and persistence logic.
 - `create(input): Promise<Result>` - Encrypts sensitive fields based on schema metadata, auto-links or creates a Client, and saves the submission.
+- `updateVerdict(submissionId, verdict): Promise<Result>` - Updates a submission record with the Magistrate's legal analysis verdict.
 - `findMany(organizationId, formId?): Promise<Result[]>` - Fetches submissions and decrypts PII on-the-fly for authorized lists.
 - `findById(organizationId, submissionId, actorId): Promise<Result | null>` - Fetches a specific submission, decrypts data, and logs a `PII_ACCESS` audit event.
 **Dependencies:** `db`, `EncryptionService`, `AuditService`, `FormSchemaJsonShape`.
@@ -57,9 +58,11 @@ crm/
 **Dependencies:** `zod`.
 
 ### `schema/crm.schema.FormSubmissionModel.ts`
-**Role:** Defines the Zod schema for the immutable record of a user's intake form answers.
+**Role:** Defines the Zod schema for the immutable record of a user's intake form answers, including the new Magistrate Verdict structure.
 **Key Exports:**
-- `FormSubmissionSchema` - Zod definition including `answers` (JSON), logic flags, and context IDs.
+- `VerdictSchema` - Zod definition for the legal opinion (status, confidence, analysis).
+- `Verdict` - TypeScript interface for the verdict.
+- `FormSubmissionSchema` - Zod definition including `answers` (JSON), logic flags, context IDs, and the optional `verdict`.
 - `FormSubmission` - TypeScript interface inferred from the schema.
 **Dependencies:** `zod`.
 
