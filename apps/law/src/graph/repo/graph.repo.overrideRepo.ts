@@ -12,18 +12,20 @@ export interface IOverrideRepo {
   getOverrides(urn: string): Promise<JudicialOverride[]>;
 }
 
+/**
+ * Escape regex metacharacters EXCEPT '*' (we treat '*' as a wildcard).
+ */
+export function overrideMatches(targetUrn: string, urnPattern: string): boolean {
+  // Escape everything that has meaning in regex, leaving '*' alone for later replacement.
+  // Note: we escape: . + ? ^ $ { } ( ) | [ ] \ 
+  const escaped = urnPattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
+  // Now convert wildcard '*' into '.*'
+  const regex = new RegExp('^' + escaped.replace(/\*/g, '.*') + '$');
+  return regex.test(targetUrn);
+}
+
 export class SupabaseOverrideRepo implements IOverrideRepo {
-  
   async getOverrides(targetUrn: string): Promise<JudicialOverride[]> {
-    // Logic: Find any override where the target URN matches the pattern.
-    // In SQL, this is often `targetUrn LIKE pattern`.
-    // Since we are checking if a specific URN is covered by a broader ban:
-    // We fetch all active overrides and check regex in memory (for speed/simplicity in this layer)
-    // or rely on Postgres pattern matching.
-    
-    // Simplification: We fetch *all* overrides for the jurisdiction/corpus 
-    // and filter in memory to handle the glob matching "3.17:*"
-    
     const { data, error } = await supabase
       .from('judicial_overrides')
       .select('*')
@@ -31,21 +33,19 @@ export class SupabaseOverrideRepo implements IOverrideRepo {
 
     if (error || !data) return [];
 
-    return data.filter((o: any) => {
-        // Convert SQL-like glob "3.17:*" to Regex "^3.17:.*"
-        const regex = new RegExp('^' + o.urn_pattern.replace('*', '.*') + '$');
-        return regex.test(targetUrn);
-    }).map((o: any) => ({
+    return (data as any[])
+      .filter((o: any) => overrideMatches(targetUrn, o.urn_pattern))
+      .map((o: any) => ({
         urn_pattern: o.urn_pattern,
         type: o.type,
         court_citation: o.court_citation,
         message: o.message,
         severity: o.severity
-    }));
+      }));
   }
 }
 
-// Mock for Testing
+// Mock for Testing / Local
 export class MockOverrideRepo implements IOverrideRepo {
   private overrides: JudicialOverride[] = [];
 
@@ -54,9 +54,6 @@ export class MockOverrideRepo implements IOverrideRepo {
   }
 
   async getOverrides(targetUrn: string): Promise<JudicialOverride[]> {
-    return this.overrides.filter(o => {
-        const regex = new RegExp('^' + o.urn_pattern.replace(/\*/g, '.*') + '$');
-        return regex.test(targetUrn);
-    });
+    return this.overrides.filter(o => overrideMatches(targetUrn, o.urn_pattern));
   }
 }

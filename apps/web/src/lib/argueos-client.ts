@@ -1,27 +1,22 @@
 import { PublicFormResponse } from "@/lib/types/argueos-types";
 
-// Note: For Server Components (fetching the form definition), we still use the direct URL + Key.
-// For Client Components (Submitting), we use the local Proxy paths.
-const SERVER_API_BASE = process.env.SERVER_API_BASE || "http://localhost:3001/api/public/v1";
+const SERVER_API_BASE =
+  process.env.SERVER_API_BASE || "http://localhost:3001/api/public/v1";
 const SERVER_API_KEY = process.env.ARGUEOS_API_KEY_PUBLIC || "";
 
 class ArgueOSClient {
   /**
-   * [SERVER SIDE] Fetch form definition.
-   * This is called by page.tsx (Server Component), so it can access secrets safely.
+   * [SERVER SIDE] Fetch a single published form by slug.
    */
   async getFormBySlug(slug: string): Promise<PublicFormResponse | null> {
     try {
-       console.log("[ArgueOSClient] Attempting to use API Key:", `'${SERVER_API_KEY}'`);
-      // Server-to-Server call
       const res = await fetch(`${SERVER_API_BASE}/forms?slug=${slug}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "x-api-key": SERVER_API_KEY, 
+          "x-api-key": SERVER_API_KEY,
         },
-        // [FIX] Disable cache to prevent stale data (missing 'schema' key) during dev
-        cache: "no-store", 
+        cache: "no-store",
       });
 
       if (res.status === 404) return null;
@@ -35,12 +30,32 @@ class ArgueOSClient {
   }
 
   /**
-   * [CLIENT SIDE] Submit form.
-   * This is called by UnifiedRunner (Client Component).
-   * It hits the LOCAL proxy to hide the API Key.
+   * [SERVER SIDE] Fetch global published form catalog.
+   * Used by chat router.
+   */
+  async listForms(): Promise<
+    { id: string; slug: string | null; name: string }[]
+  > {
+    const res = await fetch(`${SERVER_API_BASE}/forms`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": SERVER_API_KEY,
+      },
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch form catalog");
+    }
+
+    return await res.json();
+  }
+
+  /**
+   * [CLIENT SIDE] Submit form via local proxy.
    */
   async submitForm(payload: { formId: string; orgId: string; data: any }) {
-    // Call local Next.js API route
     const res = await fetch(`/api/intake/submit`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

@@ -2,35 +2,36 @@ import { NextRequest, NextResponse } from "next/server";
 import { formSchemaRepo } from "@/forms/repo/forms.repo.FormSchemaRepo";
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const slug = searchParams.get("slug");
   const apiKey = req.headers.get("x-api-key");
-
-  // [SECURITY] Simple API Key check
   if (apiKey !== process.env.ARGUEOS_API_KEY_PUBLIC) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (!slug) {
-    return NextResponse.json({ error: "Slug required" }, { status: 400 });
-  }
+  const { searchParams } = new URL(req.url);
+  const slug = searchParams.get("slug");
 
   try {
-    const form = await formSchemaRepo.getBySlug(slug);
+    // MODE 1: fetch a single published form by slug
+    if (slug) {
+      const form = await formSchemaRepo.getBySlug(slug);
 
-    if (!form) {
-      return NextResponse.json({ error: "Form not found" }, { status: 404 });
+      if (!form) {
+        return NextResponse.json({ error: "Form not found" }, { status: 404 });
+      }
+
+      return NextResponse.json({
+        id: form.id,
+        title: form.name,
+        organizationId: form.organizationId,
+        schema: form.schemaJson,
+      });
     }
 
-    // [FIX] Return 'schema' key (not 'fields') and pass the raw JSON
-    return NextResponse.json({
-      id: form.id,
-      title: form.name,
-      organizationId: form.organizationId,
-      schema: form.schemaJson // <--- Direct pass-through of the seeded JSON
-    });
+    // MODE 2: global published catalog (for router)
+    const forms = await formSchemaRepo.listPublishedPublic();
+    return NextResponse.json(forms);
   } catch (error) {
-    console.error("[API] Public Form Fetch Error:", error);
+    console.error("[API] Public Forms Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

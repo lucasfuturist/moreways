@@ -1,6 +1,4 @@
---- START OF FILE CONSOLE-SRC-FORMS.md ---
-
-# High-Resolution Interface Map
+# High-Resolution Interface Map: `apps/console/src/forms`
 
 ## Tree: `apps/console/src/forms`
 
@@ -117,14 +115,15 @@ forms/
 **Dependencies:** `FormSchemaJsonShape`.
 
 ### `repo/forms.repo.FormSchemaRepo.ts`
-**Role:** Data access layer for Form Schemas, handling versioning, retrieval, soft deletes, and publishing.
+**Role:** Data access layer for Form Schemas. Handles CRUD operations, version control (creating new versions), publishing logic (slug management), retrieval by ID/Slug, and soft deletion.
 **Key Exports:**
 - `formSchemaRepo` - Singleton instance.
-- `createVersion(input): Promise<FormSchema>` - Creates a new draft version.
-- `publishVersion(params): Promise<void>` - Marks a specific version as live and unpublishes others.
+- `createVersion(input): Promise<FormSchema>` - Creates a new draft version, handling version incrementing and migrations.
+- `publishVersion(params): Promise<void>` - Sets a specific version as published, inheriting slugs and unpublishing siblings.
 - `softDelete(params): Promise<void>` - Marks a form family as deprecated.
 - `getPublicById(id): Promise<FormSchema>` - Fetches schema only if published and active.
-**Dependencies:** `db`, `logger`, `migrateSchemaToV15`.
+- `listPublishedPublic()` - Lists distinct published forms for the global catalog.
+**Dependencies:** `db`, `logger`, `migrateSchemaToV15`, `mapDbFormSchemaRowToDomain`.
 
 ### `runner/useChatRunnerController.ts`
 **Role:** Custom hook managing the state and API interactions for a chat-based form runner.
@@ -202,10 +201,10 @@ forms/
 **Dependencies:** `framer-motion`, `LogicEditor`, `DataSettings`.
 
 ### `ui/canvas/ReactiveCanvas.tsx`
-**Role:** The central workspace of the Form Editor, managing selection, drag-drop, and view modes (Desktop/Mobile).
+**Role:** The central workspace of the Form Editor. Manages the visual layout (Mobile/Tablet/Desktop), field selection, hover triggers for sidebars, and drag-and-drop interactions.
 **Key Exports:**
-- `ReactiveCanvas(props)` - Orchestrates the `DraggableFieldList` and `FloatingFieldEditor`.
-**Dependencies:** `DraggableFieldList`, `FloatingFieldEditor`, `useLocalStorage`.
+- `ReactiveCanvas(props)` - Orchestrates the `DraggableFieldList` and `FloatingFieldEditor` within a responsive container.
+**Dependencies:** `DraggableFieldList`, `FloatingFieldEditor`, `useLocalStorage`, `field-actions`, `lucide-react`.
 
 ### `ui/canvas/field-actions.ts`
 **Role:** Helper functions for manipulating field definitions (adding options, generating IDs).
@@ -227,10 +226,10 @@ forms/
 **Dependencies:** `GlassCard`.
 
 ### `ui/dashboard/FormCard.tsx`
-**Role:** A card component representing a single form in the dashboard grid with spotlight effects and management actions.
+**Role:** Renders a card component representing a single form in the dashboard grid. Handles spotlight effects, stats display, navigation, and management actions (Edit, Share, Delete) via a `GlassMenu`.
 **Key Exports:**
-- `FormCard({ form, onDelete })` - Renders form stats (leads, conversion), version info, and context menu (Archive).
-**Dependencies:** `GlassMenu`, `framer-motion`.
+- `FormCard({ form, onDelete })` - Renders form details and manages the action menu.
+**Dependencies:** `GlassMenu`, `framer-motion`, `useRouter`, `lucide-react`.
 
 ### `ui/editor/HistoryControl.tsx`
 **Role:** Floating UI control to toggle the Version History slider.

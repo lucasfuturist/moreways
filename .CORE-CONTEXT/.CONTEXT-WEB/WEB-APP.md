@@ -1,6 +1,6 @@
 # High-Resolution Interface Map: `apps/web/src/app`
 
-## Tree: C:\projects\moreways-ecosystem\apps\web\src\app
+## Tree: `apps/web/src/app`
 
 ```
 app/
@@ -91,8 +91,6 @@ app/
 ├── sitemap.ts
 ```
 
----
-
 ## File Summaries
 
 ### `layout.tsx` (Root)
@@ -108,12 +106,17 @@ app/
 - `dynamic` - Forced to `"force-dynamic"` to ensure fresh schema retrieval.
 **Dependencies:** `argueosClient`, `UnifiedRunner`, `consumerIssues` (static content), `IssueTracker`.
 
-
-### `app/(intake)/start/page.tsx`
-**Role:** The entry point for the general claim intake flow, instantiating the `UnifiedRunner` with a default demo form ID to jumpstart the user experience.
+### `(intake)/start/page.tsx`
+**Role:** The main intake landing page that uses an orchestrator component to start the claim process.
 **Key Exports:**
-- `StartClaim(): JSX.Element` - Renders the full-screen intake runner wrapper.
-**Dependencies:** `UnifiedRunner`.
+- `StartClaimPage(): JSX.Element` - Renders the `IntakeOrchestrator` to guide the user.
+**Dependencies:** `IntakeOrchestrator`.
+
+### `(intake)/start/[id]/page.tsx`
+**Role:** Dynamic route for running a specific intake form by its ID.
+**Key Exports:**
+- `DynamicIntakePage({ params }): JSX.Element` - Fetches the form schema via API by ID and renders the `UnifiedRunner`.
+**Dependencies:** `UnifiedRunner`, `Loader2`.
 
 ### `(portal)/dashboard/page.tsx`
 **Role:** Main authenticated landing page for clients to track active legal claims or redirect to the CRM.
@@ -135,16 +138,22 @@ app/
 **Dependencies:** `authService`.
 
 ### `api/chat/route.ts`
-**Role:** AI Classification gateway that maps natural language user input to specific form categories.
+**Role:** AI Intake Router. Analyzes natural language input to direct users to the correct intake form slug.
 **Key Exports:**
-- `POST(req): Promise<NextResponse>` - Uses GPT-4o to analyze issues and return a `form_type` or clarifying question.
-**Dependencies:** `OpenAI`.
+- `POST(req): Promise<NextResponse>` - Fetches available forms from the console catalog and uses GPT-4o to select the best match or ask a clarifying question.
+**Dependencies:** `OpenAI`, `argueosClient`.
 
 ### `api/chat/legal/route.ts`
 **Role:** Gateway to the Legal Brain for RAG-based search and synthesis of law library content.
 **Key Exports:**
 - `POST(req): Promise<NextResponse>` - Proxies queries to the Brain API and formats citations for the UI.
 **Dependencies:** `BRAIN_API_URL` (env).
+
+### `api/intake/form/[id]/route.ts`
+**Role:** API endpoint to fetch a single form schema by ID or slug directly from the database.
+**Key Exports:**
+- `GET(req, { params }): Promise<NextResponse>` - Returns the form schema JSON if found.
+**Dependencies:** `db` (Drizzle), `formSchemas`.
 
 ### `api/intake/validate/route.ts`
 **Role:** Legal logic gateway that evaluates submitted facts against statutes to provide a "Likely Violation" verdict.

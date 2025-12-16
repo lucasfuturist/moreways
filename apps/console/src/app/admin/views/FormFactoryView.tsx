@@ -1,65 +1,117 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { Search, Plus } from "lucide-react";
+import React, { useState, useMemo, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Fuse from "fuse.js";
 import { FormCard } from "@/forms/ui/dashboard/FormCard";
+import { Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Plus } from "lucide-react";
+
+// This component is the one actually being used by the /admin page.
+// We are now adding the delete logic here.
 
 interface FormFactoryViewProps {
   forms: any[];
   isLoading: boolean;
 }
 
-export function FormFactoryView({ forms, isLoading }: FormFactoryViewProps) {
+export function FormFactoryView({ forms: initialForms, isLoading }: FormFactoryViewProps) {
+  const [forms, setForms] = useState(initialForms);
+  const [query, setQuery] = useState("");
+
   const router = useRouter();
-  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    setForms(initialForms);
+  }, [initialForms]);
+
+  const fuse = useMemo(() => new Fuse(forms, {
+    keys: ["name"],
+    threshold: 0.3,
+  }), [forms]);
 
   const filteredForms = useMemo(() => {
-    if (!search.trim()) return forms;
-    const fuse = new Fuse(forms, { keys: ["name", "id"], threshold: 0.3 });
-    return fuse.search(search).map(r => r.item);
-  }, [forms, search]);
+    if (!query.trim()) return forms;
+    return fuse.search(query).map((result) => result.item);
+  }, [query, forms, fuse]);
+
+  // This is the function that does the actual work
+  const handleDeleteForm = async (formId: string, formName: string) => {
+    if (!window.confirm(`Are you sure you want to delete the form "${formName}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    setForms(currentForms => currentForms.filter(form => form.id !== formId));
+
+    try {
+      const response = await fetch(`/api/forms/${formId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`Failed to delete the form: ${errorData.error || 'Server error'}`);
+        setForms(initialForms);
+      }
+    } catch (error) {
+      console.error("Error deleting form:", error);
+      alert("An error occurred while deleting the form. Rolling back.");
+      setForms(initialForms);
+    }
+  };
+
+  if (isLoading) {
+    return <div className="p-6 text-slate-400">Loading forms...</div>;
+  }
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-white">Master Templates</h2>
-        <div className="relative group w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-rose-500 transition-colors" />
-          <input 
-            type="text" placeholder="Search templates..." value={search} onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 text-sm text-white placeholder:text-slate-500 focus:ring-1 focus:ring-rose-500 transition-all outline-none"
-          />
-        </div>
+    <div className="p-6">
+      <div className="mb-6 relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search forms..."
+          className="w-full max-w-sm bg-slate-800/50 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-slate-500 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+        />
       </div>
 
-      {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">{[1,2].map(i => <div key={i} className="h-48 rounded-2xl bg-white/5 animate-pulse" />)}</div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          
-          {/* [INTEGRATION] The Create Card now passes ?context=admin */}
-          <button 
-                onClick={() => router.push('/forms/new-from-prompt?context=admin')}
-                className="group relative h-full min-h-[200px] rounded-2xl border-2 border-dashed border-white/10 bg-white/[0.02] hover:bg-white/5 hover:border-rose-500/30 transition-all duration-300 flex flex-col items-center justify-center gap-4 animate-in fade-in zoom-in-95"
-            >
-                <div className="w-14 h-14 rounded-full bg-white/5 group-hover:bg-rose-600 group-hover:scale-110 group-hover:text-white text-slate-500 flex items-center justify-center transition-all duration-300 shadow-lg border border-white/5">
-                    <Plus className="w-7 h-7" />
-                </div>
-                <div className="text-center">
-                    <h3 className="text-sm font-bold text-white group-hover:text-rose-400 transition-colors">Create Master Template</h3>
-                    <p className="text-xs text-slate-500 mt-1 max-w-[150px] mx-auto">Use AI to generate a system-wide intake template.</p>
-                </div>
-          </button>
+      <AnimatePresence>
+      <motion.div
+        layout
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      >
+        {/* --- THIS IS THE NEW CARD --- */}
+        <button
+          onClick={() => router.push('/forms/new-from-prompt?context=admin')}
+          className="group relative flex flex-col items-center justify-center text-center p-6 h-full min-h-[260px] rounded-2xl border-2 border-dashed border-slate-800 hover:border-indigo-500 hover:bg-indigo-950/30 transition-all duration-300"
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-indigo-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="w-16 h-16 rounded-full bg-slate-800 group-hover:bg-indigo-500 flex items-center justify-center transition-colors text-slate-500 group-hover:text-white mb-4">
+            <Plus className="w-8 h-8" />
+          </div>
+          <h3 className="font-bold text-white">Create New Form</h3>
+          <p className="text-xs text-slate-500 mt-1">Use the AI Architect to start a new intake form from scratch.</p>
+        </button>
 
-          {/* Existing Forms */}
-          {filteredForms.map(form => (
-            <motion.div layout key={form.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <FormCard form={form} />
-            </motion.div>
-          ))}
+        {/* The existing map of forms comes after */}
+        {filteredForms.map((form) => (
+          <FormCard
+            key={form.id}
+            form={form}
+            onDelete={() => handleDeleteForm(form.id, form.name)}
+          />
+        ))}
+      </motion.div>
+      </AnimatePresence>
+
+      {!isLoading && filteredForms.length === 0 && (
+        <div className="text-center py-20 border-2 border-dashed border-slate-800 rounded-xl mt-6">
+          <p className="text-slate-500">
+            {query ? "No forms match your search." : "You haven't created any forms yet."}
+          </p>
         </div>
       )}
     </div>

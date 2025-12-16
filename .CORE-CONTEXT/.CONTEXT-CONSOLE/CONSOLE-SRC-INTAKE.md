@@ -1,4 +1,4 @@
-# High-Resolution Interface Map
+# High-Resolution Interface Map: `apps/console/src/intake`
 
 ## Tree: `apps/console/src/intake`
 
@@ -30,7 +30,7 @@ intake/
 ### `api/intake.api.createFormFromPromptRoute.ts`
 **Role:** HTTP Endpoint handler (`POST /api/intake/forms/from-prompt`) for generating or editing forms via natural language.
 **Key Exports:**
-- `createFormFromPromptRoute(req, deps): Promise<Response>` - Validates auth/org scope, injects micro-edit instructions if scoped, and calls `IntakeCreateFormFromPromptAsync`.
+- `createFormFromPromptRoute(req, deps): Promise<Response>` - Validates auth/org scope, injects micro-edit instructions if scoped, and calls the generation service.
 **Dependencies:** `IntakeCreateFormFromPromptAsync`, `logger`, `getCurrentUser`.
 
 ### `logic/SimpleIntakeEngine.ts`
@@ -63,7 +63,7 @@ intake/
 **Role:** The core pipeline ("Talk + Do") that converts a prompt into a persisted form schema.
 **Key Exports:**
 - `IntakePromptToFormPipelineAsync(input, deps): Promise<Output>` - Runs the multi-step process: Normalize Prompt -> Generate Draft via LLM -> Validate Schema -> Persist to Repo.
-**Dependencies:** `LlmGenerateFormFromPromptAsync`, `formSchemaRepo`, `openaiClient`, `logger`.
+**Dependencies:** `LlmGenerateFormFromPromptAsync`, `formSchemaRepo`, `openaiClient`, `logger`, `normalizeFormSchemaJsonShape`.
 
 ### `ui/chat/ChatPanel.tsx`
 **Role:** Renders the "AI Architect" chat interface where users describe form changes.
@@ -74,8 +74,8 @@ intake/
 ### `ui/intake.ui.FormFromPromptPage.tsx`
 **Role:** The main "Form Builder" page connecting the Canvas, Chat Panel, and Inventory.
 **Key Exports:**
-- `FormFromPromptPage({ initialFormId })` - Manages global state (`fields`, `messages`), handles keyboard shortcuts, orchestrates AI updates via `fetch`, and renders the workspace layout.
-**Dependencies:** `ReactiveCanvas`, `ChatPanel`, `AssistantPanel`, `ElementInventory`, `useHistory`.
+- `FormFromPromptPage({ initialFormId })` - Manages global state (`fields`, `messages`), handles interactions (Undo/Redo, Save, Publish, Delete), and renders the workspace layout.
+**Dependencies:** `ReactiveCanvas`, `AssistantPanel`, `ElementInventory`, `HistoryControl`, `useHistory`, `fetch`.
 
 ### `ui/intake.ui.FormSchemaPreview.tsx`
 **Role:** Renders a live, interactive preview of the generated form schema using React Hook Form.

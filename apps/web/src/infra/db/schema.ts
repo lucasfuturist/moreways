@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid, jsonb, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, uuid, jsonb, pgEnum, boolean } from 'drizzle-orm/pg-core';
 
 // [FIX] Shim the shared Enum so Drizzle doesn't try to delete it.
 // This is used by the Attribution Engine, but shares the same DB 'public' schema.
@@ -30,6 +30,20 @@ export const claims = pgTable('portal_claims', {
   status: text('status').default('draft'),
   summary: text('summary'),
   formData: jsonb('form_data'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+
+export const formSchemas = pgTable('form_schemas', {
+  id: uuid('id').primaryKey(),
+  // Note: Drizzle uses camelCase for keys, mapped to snake_case columns
+  organizationId: text('organization_id').notNull(), 
+  name: text('name').notNull(),
+  slug: text('slug'), // Nullable in DB
+  schemaJson: jsonb('schema_json'),
+  isPublished: boolean('is_published').default(false),
+  isDeprecated: boolean('is_deprecated').default(false),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });

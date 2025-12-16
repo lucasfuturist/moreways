@@ -13,7 +13,7 @@ interface NavbarProps {
   user?: {
     name?: string | null;
     email?: string | null;
-    role?: string | null; // UPDATED: Added role to type
+    role?: string | null;
   } | null;
 }
 
@@ -21,13 +21,16 @@ export default function Navbar({ user }: NavbarProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  // 1. Reset scroll state immediately on route change
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     setScrolled(false);
   }, [pathname]);
 
-  // 2. Global Scroll Listener
   useEffect(() => {
     const handleScroll = (e: Event) => {
       const target = e.target as HTMLElement;
@@ -47,7 +50,6 @@ export default function Navbar({ user }: NavbarProps) {
     { href: "/for-law-firms", label: "For Attorneys" },
   ];
 
-  // UPDATED: Determine Dashboard URL based on Role
   const dashboardUrl = (user?.role === 'lawyer' || user?.role === 'admin') 
     ? (process.env.NEXT_PUBLIC_LAWYER_APP_URL || 'http://localhost:3001/crm')
     : '/dashboard';
@@ -64,7 +66,6 @@ export default function Navbar({ user }: NavbarProps) {
             : "w-[calc(100%-2rem)] max-w-7xl rounded-[2rem] py-4 px-6"
         )}
       >
-        {/* LOGO */}
         <Link href="/" className="flex items-center gap-2 group relative z-10">
           <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold font-heading shadow-lg shadow-indigo-500/30 group-hover:scale-110 transition-transform">
             M
@@ -74,7 +75,6 @@ export default function Navbar({ user }: NavbarProps) {
           </span>
         </Link>
 
-        {/* CENTER LINKS (Desktop Only) */}
         <div className={cn(
             "hidden md:flex items-center bg-white/5 dark:bg-white/5 rounded-full border border-white/5 transition-all duration-300",
             scrolled ? "gap-0 p-0.5" : "gap-1 p-1" 
@@ -96,7 +96,6 @@ export default function Navbar({ user }: NavbarProps) {
           ))}
         </div>
 
-        {/* RIGHT ACTIONS */}
         <div className={cn(
             "hidden md:flex items-center transition-all duration-300",
             scrolled ? "gap-2" : "gap-3" 
@@ -104,9 +103,7 @@ export default function Navbar({ user }: NavbarProps) {
           <ThemeToggle />
 
           {user ? (
-            // === LOGGED IN STATE ===
             <>
-              {/* UPDATED: Dynamic Dashboard Button */}
               <Link href={dashboardUrl}>
                 <Button variant="ghost" size="sm" className={cn(
                     "rounded-full h-10 px-4 transition-colors",
@@ -123,7 +120,6 @@ export default function Navbar({ user }: NavbarProps) {
               </div>
             </>
           ) : (
-            // === LOGGED OUT STATE ===
             <>
               <Link href="/login">
                  <Button 
@@ -150,21 +146,26 @@ export default function Navbar({ user }: NavbarProps) {
         <div className="md:hidden flex items-center gap-2">
             {user && <ClientUserMenu user={user} />}
             
+            {/* [FIX] Always render Button to match server HTML. Only conditionally render Icon. */}
             <Button
               variant="ghost"
               size="icon"
               className="text-slate-900 dark:text-white hover:bg-white/10"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              suppressHydrationWarning // Extra safety net for attributes
             >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {mounted ? (
+                mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />
+              ) : (
+                // Render an empty SVG or span of same size to hold layout
+                <span className="h-6 w-6 block" /> 
+              )}
             </Button>
         </div>
 
-        {/* MOBILE MENU CONTENT */}
         {mobileMenuOpen && (
           <div className="md:hidden absolute top-24 left-4 right-4 bg-white/90 dark:bg-slate-900/95 backdrop-blur-3xl border border-white/20 dark:border-white/10 rounded-[2rem] p-4 shadow-2xl animate-in slide-in-from-top-2 z-50 pointer-events-auto">
              <div className="flex flex-col space-y-2">
-              
               {navLinks.map((link) => (
                 <Link
                   key={link.href}

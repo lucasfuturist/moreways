@@ -1,12 +1,9 @@
---- START OF FILE WEB-COMPONENTS.md ---
-
 # High-Resolution Interface Map: `apps/web/src/components`
 
 ## Tree: `apps/web/src/components`
 
 ```
 components/
-
 ├── AmbientLight.tsx
 ├── AttributionPixel.tsx
 ├── ChatInterface.tsx
@@ -153,7 +150,7 @@ components/
 ### `Navbar.tsx`
 **Role:** The main public navigation bar handling scroll states, mobile menus, and conditional rendering based on authentication status.
 **Key Exports:**
-- `Navbar({ user })` - Renders the navigation pills, theme toggle, and auth actions.
+- `Navbar({ user })` - Renders the navigation pills, theme toggle, and auth actions. Includes client-side hydration guards.
 **Dependencies:** `ClientUserMenu`, `ThemeToggle`.
 
 ### `PageTransition.tsx`
@@ -189,7 +186,7 @@ components/
 ### `ThemeToggle.tsx`
 **Role:** Button component to toggle between light and dark themes using `next-themes`.
 **Key Exports:**
-- `ThemeToggle()` - Renders a sun/moon icon button.
+- `ThemeToggle()` - Renders a sun/moon icon button with client-side hydration guards.
 **Dependencies:** `next-themes`.
 
 ### `theme-provider.tsx`
@@ -203,19 +200,19 @@ components/
 ### `runner/IntakeOrchestrator.tsx`
 **Role:** The entry point for the intake process; uses an LLM router to "triage" the user's situation before handing off to the structured `UnifiedRunner`.
 **Key Exports:**
-- `IntakeOrchestrator({ initialMessage })` - Manages the transition from open-ended chat (Router) to specific form execution (Runner).
+- `IntakeOrchestrator({ initialMessage })` - Manages the transition from open-ended chat (Router) to specific form execution (Runner), supporting dynamic form fetching.
 **Dependencies:** `UnifiedRunner`, `IntakeChatMessage`, `fetch` (/api/chat).
 
 ### `runner/UnifiedRunner.tsx`
 **Role:** The top-level orchestrator for the public-facing Form Runner. Handles schema fetching (via proxy), local persistence, layout switching, submission, and AI assessment display.
 **Key Exports:**
-- `UnifiedRunner(props)` - Manages the full intake lifecycle from loading to verdict.
+- `UnifiedRunner(props)` - Manages the full intake lifecycle from loading to verdict. Includes robust schema normalization.
 **Dependencies:** `ChatRunner`, `SectionSidebar`, `VerdictCard`, `fetch` (Console Proxy API).
 
 ### `runner/components/ChatRunner.tsx`
 **Role:** The logic core for the conversational form execution. Drives the form flow based on schema logic and user input.
 **Key Exports:**
-- `ChatRunner(props)` - Orchestrates the loop: Ask Question -> Receive Input -> Validate -> Next Field.
+- `ChatRunner(props)` - Orchestrates the loop: Ask Question -> Receive Input -> Validate -> Next Field. Handles scrolling, completion states, and "Review" overlay triggers.
 **Dependencies:** `IntakeChatMessage`, `schemaIterator`.
 
 ### `runner/components/FieldAssistantBubble.tsx`
@@ -245,13 +242,13 @@ components/
 ### `runner/components/SectionSidebar.tsx`
 **Role:** Visual progress indicator showing the user's position within the form sections.
 **Key Exports:**
-- `SectionSidebar({ schema, currentFieldKey })` - Renders a list of sections, highlighting the active one.
+- `SectionSidebar({ schema, currentFieldKey })` - Renders a list of sections based on schema metadata, highlighting the active one.
 **Dependencies:** None.
 
 ### `runner/components/VerdictCard.tsx`
 **Role:** Displays the final AI assessment results, including the merit score, legal summary, and citations.
 **Key Exports:**
-- `VerdictCard(props)` - Visualizes the `confidence` score and lists `missingElements` and `citations`.
+- `VerdictCard(props)` - Visualizes the `confidence` score and lists `missingElements` and `citations`. Includes guard logic for hallucinated citations.
 **Dependencies:** `lucide-react`.
 
 ### `runner/logic/schemaIterator.ts`

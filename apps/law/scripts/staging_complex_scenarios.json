@@ -1,0 +1,850 @@
+[
+  {
+    "id": "complex_0_01",
+    "intent": "Auto Sales – Lemon Law",
+    "formData": {
+      "client_info": {
+        "state": "MA",
+        "age": 45
+      },
+      "key_dates": {
+        "purchase_date": "2023-01-15",
+        "first_issue": "2023-01-20",
+        "dealer_notice": "2023-02-01"
+      },
+      "financials": {
+        "purchase_price": 24000,
+        "repair_costs_incurred": 1500,
+        "finance_company": "Ally"
+      },
+      "timeline": [
+        {
+          "date": "2023-01-15",
+          "event": "Purchased Ford Explorer"
+        },
+        {
+          "date": "2023-01-20",
+          "event": "Check engine light came on"
+        },
+        {
+          "date": "2023-01-22",
+          "event": "Dealer said it was just a loose cap"
+        },
+        {
+          "date": "2023-02-10",
+          "event": "Transmission started slipping"
+        },
+        {
+          "date": "2023-03-05",
+          "event": "Car won't go into reverse"
+        }
+      ],
+      "evidence_held": [
+        "Sales Contract",
+        "Repair Order #123",
+        "Repair Invoice #456"
+      ],
+      "client_narrative": "I bought this car thinking it was reliable. Three days later, the light comes on. The dealer brushed me off. Now it's been in the shop 4 times for the same transmission issue. They are refusing to refund me and say I drove it too hard, which is ridiculous! I only use it to commute to work and occasionally pick up groceries."
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "complex_0_02",
+    "intent": "Debt Collection – Harassment",
+    "formData": {
+      "client_info": {
+        "state": "MA",
+        "age": 38
+      },
+      "key_dates": {
+        "collection_start": "2022-05-01",
+        "first_harassment": "2022-06-15",
+        "formal_dispute": "2022-07-01"
+      },
+      "financials": {
+        "debt_amount": 5500,
+        "payments_made": 1200,
+        "creditor": "XYZ Credit, Inc."
+      },
+      "timeline": [
+        {
+          "date": "2022-05-01",
+          "event": "Received first collection notice"
+        },
+        {
+          "date": "2022-06-15",
+          "event": "Received harassing call at work"
+        },
+        {
+          "date": "2022-07-01",
+          "event": "Sent formal dispute via certified mail"
+        },
+        {
+          "date": "2022-09-10",
+          "event": "Received another call at work despite dispute"
+        }
+      ],
+      "evidence_held": [
+        "Certified mail receipt",
+        "Call log records",
+        "Voicemail recordings"
+      ],
+      "client_narrative": "They keep calling me at my job, which is embarrassing and against the law, right? I already sent them a letter to stop, but they just ignore it and keep hounding me. I'm trying to pay, but I just can't catch a break with all these fees piling up."
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "complex_0_03",
+    "intent": "Credit Reporting – Mixed Files",
+    "formData": {
+      "client_info": {
+        "state": "MA",
+        "age": 29
+      },
+      "key_dates": {
+        "first_dispute": "2022-11-11",
+        "second_dispute": "2023-02-15",
+        "issue_persistence": "2023-04-20"
+      },
+      "financials": {
+        "credit_score_drop": 120,
+        "disputed_amount": 8000
+      },
+      "timeline": [
+        {
+          "date": "2022-11-11",
+          "event": "Filed initial dispute with credit bureau"
+        },
+        {
+          "date": "2023-02-15",
+          "event": "Filed second dispute after no resolution"
+        },
+        {
+          "date": "2023-04-20",
+          "event": "Credit issue persists, new accounts appear"
+        }
+      ],
+      "evidence_held": [
+        "Dispute letters",
+        "Credit report printouts",
+        "Correspondence with credit bureau"
+      ],
+      "client_narrative": "My credit report is a mess! It's like they think I'm someone else. I never opened these accounts, but they keep adding them. It's affecting my score and my life. I can't get a loan for a car I desperately need for work. I've written to them multiple times, but nothing changes."
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "complex_0_04",
+    "intent": "Home Improvement – Contractor Walked Off Job",
+    "formData": {
+      "client_info": {
+        "state": "MA",
+        "age": 54
+      },
+      "key_dates": {
+        "contract_signed": "2023-02-01",
+        "work_start": "2023-02-10",
+        "contractor_walked_off": "2023-03-05"
+      },
+      "financials": {
+        "contract_amount": 15000,
+        "amount_paid": 10000,
+        "estimated_cost_to_complete": 8000
+      },
+      "timeline": [
+        {
+          "date": "2023-02-01",
+          "event": "Signed contract for kitchen remodel"
+        },
+        {
+          "date": "2023-02-10",
+          "event": "Contractor began work"
+        },
+        {
+          "date": "2023-03-05",
+          "event": "Contractor walked off job, leaving it unfinished"
+        }
+      ],
+      "evidence_held": [
+        "Signed contract",
+        "Payment receipts",
+        "Photographs of unfinished work"
+      ],
+      "client_narrative": "I hired this guy to remodel my kitchen. We agreed on everything, but then he just stops showing up! Calls go unanswered, and I'm left with a half-done mess. I paid him most of the money already, and now I need someone else to finish it. I just don't know what to do anymore."
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "complex_1_01",
+    "intent": "Auto Sales – Lemon Law",
+    "formData": {
+      "client_info": {
+        "state": "MA",
+        "age": 45
+      },
+      "key_dates": {
+        "purchase_date": "2023-01-15",
+        "first_issue": "2023-01-20",
+        "dealer_notice": "2023-02-01"
+      },
+      "financials": {
+        "purchase_price": 24000,
+        "repair_costs_incurred": 1500,
+        "finance_company": "Ally"
+      },
+      "timeline": [
+        {
+          "date": "2023-01-15",
+          "event": "Purchased Ford Explorer"
+        },
+        {
+          "date": "2023-01-20",
+          "event": "Check engine light came on"
+        },
+        {
+          "date": "2023-01-22",
+          "event": "Dealer said it was just a loose cap"
+        },
+        {
+          "date": "2023-03-05",
+          "event": "Transmission issue diagnosed"
+        },
+        {
+          "date": "2023-03-10",
+          "event": "Returned to dealer for repair"
+        },
+        {
+          "date": "2023-04-02",
+          "event": "Transmission issue recurred"
+        }
+      ],
+      "evidence_held": [
+        "Sales Contract",
+        "Repair Order #123"
+      ],
+      "client_narrative": "I bought this car thinking it was reliable. Three days later, the light comes on. The dealer brushed me off. Now it's been in the shop 4 times for the same transmission issue. They are refusing to refund me and say I drove it too hard."
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "complex_2_01",
+    "intent": "Debt Collection – Harassment",
+    "formData": {
+      "client_info": {
+        "state": "MA",
+        "age": 33
+      },
+      "key_dates": {
+        "initial_contact": "2023-06-01",
+        "workplace_call": "2023-08-15",
+        "written_dispute": "2023-09-01"
+      },
+      "financials": {
+        "alleged_debt_amount": 5000,
+        "settlement_offer": 3000
+      },
+      "timeline": [
+        {
+          "date": "2023-06-01",
+          "event": "First contact from ABC Collections"
+        },
+        {
+          "date": "2023-07-10",
+          "event": "Received letter about debt"
+        },
+        {
+          "date": "2023-08-15",
+          "event": "Collection call made to workplace"
+        },
+        {
+          "date": "2023-09-01",
+          "event": "Sent written dispute"
+        }
+      ],
+      "evidence_held": [
+        "Collection letters",
+        "Voicemail transcriptions"
+      ],
+      "client_narrative": "These debt collectors won't leave me alone. They called my work, which is just embarrassing. I told them the amount is wrong, sent a dispute, but they keep calling. I don't owe this money. It's causing me so much stress."
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "complex_3_01",
+    "intent": "Credit Reporting – Identity Theft",
+    "formData": {
+      "client_info": {
+        "state": "MA",
+        "age": 29
+      },
+      "key_dates": {
+        "discovery_date": "2022-12-10",
+        "reporting_date": "2022-12-15",
+        "police_report_date": "2023-01-02"
+      },
+      "financials": {
+        "fraudulent_charges": 4000,
+        "credit_score_drop": 120
+      },
+      "timeline": [
+        {
+          "date": "2022-12-10",
+          "event": "Noticed unknown account on credit report"
+        },
+        {
+          "date": "2022-12-15",
+          "event": "Reported to credit bureau"
+        },
+        {
+          "date": "2023-01-02",
+          "event": "Filed police report"
+        },
+        {
+          "date": "2023-01-20",
+          "event": "Received confirmation from credit bureau"
+        }
+      ],
+      "evidence_held": [
+        "Credit report",
+        "Police report"
+      ],
+      "client_narrative": "I checked my credit score and saw an account that isn't mine. I contacted the credit bureau, but they took forever to respond. Meanwhile, my credit score dropped significantly, and now I can't get approved for a loan."
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "complex_4_01",
+    "intent": "Home Improvement – Contractor walked off job",
+    "formData": {
+      "client_info": {
+        "state": "MA",
+        "age": 52
+      },
+      "key_dates": {
+        "contract_signed": "2023-04-01",
+        "work_start_date": "2023-04-15",
+        "walk_off_date": "2023-05-10"
+      },
+      "financials": {
+        "contract_amount": 15000,
+        "amount_paid": 10000,
+        "estimated_completion": 80
+      },
+      "timeline": [
+        {
+          "date": "2023-04-01",
+          "event": "Signed contract with BuildItNow"
+        },
+        {
+          "date": "2023-04-15",
+          "event": "Work commenced"
+        },
+        {
+          "date": "2023-05-10",
+          "event": "Contractor walked off job"
+        }
+      ],
+      "evidence_held": [
+        "Contract agreement",
+        "Receipts of payments"
+      ],
+      "client_narrative": "This contractor seemed fine until he just stopped showing up. He said something about needing more money but the contract was clear. Now I'm living in a construction zone and no one will finish the work."
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "complex_5_01",
+    "intent": "Auto Sales – Statute of Limitations",
+    "formData": {
+      "client_info": {
+        "state": "MA",
+        "age": 40
+      },
+      "key_dates": {
+        "purchase_date": "2019-07-10",
+        "first_issue": "2019-09-15",
+        "final_repair": "2019-12-20"
+      },
+      "financials": {
+        "purchase_price": 18000,
+        "repair_costs_incurred": 3000,
+        "settled_with_dealer": false
+      },
+      "timeline": [
+        {
+          "date": "2019-07-10",
+          "event": "Purchased Toyota Camry"
+        },
+        {
+          "date": "2019-09-15",
+          "event": "First issue with brakes"
+        },
+        {
+          "date": "2019-12-20",
+          "event": "Final repair attempt by dealer"
+        },
+        {
+          "date": "2023-10-01",
+          "event": "Decided to take legal action"
+        }
+      ],
+      "evidence_held": [
+        "Sales Contract",
+        "Repair Records"
+      ],
+      "client_narrative": "I bought this car years ago, thinking Toyotas are solid. But very soon, the brakes started acting up. The dealer kept saying they'd fix it, but it was temporary every time. I finally decided to act now because I'm tired of dealing with this lemon."
+    },
+    "expected_bias": "STATUTE_OF_LIMITATIONS"
+  },
+  {
+    "id": "complex_2_01",
+    "intent": "Auto Sales – Lemon Law",
+    "formData": {
+      "client_info": {
+        "state": "MA",
+        "age": 45
+      },
+      "key_dates": {
+        "purchase_date": "2023-01-15",
+        "first_issue": "2023-01-20",
+        "dealer_notice": "2023-02-01"
+      },
+      "financials": {
+        "purchase_price": 24000,
+        "repair_costs_incurred": 1500,
+        "finance_company": "Ally"
+      },
+      "timeline": [
+        {
+          "date": "2023-01-15",
+          "event": "Purchased Ford Explorer"
+        },
+        {
+          "date": "2023-01-20",
+          "event": "Check engine light came on"
+        },
+        {
+          "date": "2023-01-22",
+          "event": "Dealer said it was just a loose cap"
+        },
+        {
+          "date": "2023-02-05",
+          "event": "Transmission issues started"
+        },
+        {
+          "date": "2023-03-01",
+          "event": "Fourth repair attempt failed"
+        }
+      ],
+      "evidence_held": [
+        "Sales Contract",
+        "Repair Order #123",
+        "Emails from Dealer"
+      ],
+      "client_narrative": "I bought this car thinking it was reliable. Three days later, the light comes on. The dealer brushed me off. Now it's been in the shop 4 times for the same transmission issue. They are refusing to refund me and say I drove it too hard."
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "complex_2_02",
+    "intent": "Debt Collection – Harassment",
+    "formData": {
+      "client_info": {
+        "state": "CA",
+        "age": 32
+      },
+      "key_dates": {
+        "debt_origin_date": "2018-05-15",
+        "first_collection_contact": "2023-03-01",
+        "workplace_contact_date": "2023-03-10"
+      },
+      "debt_details": {
+        "original_creditor": "Chase",
+        "amount_owed": 5000,
+        "current_collector": "ABC Collections"
+      },
+      "timeline": [
+        {
+          "date": "2023-03-01",
+          "event": "Received first collection call at home"
+        },
+        {
+          "date": "2023-03-05",
+          "event": "Received letter from ABC Collections"
+        },
+        {
+          "date": "2023-03-10",
+          "event": "Collector called workplace multiple times"
+        },
+        {
+          "date": "2023-03-12",
+          "event": "Sent cease communication request"
+        }
+      ],
+      "evidence_held": [
+        "Collection Letter",
+        "Call Logs",
+        "Cease Letter Receipt"
+      ],
+      "client_narrative": "I got this call out of nowhere at work. They won't stop calling my office, and it's really embarrassing. I told them not to call here, and they keep ignoring my requests. I don't even know if I owe this debt because it's so old."
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "complex_2_03",
+    "intent": "Credit Reporting – Identity Theft",
+    "formData": {
+      "client_info": {
+        "state": "FL",
+        "age": 29
+      },
+      "key_dates": {
+        "discovery_date": "2023-04-15",
+        "police_report_date": "2023-04-17",
+        "first_dispute_date": "2023-04-20"
+      },
+      "credit_issues": {
+        "accounts_opened": [
+          "Capital One",
+          "Best Buy"
+        ],
+        "total_fraudulent_debt": 12000
+      },
+      "timeline": [
+        {
+          "date": "2023-04-15",
+          "event": "Noticed unfamiliar accounts on credit report"
+        },
+        {
+          "date": "2023-04-17",
+          "event": "Filed police report for identity theft"
+        },
+        {
+          "date": "2023-04-20",
+          "event": "Disputed fraudulent accounts with credit bureaus"
+        },
+        {
+          "date": "2023-05-01",
+          "event": "Received response from TransUnion denying dispute"
+        }
+      ],
+      "evidence_held": [
+        "Police Report",
+        "Dispute Letter",
+        "Credit Report"
+      ],
+      "client_narrative": "I was just checking my credit score, and suddenly, there are these accounts I never opened. I called the companies, and they said I owe them money! I promptly filed a police report, but the credit bureaus are just dragging their feet."
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "complex_2_04",
+    "intent": "Home Improvement – Bad Work",
+    "formData": {
+      "client_info": {
+        "state": "TX",
+        "age": 50
+      },
+      "key_dates": {
+        "contract_signing": "2022-09-15",
+        "work_start": "2022-10-01",
+        "first_issue": "2022-11-10"
+      },
+      "contract_details": {
+        "contractor": "XYZ Renovations",
+        "total_cost": 15000,
+        "amount_paid": 12000
+      },
+      "timeline": [
+        {
+          "date": "2022-09-15",
+          "event": "Signed contract with XYZ Renovations"
+        },
+        {
+          "date": "2022-10-01",
+          "event": "Contractor began work on kitchen"
+        },
+        {
+          "date": "2022-11-10",
+          "event": "Noticed misaligned cabinets"
+        },
+        {
+          "date": "2023-01-15",
+          "event": "Contractor stopped returning calls"
+        }
+      ],
+      "evidence_held": [
+        "Contract",
+        "Photos of Kitchen",
+        "Emails"
+      ],
+      "client_narrative": "I hired this contractor to fix up my kitchen. He seemed so professional at first, but the cabinets are all crooked, and the paint is peeling. Now, he won't even return my calls or come back to finish the job. I paid most of the cost upfront, and I'm just stuck."
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "complex_2_05",
+    "intent": "Auto Sales – Misrepresentation",
+    "formData": {
+      "client_info": {
+        "state": "NY",
+        "age": 37
+      },
+      "key_dates": {
+        "purchase_date": "2020-08-15",
+        "discovery_date": "2023-07-10",
+        "dealer_contact": "2023-07-15"
+      },
+      "financials": {
+        "purchase_price": 18000,
+        "current_value": 5000,
+        "loan_provider": "Capital Auto Loan"
+      },
+      "timeline": [
+        {
+          "date": "2020-08-15",
+          "event": "Purchased vehicle with clean title"
+        },
+        {
+          "date": "2023-07-10",
+          "event": "Discovered vehicle had been in a prior accident"
+        },
+        {
+          "date": "2023-07-15",
+          "event": "Contacted dealer for explanation"
+        },
+        {
+          "date": "2023-07-20",
+          "event": "Dealer denied knowledge of accident"
+        }
+      ],
+      "evidence_held": [
+        "Vehicle History Report",
+        "Sales Contract"
+      ],
+      "client_narrative": "When I bought this car, they told me it had a clean title. I recently decided to sell it, and the buyer found it had been in a major accident before I bought it! I contacted the dealer, and they just shrugged it off, saying it wasn't their problem. Now the car's worth nothing."
+    },
+    "expected_bias": "GRAY AREA"
+  },
+  {
+    "id": "complex_3_01",
+    "intent": "Auto Sales – Lemon Law",
+    "formData": {
+      "client_info": {
+        "state": "MA",
+        "age": 45
+      },
+      "key_dates": {
+        "purchase_date": "2023-01-15",
+        "first_issue": "2023-01-20",
+        "dealer_notice": "2023-02-01"
+      },
+      "financials": {
+        "purchase_price": 24000,
+        "repair_costs_incurred": 1500,
+        "finance_company": "Ally"
+      },
+      "timeline": [
+        {
+          "date": "2023-01-15",
+          "event": "Purchased Ford Explorer"
+        },
+        {
+          "date": "2023-01-20",
+          "event": "Check engine light came on"
+        },
+        {
+          "date": "2023-01-22",
+          "event": "Dealer said it was just a loose cap"
+        },
+        {
+          "date": "2023-02-10",
+          "event": "Transmission issues detected"
+        },
+        {
+          "date": "2023-03-01",
+          "event": "Fourth repair attempt by dealer"
+        }
+      ],
+      "evidence_held": [
+        "Sales Contract",
+        "Repair Order #123",
+        "Dealer Repair Receipts"
+      ],
+      "client_narrative": "I bought this car thinking it was reliable. Three days later, the light comes on. The dealer brushed me off. Now it's been in the shop 4 times for the same transmission issue. They are refusing to refund me and say I drove it too hard."
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "complex_3_02",
+    "intent": "Debt Collection – Harassment",
+    "formData": {
+      "client_info": {
+        "state": "MA",
+        "age": 32
+      },
+      "key_dates": {
+        "initial_contact": "2023-02-01",
+        "workplace_call": "2023-02-15",
+        "cease_contact_letter_sent": "2023-03-01"
+      },
+      "financials": {
+        "debt_amount": 5000,
+        "settlement_offer": 3000,
+        "collection_agency": "ABC Collections"
+      },
+      "timeline": [
+        {
+          "date": "2023-02-01",
+          "event": "First collection call received"
+        },
+        {
+          "date": "2023-02-05",
+          "event": "Received letter from collection agency"
+        },
+        {
+          "date": "2023-02-15",
+          "event": "Agency called workplace"
+        },
+        {
+          "date": "2023-03-01",
+          "event": "Sent cease contact letter"
+        }
+      ],
+      "evidence_held": [
+        "Cease and desist letter",
+        "Call logs from work"
+      ],
+      "client_narrative": "I keep getting calls from ABC Collections, even at my work! I sent them a letter to stop, but they just don't listen. This is causing me so much stress. I even offered a settlement, but they keep refusing. It's like they enjoy harassing me."
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "complex_3_03",
+    "intent": "Credit Reporting – Mixed Files",
+    "formData": {
+      "client_info": {
+        "state": "MA",
+        "age": 27
+      },
+      "key_dates": {
+        "first_credit_report_dispute": "2022-11-15",
+        "identity_theft_report_filed": "2022-12-01",
+        "last_creditor_contact": "2023-01-20"
+      },
+      "financials": {
+        "disputed_amount": 7500,
+        "credit_score_drop": 120,
+        "credit_bureau": "Experian"
+      },
+      "timeline": [
+        {
+          "date": "2022-11-01",
+          "event": "Noticed inaccurate account on credit report"
+        },
+        {
+          "date": "2022-11-15",
+          "event": "Filed dispute with Experian"
+        },
+        {
+          "date": "2022-12-01",
+          "event": "Identity theft report filed with police"
+        },
+        {
+          "date": "2023-01-20",
+          "event": "Last contact with fraudulent creditor"
+        }
+      ],
+      "evidence_held": [
+        "Police report",
+        "Dispute letter to Experian"
+      ],
+      "client_narrative": "I found an account on my credit report that isn't mine, and my score has tanked because of it. I filed a dispute and even went to the police, but Experian hasn't resolved it. This is outrageous; it's not even my account!"
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "complex_3_04",
+    "intent": "Home Improvement – Contractor Walked Off Job",
+    "formData": {
+      "client_info": {
+        "state": "MA",
+        "age": 52
+      },
+      "key_dates": {
+        "contract_date": "2023-02-01",
+        "work_started": "2023-02-10",
+        "last_contact_with_contractor": "2023-02-25"
+      },
+      "financials": {
+        "contract_value": 15000,
+        "amount_paid": 10000,
+        "contractor_company": "Joe's Renovations"
+      },
+      "timeline": [
+        {
+          "date": "2023-02-01",
+          "event": "Signed contract with Joe's Renovations"
+        },
+        {
+          "date": "2023-02-10",
+          "event": "Contractor began work"
+        },
+        {
+          "date": "2023-02-20",
+          "event": "Quality concerns raised"
+        },
+        {
+          "date": "2023-02-25",
+          "event": "Contractor left site, no further contact"
+        }
+      ],
+      "evidence_held": [
+        "Contract Agreement",
+        "Photos of incomplete work"
+      ],
+      "client_narrative": "We hired Joe's Renovations to redo our kitchen. They seemed great at first, but soon after, it was clear they were cutting corners. Now they've just disappeared without finishing, and I can't get a hold of them. I've already paid too much for this mess."
+    },
+    "expected_bias": "VIOLATION"
+  },
+  {
+    "id": "complex_3_05",
+    "intent": "Auto Sales – Misrepresentation",
+    "formData": {
+      "client_info": {
+        "state": "MA",
+        "age": 39
+      },
+      "key_dates": {
+        "purchase_date": "2022-10-10",
+        "issues_discovered": "2022-11-01",
+        "dealer_contact_attempted": "2022-11-20"
+      },
+      "financials": {
+        "purchase_price": 18000,
+        "estimated_repair_costs": 2000,
+        "dealer_name": "Best Auto Sales"
+      },
+      "timeline": [
+        {
+          "date": "2022-10-10",
+          "event": "Purchased used sedan from Best Auto Sales"
+        },
+        {
+          "date": "2022-11-01",
+          "event": "Discovered odometer had been rolled back"
+        },
+        {
+          "date": "2022-11-20",
+          "event": "Attempted contact with dealer, no response"
+        }
+      ],
+      "evidence_held": [
+        "Vehicle history report",
+        "Odometer disclosure statement"
+      ],
+      "client_narrative": "I bought this used car, and they assured me everything was legit. Turns out, the odometer was rolled back. I feel cheated, and the dealer just ignores my calls. This is not just unfair, it's illegal."
+    },
+    "expected_bias": "STATUTE_OF_LIMITATIONS"
+  }
+]

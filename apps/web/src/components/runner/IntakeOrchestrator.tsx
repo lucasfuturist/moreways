@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Send, Sparkles, ShieldCheck, AlignLeft, ArrowRight } from "lucide-react";
+import { Send, Sparkles, ShieldCheck, FileText } from "lucide-react"; // Added FileText
 import { UnifiedRunner } from "./UnifiedRunner";
 import { ChatMessage } from "./components/ChatRunner";
 import { IntakeChatMessage } from "./components/IntakeChatMessage";
@@ -14,11 +14,19 @@ interface IntakeOrchestratorProps {
   initialMessage?: string;
 }
 
-export function IntakeOrchestrator({ initialMessage = "Briefly tell me what happened." }: IntakeOrchestratorProps) {
+interface PublishedForm {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export function IntakeOrchestrator({ initialMessage = "Briefly tell me what happened, or choose a topic below." }: IntakeOrchestratorProps) {
   const [mode, setMode] = useState<OrchestratorMode>("triage");
   
+  // -- DYNAMIC FORMS STATE --
+  const [availableForms, setAvailableForms] = useState<PublishedForm[]>([]);
+  
   // -- SHARED STATE --
-  // This history array persists across the Triage -> Runner transition
   const [history, setHistory] = useState<ChatMessage[]>([
     { id: "init", variant: "agent", content: initialMessage }
   ]);
@@ -32,25 +40,66 @@ export function IntakeOrchestrator({ initialMessage = "Briefly tell me what happ
   const [targetFormSlug, setTargetFormSlug] = useState<string | null>(null);
   const [extractedContext, setExtractedContext] = useState<Record<string, any>>({});
 
-  // Auto-scroll for Triage Phase
+  // Fetch available forms on mount
+  useEffect(() => {
+    fetch("/api/intake/published-forms")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setAvailableForms(data);
+        }
+      })
+      .catch(console.error);
+  }, []);
+
+  // Auto-scroll
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
     }
-  }, [history, isThinking]);
+  }, [history, isThinking, availableForms]);
+
+  // -- PILL CLICK HANDLER --
+  const handleFormSelect = (form: PublishedForm) => {
+    // 1. Add user choice to history
+    const userMsg: ChatMessage = { 
+        id: Date.now().toString(), 
+        variant: "user", 
+        content: `I have a ${form.name} issue.` 
+    };
+    setHistory(prev => [...prev, userMsg]);
+    setIsThinking(true);
+
+    // 2. Direct Routing
+    setTimeout(() => {
+        setIsThinking(false);
+        const transitionMsg: ChatMessage = { 
+            id: "sys_route", 
+            variant: "section", 
+            content: `Case Type Identified: ${form.name.toUpperCase()}` 
+        };
+        setHistory(prev => [...prev, transitionMsg]);
+        
+        // [CHANGE] Pass the ID (UUID) instead of slug for 100% reliability with the API
+        setTargetFormSlug(form.id); 
+        setExtractedContext({ detected_intent: form.name });
+        setMode("handoff");
+        
+        setTimeout(() => setMode("runner"), 1000);
+    }, 800);
+  };
+
 
   // -- TRIAGE LOGIC --
   const handleTriageSubmit = async (text: string) => {
     if (!text.trim()) return;
 
-    // 1. Optimistic UI Update
     const userMsg: ChatMessage = { id: Date.now().toString(), variant: "user", content: text };
     setHistory(prev => [...prev, userMsg]);
     setInputValue("");
     setIsThinking(true);
 
     try {
-      // 2. Call the Router API
       // We map our ChatMessage format to the format OpenAI expects
       const apiMessages = history.concat(userMsg).map(m => ({
         role: m.variant === "user" ? "user" : "assistant",
@@ -69,15 +118,12 @@ export function IntakeOrchestrator({ initialMessage = "Briefly tell me what happ
       setIsThinking(false);
 
       if (router_data?.needs_clarification) {
-        // CASE A: Need more info
         setHistory(prev => [...prev, { id: Date.now().toString(), variant: "agent", content: message }]);
       } 
       else if (router_data?.router_decision?.form_slug) {
-        // CASE B: Routed!
         const { form_slug } = router_data.router_decision;
         const context = router_data.extracted_context || {};
         
-        // Add a "System" message to visually mark the transition
         const transitionMsg: ChatMessage = { 
           id: "sys_route", 
           variant: "section", 
@@ -85,17 +131,12 @@ export function IntakeOrchestrator({ initialMessage = "Briefly tell me what happ
         };
         
         setHistory(prev => [...prev, transitionMsg]);
-        
-        // Prepare state for the switch
         setTargetFormSlug(form_slug);
         setExtractedContext(context);
         setMode("handoff");
-        
-        // Short artificial delay to let the user read the "Identified" message before the UI shifts
         setTimeout(() => setMode("runner"), 1200);
       } 
       else {
-        // Fallback
         setHistory(prev => [...prev, { id: Date.now().toString(), variant: "agent", content: message || "Can you provide more details?" }]);
       }
 
@@ -107,14 +148,12 @@ export function IntakeOrchestrator({ initialMessage = "Briefly tell me what happ
   };
 
   // --- RENDER: RUNNER MODE ---
-  // If we are in "runner" mode, we render the UnifiedRunner.
-  // CRITICAL: We pass 'history' so it pre-fills the chat window.
   if (mode === "runner" && targetFormSlug) {
     return (
       <UnifiedRunner
         formId={targetFormSlug}
         initialData={extractedContext}
-        initialHistory={history} // <--- The magic glue
+        initialHistory={history}
         intent={extractedContext.detected_intent || "General Inquiry"}
       />
     );
@@ -124,8 +163,7 @@ export function IntakeOrchestrator({ initialMessage = "Briefly tell me what happ
   return (
     <div className="flex flex-col md:flex-row h-[85vh] w-full bg-slate-950 overflow-hidden rounded-2xl border border-slate-800 shadow-2xl relative transition-all duration-500">
       
-      {/* 1. LEFT SIDEBAR (Placeholder State) */}
-      {/* This ensures the layout shape matches the UnifiedRunner so there's no "jump" when switching */}
+      {/* 1. LEFT SIDEBAR */}
       <div className="hidden md:flex w-64 flex-col border-r border-slate-800 bg-slate-950 flex-none z-20">
          <div className="p-6 border-b border-slate-800 flex items-center gap-2">
              <ShieldCheck className="w-4 h-4 text-indigo-500" />
@@ -150,7 +188,6 @@ export function IntakeOrchestrator({ initialMessage = "Briefly tell me what happ
       {/* 2. MAIN CHAT AREA */}
       <div className="flex-1 relative flex flex-col h-full overflow-hidden bg-slate-950">
           
-          {/* Handoff Overlay (Fade Effect) */}
           <AnimatePresence>
             {mode === "handoff" && (
                 <motion.div 
@@ -169,11 +206,32 @@ export function IntakeOrchestrator({ initialMessage = "Briefly tell me what happ
 
           {/* Chat History */}
           <div className="flex-1 overflow-y-auto px-4 py-8 scroll-smooth" ref={scrollRef}>
-            <div className="max-w-2xl mx-auto space-y-6">
+            <div className="max-w-2xl mx-auto space-y-6 pb-24">
                 <AnimatePresence mode="popLayout">
                     {history.map((msg) => (
                         <IntakeChatMessage key={msg.id} {...msg} />
                     ))}
+                    
+                    {/* --- DYNAMIC FORM PILLS --- */}
+                    {history.length === 1 && availableForms.length > 0 && !isThinking && (
+                        <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="flex flex-wrap gap-2 mt-4 ml-12"
+                        >
+                            {availableForms.map((form) => (
+                                <button
+                                    key={form.id}
+                                    onClick={() => handleFormSelect(form)}
+                                    className="px-4 py-2 rounded-full bg-slate-800/50 hover:bg-indigo-600/20 hover:border-indigo-500/50 border border-slate-700 text-slate-300 hover:text-white text-sm transition-all duration-200 flex items-center gap-2 group"
+                                >
+                                    <FileText className="w-3.5 h-3.5 text-slate-500 group-hover:text-indigo-400" />
+                                    {form.name}
+                                </button>
+                            ))}
+                        </motion.div>
+                    )}
+
                     {isThinking && (
                         <motion.div 
                             initial={{ opacity: 0, y: 10 }} 

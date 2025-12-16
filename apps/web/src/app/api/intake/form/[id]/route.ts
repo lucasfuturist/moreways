@@ -1,35 +1,40 @@
-import { NextRequest, NextResponse } from "next/server";
-
-const FACTORY_API_URL = process.env.FACTORY_API_URL || "http://localhost:3002";
-const API_KEY = process.env.ARGUEOS_API_KEY || "";
+import { NextResponse } from "next/server";
+import { db } from "@/infra/db/client";
+import { formSchemas } from "@/infra/db/schema";
+import { eq, or } from "drizzle-orm";
 
 export async function GET(
-  req: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const formId = params.id;
-    console.log(`[Gateway] 📥 Fetching Schema for: ${formId}`);
+    const idOrSlug = params.id;
+    
+    // Fetch directly from DB using ID OR Slug
+    const result = await db
+      .select()
+      .from(formSchemas)
+      .where(or(
+        eq(formSchemas.id, idOrSlug),
+        eq(formSchemas.slug, idOrSlug)
+      ))
+      .limit(1);
 
-    // Call Factory Public API
-    const res = await fetch(`${FACTORY_API_URL}/api/public/v1/forms?id=${formId}`, {
-      headers: {
-        "x-api-key": API_KEY,
-        "Content-Type": "application/json"
-      },
-      cache: "no-store"
-    });
-
-    if (!res.ok) {
-      console.error(`[Gateway] Factory Error: ${res.status}`);
-      return NextResponse.json({ error: "Form not found" }, { status: 404 });
+    if (result.length === 0) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    const data = await res.json();
-    return NextResponse.json(data);
+    const form = result[0];
+    
+    return NextResponse.json({
+        id: form.id,
+        name: form.name,
+        slug: form.slug,
+        schemaJson: form.schemaJson
+    });
 
   } catch (error) {
-    console.error("[Gateway] Schema Proxy Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error("Fetch form error:", error);
+    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
   }
 }

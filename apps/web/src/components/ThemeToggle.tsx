@@ -16,8 +16,9 @@ export function ThemeToggle() {
     setMounted(true);
   }, []);
 
-  // 3. Render a placeholder during Server-Side Rendering (SSR)
-  // This prevents the "Hydration failed" error because the HTML will be stable
+  // 3. Render a STABLE placeholder during SSR
+  // IMPORTANT: This must match the dimensions/layout of the final button exactly
+  // to prevent layout shifts, but contain no theme-specific icons.
   if (!mounted) {
     return (
       <Button
@@ -30,7 +31,6 @@ export function ThemeToggle() {
     );
   }
 
-  // 4. Render the actual interactive toggle (Client Side only)
   return (
     <Button
       variant="ghost"
@@ -38,12 +38,8 @@ export function ThemeToggle() {
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
       className="relative rounded-full w-10 h-10 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-500 dark:text-slate-400 transition-all hover:scale-110 active:scale-95"
     >
-      {/* Sun Icon: Visible in Light Mode, Scales down in Dark */}
       <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all duration-500 dark:-rotate-90 dark:scale-0 absolute" />
-      
-      {/* Moon Icon: Hidden in Light Mode, Scales up in Dark */}
       <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all duration-500 dark:rotate-0 dark:scale-100" />
-      
       <span className="sr-only">Toggle theme</span>
     </Button>
   );

@@ -235,10 +235,10 @@ components/
 **Dependencies:** `ChatRunner`, `SectionSidebar`, `VerdictCard`, `LegalChatInterface`, `fetch`.
 
 ### `ui/runner/VerdictCard.tsx`
-**Role:** Displays the final analysis results (Score, Status, Citations) after form submission.
+**Role:** Displays the detailed AI analysis results (Verdict) of a submission.
 **Key Exports:**
-- `VerdictCard(props)` - Visualizes the `confidence` score and lists `missingElements` and filtered `citations`.
-**Dependencies:** `lucide-react`.
+- `VerdictCard({ verdict, title, onUrnClick })` - Renders status badges, confidence scores, summaries (stripping guard text), citation lists, and structured findings with evidence quotes.
+**Dependencies:** React.
 
 ---
 

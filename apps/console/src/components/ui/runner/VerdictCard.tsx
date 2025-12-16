@@ -1,86 +1,274 @@
 "use client";
 
-import React from "react";
-import { CheckCircle2, AlertTriangle, XCircle, BookOpen } from "lucide-react";
-import { clsx } from "clsx";
+import * as React from "react";
 
-interface VerdictProps {
-  status: "LIKELY_VIOLATION" | "POSSIBLE_VIOLATION" | "UNLIKELY_VIOLATION" | "INELIGIBLE";
-  confidence: number; // 0.0 to 1.0
-  summary: string;
-  missingElements: string[];
+type EvidenceQuote = { urn: string; quote: string };
+
+type Finding = {
+  text: string;
   citations: string[];
+  evidence_quotes: EvidenceQuote[];
+};
+
+export type Verdict = {
+  status: "LIKELY_VIOLATION" | "POSSIBLE_VIOLATION" | "UNLIKELY_VIOLATION" | "INELIGIBLE";
+  confidence_score: number;
+  analysis?: {
+    summary?: string;
+    missing_elements?: string[];
+    strength_factors?: string[];
+    weakness_factors?: string[];
+    findings?: Finding[];
+  };
+  relevant_citations?: string[];
+};
+
+function pct(n: number) {
+  if (!Number.isFinite(n)) return "0%";
+  const clamped = Math.max(0, Math.min(1, n));
+  return `${Math.round(clamped * 100)}%`;
 }
 
-export function VerdictCard({ 
-  status, 
-  confidence, 
-  summary, 
-  missingElements = [], 
-  citations = []        
-}: VerdictProps) {
-  
-  const config = {
-    LIKELY_VIOLATION: { color: "bg-emerald-500", text: "text-emerald-500", label: "Strong Claim", icon: CheckCircle2 },
-    POSSIBLE_VIOLATION: { color: "bg-amber-500", text: "text-amber-500", label: "Potential Claim", icon: AlertTriangle },
-    UNLIKELY_VIOLATION: { color: "bg-red-500", text: "text-red-500", label: "Unlikely Claim", icon: XCircle },
-    INELIGIBLE: { color: "bg-slate-500", text: "text-slate-500", label: "Ineligible", icon: XCircle },
+function statusTone(status: Verdict["status"]) {
+  switch (status) {
+    case "LIKELY_VIOLATION":
+      return "bg-emerald-500/15 text-emerald-200 ring-1 ring-emerald-500/30";
+    case "POSSIBLE_VIOLATION":
+      return "bg-amber-500/15 text-amber-200 ring-1 ring-amber-500/30";
+    case "UNLIKELY_VIOLATION":
+      return "bg-slate-500/15 text-slate-200 ring-1 ring-slate-500/30";
+    case "INELIGIBLE":
+      return "bg-rose-500/15 text-rose-200 ring-1 ring-rose-500/30";
+  }
+}
+
+function hasGuardText(summary: string) {
+  return summary.includes("[CITATION_GUARD]") || summary.includes("[CITATION_DB_GUARD]");
+}
+
+function splitGuard(summary: string) {
+  const lines = summary.split("\n");
+  const guardLines = lines.filter(
+    (l) => l.includes("[CITATION_GUARD]") || l.includes("[CITATION_DB_GUARD]")
+  );
+  const bodyLines = lines.filter((l) => !guardLines.includes(l));
+  return {
+    guard: guardLines.join("\n").trim(),
+    body: bodyLines.join("\n").trim(),
   };
+}
 
-  const theme = config[status] || config.POSSIBLE_VIOLATION;
-  const scorePercent = Math.round(confidence * 100);
+function uniq(arr: string[]) {
+  return Array.from(new Set(arr));
+}
 
-  // [FIX] Pre-filter citations to remove garbage data (like "ii" or empty strings)
-  const validCitations = citations.filter(c => c && c.length > 5);
+export function VerdictCard({
+  verdict,
+  title = "Magistrate Verdict",
+  onUrnClick,
+}: {
+  verdict: Verdict;
+  title?: string;
+  onUrnClick?: (urn: string) => void;
+}) {
+  // --- hardening: never assume shape ---
+  const status = verdict?.status ?? "POSSIBLE_VIOLATION";
+  const confidence = typeof verdict?.confidence_score === "number" ? verdict.confidence_score : 0;
+
+  const analysis = verdict?.analysis ?? {};
+  const rawSummary = typeof analysis?.summary === "string" ? analysis.summary : "";
+  const { guard, body } = splitGuard(rawSummary);
+
+  const citations = uniq(((verdict?.relevant_citations ?? []) as string[]).filter(Boolean));
+
+  const strength = ((analysis?.strength_factors ?? []) as string[]).filter(Boolean);
+  const weakness = ((analysis?.weakness_factors ?? []) as string[]).filter(Boolean);
+  const missing = ((analysis?.missing_elements ?? []) as string[]).filter(Boolean);
+  const findings = ((analysis?.findings ?? []) as Finding[]).filter(Boolean);
+
+  const showGuard = rawSummary ? hasGuardText(rawSummary) : false;
+  const displaySummary = body || rawSummary || "No summary returned.";
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
-      <div className="p-6 md:p-8">
-        <div className="flex flex-col md:flex-row gap-6 items-start">
-            
-            {/* Score Circle */}
-            <div className="flex-none relative">
-                <div className={clsx("w-24 h-24 rounded-full flex items-center justify-center border-4", theme.text.replace('text-', 'border-'))}>
-                    <span className={clsx("text-2xl font-bold", theme.text)}>{scorePercent}%</span>
-                </div>
-                <div className={clsx("absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-bold text-white uppercase whitespace-nowrap", theme.color)}>
-                    {theme.label}
-                </div>
-            </div>
-
-            <div className="flex-1 space-y-4">
-                <div>
-                    <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Legal Analysis</h2>
-                    <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">{summary}</p>
-                </div>
-
-                {missingElements && missingElements.length > 0 && (
-                    <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800/50">
-                        <h4 className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase mb-2">Missing Information</h4>
-                        <ul className="list-disc list-inside text-sm text-amber-800 dark:text-amber-200 space-y-1">
-                            {missingElements.map((m, i) => <li key={i}>{m}</li>)}
-                        </ul>
-                    </div>
-                )}
-
-                {/* [FIX] Render only valid citations */}
-                {validCitations.length > 0 && (
-                    <div>
-                        <h4 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2 flex items-center gap-2">
-                            <BookOpen className="w-3.5 h-3.5" /> Cited Regulations
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                            {validCitations.map((urn, i) => (
-                                <span key={i} className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs rounded font-mono border border-slate-200 dark:border-slate-700">
-                                    {urn.split(':').pop()}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </div>
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-sm">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div className="text-sm text-white/60">{title}</div>
+          <div className="mt-1 flex flex-wrap items-center gap-2">
+            <span
+              className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${statusTone(
+                status
+              )}`}
+            >
+              {status}
+            </span>
+            <span className="text-xs text-white/60">
+              confidence: <span className="font-semibold text-white/80">{pct(confidence)}</span>
+            </span>
+          </div>
         </div>
+
+        {showGuard && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">
+            <div className="font-semibold">citation guard triggered</div>
+            <div className="mt-1 whitespace-pre-wrap text-amber-100/90">
+              {guard || "Some citations were filtered/removed."}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Summary */}
+      <div className="mt-4">
+        <div className="text-xs font-semibold text-white/70">Summary</div>
+        <div className="mt-2 whitespace-pre-wrap text-sm text-white/85">{displaySummary}</div>
+      </div>
+
+      {/* Details */}
+      <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+        <Section title="Missing Elements" emptyText="None listed.">
+          <BulletList items={missing} />
+        </Section>
+
+        <Section title="Suggested Citations (DB-verified)" emptyText="None.">
+          <ul className="space-y-2">
+            {citations.map((urn) => (
+              <li key={urn} className="flex items-start justify-between gap-2">
+                <button
+                  type="button"
+                  onClick={() => onUrnClick?.(urn)}
+                  className="text-left text-xs text-sky-200 hover:text-sky-100 underline underline-offset-2"
+                  title="Open law node"
+                >
+                  {urn}
+                </button>
+
+                <CopyButton value={urn} />
+              </li>
+            ))}
+          </ul>
+        </Section>
+
+        <Section title="Strength Factors" emptyText="None listed.">
+          <BulletList items={strength} />
+        </Section>
+
+        <Section title="Weakness Factors" emptyText="None listed.">
+          <BulletList items={weakness} />
+        </Section>
+      </div>
+
+      {/* Findings (optional) */}
+      <div className="mt-4">
+        <details className="rounded-xl border border-white/10 bg-black/10 px-4 py-3">
+          <summary className="cursor-pointer select-none text-sm font-semibold text-white/80">
+            Findings ({findings.length})
+            <span className="ml-2 text-xs font-normal text-white/50">
+              (structured claims; may be empty unless you prompt for them)
+            </span>
+          </summary>
+
+          {findings.length === 0 ? (
+            <div className="mt-3 text-sm text-white/60">No findings returned.</div>
+          ) : (
+            <div className="mt-3 space-y-4">
+              {findings.map((f, idx) => (
+                <div key={idx} className="rounded-xl border border-white/10 bg-white/5 p-3">
+                  <div className="text-sm font-semibold text-white/85">
+                    {idx + 1}. {f.text}
+                  </div>
+
+                  <div className="mt-2 grid grid-cols-1 gap-3 md:grid-cols-2">
+                    <div>
+                      <div className="text-xs font-semibold text-white/60">Citations</div>
+                      <ul className="mt-1 space-y-1">
+                        {(f.citations || []).map((u) => (
+                          <li key={u}>
+                            <button
+                              type="button"
+                              onClick={() => onUrnClick?.(u)}
+                              className="text-left text-xs text-sky-200 hover:text-sky-100 underline underline-offset-2"
+                            >
+                              {u}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div>
+                      <div className="text-xs font-semibold text-white/60">Evidence Quotes</div>
+                      <div className="mt-1 space-y-2">
+                        {(f.evidence_quotes || []).map((q, qi) => (
+                          <blockquote
+                            key={qi}
+                            className="rounded-lg border border-white/10 bg-black/20 p-2"
+                          >
+                            <div className="text-[11px] text-white/60">{q.urn}</div>
+                            <div className="mt-1 text-xs text-white/85">“{q.quote}”</div>
+                          </blockquote>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </details>
       </div>
     </div>
+  );
+}
+
+function Section({
+  title,
+  children,
+  emptyText,
+}: {
+  title: string;
+  children: React.ReactNode;
+  emptyText: string;
+}) {
+  // keep simple: always render children; BulletList handles empties
+  return (
+    <div className="rounded-xl border border-white/10 bg-black/10 p-4">
+      <div className="text-xs font-semibold text-white/70">{title}</div>
+      <div className="mt-2">{children ?? <div className="text-sm text-white/60">{emptyText}</div>}</div>
+    </div>
+  );
+}
+
+function BulletList({ items }: { items: string[] }) {
+  if (!items || items.length === 0) return <div className="text-sm text-white/60">None.</div>;
+  return (
+    <ul className="list-disc space-y-1 pl-5 text-sm text-white/80">
+      {items.map((t, i) => (
+        <li key={i}>{t}</li>
+      ))}
+    </ul>
+  );
+}
+
+function CopyButton({ value }: { value: string }) {
+  const [copied, setCopied] = React.useState(false);
+
+  return (
+    <button
+      type="button"
+      className="rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70 hover:text-white/90"
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(value);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 900);
+        } catch {
+          // ignore
+        }
+      }}
+      title="Copy"
+    >
+      {copied ? "copied" : "copy"}
+    </button>
   );
 }

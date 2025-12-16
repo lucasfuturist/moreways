@@ -1,5 +1,3 @@
---- START OF FILE CONSOLE-SRC-APP.md ---
-
 # High-Resolution Interface Map: `apps/console/src/app`
 
 ## Tree: `apps/console/src/app`
@@ -52,7 +50,7 @@ app/
 │   │   │   ├── route.ts
 │   │   ├── seed-form/
 │   │   │   ├── route.ts
-│   │   ├── simulate-user/
+│   ├── simulate-user/
 │   │   │   ├── route.ts
 │   ├── forms/
 │   │   ├── [id]/
@@ -159,10 +157,10 @@ app/
 **Dependencies:** `lucide-react`.
 
 ### `admin/ui/FormFactoryView.tsx`
-**Role:** View component for managing master form templates.
+**Role:** (Legacy/Shared) Presentation component for form grids.
 **Key Exports:**
-- `FormFactoryView({ forms, isLoading })` - Displays a searchable grid of `FormCard`s and handles optimistic deletion.
-**Dependencies:** `FormCard`, `fuse.js`.
+- `FormFactoryView({ forms, isLoading })` - Displays grid of `FormCard`s.
+**Dependencies:** `FormCard`.
 
 ### `admin/ui/OpsNavbar.tsx`
 **Role:** Top navigation bar for the Admin Console.
@@ -183,10 +181,11 @@ app/
 **Dependencies:** `createClient` (Supabase).
 
 ### `admin/views/FormFactoryView.tsx`
-**Role:** Wrapper for `ui/FormFactoryView.tsx` used in the admin tabs.
+**Role:** Main Admin dashboard view for managing, searching, deleting, and creating forms.
 **Key Exports:**
-- `FormFactoryView(props)` - See `ui/FormFactoryView.tsx`.
-**Dependencies:** `FormCard`.
+- `FormFactoryView({ forms, isLoading })` - Renders searchable grid, handles optimistic deletion, and navigates to the "Create New Form" flow.
+- `handleDeleteForm(formId, formName)` - Performs optimistic UI updates and calls DELETE API.
+**Dependencies:** `FormCard`, `fuse.js`, `useRouter`.
 
 ### `admin/views/SupportView.tsx`
 **Role:** UI for viewing support tickets.
@@ -350,15 +349,15 @@ app/
 **Dependencies:** `callExtractionModel`, `mergeExtractionIntoFormData`.
 
 ### `api/public/v1/agent/route.ts`
-**Role:** Public API for external agents (Stub/Beta).
+**Role:** Public API for external agents to process intake via the LLM pipeline.
 **Key Exports:**
-- `POST(req)` - Simple chitchat responder (Placeholder).
-**Dependencies:** None.
+- `POST(req)` - Validates API key and executes `LlmIntakeAgentAsync`.
+**Dependencies:** `LlmIntakeAgentAsync`, `logger`.
 
 ### `api/public/v1/forms/route.ts`
-**Role:** Public API to fetch a form schema by slug.
+**Role:** Public API to list published forms or fetch a specific form by slug.
 **Key Exports:**
-- `GET(req)` - Validates API key and returns schema JSON.
+- `GET(req)` - Validates API key and returns either a full catalog of published forms or a single schema (if `?slug` is provided).
 **Dependencies:** `formSchemaRepo`.
 
 ### `api/public/v1/forms/[id]/route.ts`

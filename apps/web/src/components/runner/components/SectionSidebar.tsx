@@ -1,97 +1,118 @@
-import React, { useEffect, useRef } from "react";
-import { clsx } from "clsx";
-import { Check } from "lucide-react";
-import type { FormSchemaJson } from "@/lib/types/argueos-types";
+"use client";
+
+import React from "react";
+import { CheckCircle2, Circle, Lock } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface SectionSidebarProps {
-  schema: FormSchemaJson;
+  schema: any; // Relaxed type to handle both JSON Schema and Intake Schema
   currentFieldKey: string | null;
 }
 
-interface SectionItem {
-  title: string;
-  startKey: string;
-  status: 'done' | 'active' | 'pending';
-}
-
 export function SectionSidebar({ schema, currentFieldKey }: SectionSidebarProps) {
-  const fieldKeys = schema.order || Object.keys(schema.properties);
-  const sections: SectionItem[] = [];
+  if (!schema) return null;
+
+  // [FIX] Robust extraction of fields regardless of schema shape
+  const fields = schema.fields || (schema.properties ? Object.values(schema.properties) : []);
   
-  let currentSection: SectionItem = { 
-    title: "Start", 
-    startKey: fieldKeys[0] || "unknown", 
-    status: 'pending' 
-  };
-
-  let activeSectionIndex = 0;
-
-  fieldKeys.forEach((key) => {
-    const def = schema.properties[key];
-    if (def.kind === 'header') {
-        sections.push(currentSection);
-        currentSection = { title: def.title, startKey: key, status: 'pending' };
-    }
-    if (key === currentFieldKey) {
-        currentSection.status = 'active';
-        sections.forEach(s => s.status = 'done');
-        activeSectionIndex = sections.length;
-    }
-  });
-  sections.push(currentSection);
-
-  if (!currentFieldKey && sections.length > 0) {
-      sections.forEach(s => s.status = 'done');
-      activeSectionIndex = sections.length - 1;
+  if (!Array.isArray(fields) || fields.length === 0) {
+      return null;
   }
 
-  const pillsRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (pillsRef.current) {
-        const activeEl = pillsRef.current.children[activeSectionIndex] as HTMLElement;
-        if (activeEl) {
-            pillsRef.current.scrollTo({ left: activeEl.offsetLeft - 20, behavior: 'smooth' });
-        }
-    }
-  }, [activeSectionIndex]);
+  // 1. Identify Sections from fields
+  // Group consecutive fields with the same 'section' property, or default to "Intake"
+  const sections: { id: string; title: string; fieldKeys: string[] }[] = [];
+  
+  let currentSection = { id: "default", title: "General Info", fieldKeys: [] as string[] };
+  
+  fields.forEach((field: any) => {
+      const sectionTitle = field.section || "General Info";
+      
+      if (sectionTitle !== currentSection.title && currentSection.fieldKeys.length > 0) {
+          sections.push(currentSection);
+          currentSection = { id: sectionTitle, title: sectionTitle, fieldKeys: [] };
+      }
+      
+      // Update title if it changed (first item case)
+      currentSection.title = sectionTitle;
+      
+      // Use 'key' or 'id' or 'name'
+      const key = field.key || field.id || field.name;
+      if (key) currentSection.fieldKeys.push(key);
+  });
+  
+  // Push the last section
+  if (currentSection.fieldKeys.length > 0) {
+      sections.push(currentSection);
+  }
 
+  // If no explicit sections were found, create steps based on field chunks
+  if (sections.length === 1 && sections[0].fieldKeys.length > 5) {
+      // Optional: split long forms? For now, stick to logic.
+  }
+
+  // 2. Determine Progress
+  const currentFieldIndex = fields.findIndex((f: any) => (f.key || f.id) === currentFieldKey);
+  
   return (
-    <>
-        {/* DESKTOP SIDEBAR */}
-        <div className="hidden lg:flex flex-col w-64 py-8 pr-6 pl-4 h-full border-r border-slate-200 dark:border-white/5 space-y-6 bg-slate-50 dark:bg-slate-950/30">
-            <div>
-                <h4 className="text-[10px] font-bold text-slate-500 dark:text-slate-600 uppercase tracking-widest mb-4 pl-1">Progress</h4>
-                <div className="space-y-0 relative">
-                    <div className="absolute left-[9px] top-2 bottom-2 w-[1px] bg-slate-200 dark:bg-white/5 -z-10" />
+    <div className="py-4 space-y-6">
+      <div className="px-6">
+          <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">
+              Progress
+          </div>
+          <div className="relative space-y-0">
+              {sections.map((section, idx) => {
+                  // Check if this section is active, past, or future
+                  const sectionStartIndex = fields.findIndex((f: any) => (f.key || f.id) === section.fieldKeys[0]);
+                  const sectionEndIndex = sectionStartIndex + section.fieldKeys.length;
+                  
+                  const isPast = currentFieldIndex > sectionEndIndex;
+                  const isActive = currentFieldIndex >= sectionStartIndex && currentFieldIndex < sectionEndIndex;
+                  
+                  return (
+                      <div key={idx} className="relative pl-6 pb-6 last:pb-0 group">
+                          {/* Vertical Line */}
+                          {idx !== sections.length - 1 && (
+                              <div className={cn(
+                                  "absolute left-[9px] top-2 bottom-0 w-px transition-colors duration-500",
+                                  isPast ? "bg-indigo-500" : "bg-slate-800"
+                              )} />
+                          )}
+                          
+                          {/* Dot */}
+                          <div className={cn(
+                              "absolute left-0 top-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300 z-10",
+                              isActive 
+                                ? "border-indigo-500 bg-slate-900 scale-110" 
+                                : isPast 
+                                    ? "border-indigo-500 bg-indigo-500" 
+                                    : "border-slate-700 bg-slate-950"
+                          )}>
+                              {isPast && <CheckCircle2 className="w-3 h-3 text-white" />}
+                              {isActive && <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />}
+                          </div>
 
-                    {sections.map((s, i) => (
-                        <div key={i} className={clsx("flex items-center gap-3 py-2 transition-all duration-500", s.status === 'active' ? "opacity-100" : s.status === 'done' ? "opacity-50" : "opacity-20")}>
-                            <div className={clsx("w-5 h-5 rounded-full border flex items-center justify-center transition-colors z-10", 
-                                s.status === 'active' ? "bg-white dark:bg-slate-950 border-emerald-500 text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.2)]" : 
-                                s.status === 'done' ? "bg-emerald-100 dark:bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-500" : "bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-300 dark:text-slate-800"
-                            )}>
-                                {s.status === 'done' ? <Check className="w-3 h-3" /> : <div className={clsx("rounded-full bg-current", s.status === 'active' ? "w-1.5 h-1.5" : "w-1 h-1")} />}
-                            </div>
-                            <div>
-                                <div className={clsx("text-xs font-medium leading-none", s.status === 'active' ? "text-slate-900 dark:text-emerald-400" : "text-slate-500 dark:text-slate-300")}>{s.title}</div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-
-        {/* MOBILE PILLS */}
-        <div className="lg:hidden h-12 border-b border-slate-200 dark:border-white/5 flex items-center overflow-x-auto no-scrollbar px-4 gap-2 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl z-20" ref={pillsRef}>
-            {sections.map((s, i) => (
-                <div key={i} className={clsx("flex-none px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border transition-colors whitespace-nowrap", 
-                    s.status === 'active' ? "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400" : 
-                    s.status === 'done' ? "bg-slate-100 dark:bg-slate-800/50 border-transparent text-slate-500" : "border-transparent text-slate-400 dark:text-slate-600"
-                )}>
-                    {s.title}
-                </div>
-            ))}
-        </div>
-    </>
+                          {/* Label */}
+                          <div className={cn(
+                              "text-sm font-medium transition-colors duration-300 -mt-0.5",
+                              isActive ? "text-white" : isPast ? "text-slate-400" : "text-slate-600"
+                          )}>
+                              {section.title}
+                          </div>
+                      </div>
+                  );
+              })}
+          </div>
+      </div>
+      
+      {/* Security Badge */}
+      <div className="mx-6 p-3 rounded-lg bg-slate-900/50 border border-slate-800 flex items-center gap-3">
+          <Lock className="w-4 h-4 text-emerald-500" />
+          <div>
+              <div className="text-[10px] font-bold text-slate-400 uppercase">Encrypted Session</div>
+              <div className="text-xs text-slate-500">Your data is secure.</div>
+          </div>
+      </div>
+    </div>
   );
 }

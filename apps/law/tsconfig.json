@@ -14,7 +14,7 @@
   "include": [
     "src/**/*", 
     "scripts/**/*" 
-  ],
+, "tests/unit/graph.repo.overrideRepo.test.ts"  ],
   "exclude": [
     "node_modules", 
     "tests",           

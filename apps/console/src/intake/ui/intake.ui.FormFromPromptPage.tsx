@@ -6,10 +6,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { clsx } from "clsx";
 import { motion, AnimatePresence } from "framer-motion"; 
-import { 
-  MessageSquare, Undo2, Redo2, Code2, 
-  LayoutTemplate, ChevronLeft, Save, Loader2 
-} from "lucide-react";
+import { MessageSquare, Undo2, Redo2, Code2, LayoutTemplate, ChevronLeft, Save, Loader2, Trash2, Rocket, Globe } from "lucide-react";
 
 import { ChatPanel } from "./chat/ChatPanel";
 import { ReactiveCanvas } from "@/forms/ui/canvas/ReactiveCanvas";
@@ -128,11 +125,14 @@ export default function FormFromPromptPage({ initialFormId }: FormFromPromptPage
     timestamp: Date.now() 
   };
   
-  const [messages, setMessages] = useState<Message[]>([INIT_MSG]);
-  const [prompt, setPrompt] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  
+    const [messages, setMessages] = useState<Message[]>([INIT_MSG]);
+    const [prompt, setPrompt] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [isPublished, setIsPublished] = useState(false);
+    const [isPublishing, setIsPublishing] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
   // -- History & Canvas --
   const { state: fields, set: setFields, undo, redo, canUndo, canRedo } = useHistory<any[]>([]);
   
@@ -151,9 +151,10 @@ export default function FormFromPromptPage({ initialFormId }: FormFromPromptPage
         setIsLoading(true);
         fetch(`/api/forms/${initialFormId}`)
             .then(res => res.json())
-            .then((data: FormSchema) => {
+            .then((data: FormSchema & { isPublished?: boolean }) => {
                 setFormName(data.name);
                 setVersion(data.version);
+                setIsPublished(data.isPublished || false);
                 setFields(deserializeSchemaToFields(data.schemaJson));
                 
                 const hist = data.schemaJson.metadata?.chatHistory;
@@ -207,7 +208,59 @@ export default function FormFromPromptPage({ initialFormId }: FormFromPromptPage
       }
   };
 
-  const handleSaveConfirm = async (name: string) => {
+  const handlePublish = async () => {
+    if (!formId) {
+      alert("Please save the form before publishing.");
+      return;
+    }
+    setIsPublishing(true);
+    try {
+      await handleSave(false); // Silently save latest changes
+      const res = await fetch(`/api/forms/${formId}/publish`, { method: "POST" });
+      if (!res.ok) throw new Error("Publish failed");
+      setIsPublished(true);
+      alert("Form Published Successfully!");
+    } catch (e) {
+      console.error("Publishing failed because the pre-publish save failed:", e);
+      alert("Failed to publish.");
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!formId) {
+      // If the form has never been saved, just reset the state.
+      if (window.confirm("Are you sure you want to discard this unsaved form?")) {
+          router.push('/admin');
+      }
+      return;
+    }
+    if (window.confirm(`Are you sure you want to delete "${formName}"? This will archive all versions of the form.`)) {
+      setIsDeleting(true);
+      try {
+        const res = await fetch(`/api/forms/${formId}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error("Failed to delete form");
+        alert("Form deleted successfully.");
+        router.push('/admin'); // Redirect on success
+      } catch (e) {
+        console.error(e);
+        alert("An error occurred while deleting the form.");
+        setIsDeleting(false); // Only set to false on error
+      }
+    }
+  };
+
+  function handleSave(showDialog = true) {
+    if (!formId) {
+        if (showDialog) setIsSaveDialogOpen(true);
+        return false;
+    }
+    handleSaveConfirm(formName);
+    return true;
+}
+
+  async function handleSaveConfirm(name: string): Promise<void> {
     setIsSaving(true);
     const schema = serializeCanvasToSchema(fields, messages);
     try {
@@ -220,7 +273,7 @@ export default function FormFromPromptPage({ initialFormId }: FormFromPromptPage
         if (!res.ok) throw new Error("Save failed");
         
         const data = await res.json();
-        const newId = data.id || data.formSchemaId;
+        const newId = data.id;
         
         setFormId(newId);
         setFormName(name);
@@ -343,9 +396,9 @@ export default function FormFromPromptPage({ initialFormId }: FormFromPromptPage
                         {formName}
                     </h1>
                     <div className="flex items-center gap-1.5">
-                        <div className={clsx("w-1.5 h-1.5 rounded-full", version > 0 ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" : "bg-amber-500")} />
+                        <div className={clsx("w-1.5 h-1.5 rounded-full", isPublished ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" : version > 0 ? "bg-indigo-500" : "bg-amber-500")} />
                         <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono uppercase tracking-wider">
-                            {isSaving ? "Saving..." : version > 0 ? `v${version} Saved` : 'Draft'}
+                            {isSaving ? "Saving..." : isPublished ? `v${version} Live` : version > 0 ? `v${version} Saved` : 'Unsaved Draft'}
                         </span>
                     </div>
                 </div>
@@ -364,22 +417,31 @@ export default function FormFromPromptPage({ initialFormId }: FormFromPromptPage
                 <button onClick={() => setMode("builder")} className={clsx("relative z-10 px-6 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors duration-200", mode === "builder" ? "text-slate-900 dark:text-white" : "text-slate-400 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200")}>Builder</button>
                 <button onClick={() => setMode("preview")} className={clsx("relative z-10 px-6 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors duration-200", mode === "preview" ? "text-slate-900 dark:text-white" : "text-slate-400 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200")}>Preview</button>
             </div>
-
+            
             {/* Right: Actions */}
-            <div className="flex items-center gap-2">
-                <div className="hidden lg:flex items-center bg-slate-100/50 dark:bg-white/5 rounded-full p-1 border border-slate-200/50 dark:border-white/5 mr-2">
-                    <button onClick={undo} disabled={!canUndo} className="p-2 rounded-full hover:bg-white dark:hover:bg-white/10 text-slate-400 dark:text-slate-400 disabled:opacity-30 transition-colors"><Undo2 className="w-4 h-4"/></button>
-                    <button onClick={redo} disabled={!canRedo} className="p-2 rounded-full hover:bg-white dark:hover:bg-white/10 text-slate-400 dark:text-slate-400 disabled:opacity-30 transition-colors"><Redo2 className="w-4 h-4"/></button>
-                </div>
-                <ThemeToggle />
-                <div className="w-px h-6 bg-slate-200 dark:bg-white/10 mx-1" />
-                <Button variant="primary" size="sm" onClick={() => setIsSaveDialogOpen(true)} className="rounded-full px-6 shadow-lg shadow-indigo-500/20 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200">
-                    {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
-                </Button>
-                <button onClick={() => setIsChatOpen(!isChatOpen)} className={clsx("p-2.5 rounded-full transition-all border", isChatOpen ? "bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400" : "bg-transparent border-transparent text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5")}>
-                    <MessageSquare className="w-5 h-5" />
-                </button>
+        <div className="flex items-center gap-2">
+            <div className="hidden lg:flex items-center bg-slate-100/50 dark:bg-white/5 rounded-full p-1 border border-slate-200/50 dark:border-white/5 mr-2">
+                <button onClick={undo} disabled={!canUndo} className="p-2 rounded-full hover:bg-white dark:hover:bg-white/10 text-slate-400 disabled:opacity-30"><Undo2 className="w-4 h-4"/></button>
+                <button onClick={redo} disabled={!canRedo} className="p-2 rounded-full hover:bg-white dark:hover:bg-white/10 text-slate-400 disabled:opacity-30"><Redo2 className="w-4 h-4"/></button>
             </div>
+            <ThemeToggle />
+            <div className="w-px h-6 bg-slate-200 dark:bg-white/10 mx-1" />
+            <button onClick={() => setIsChatOpen(!isChatOpen)} className={clsx("p-2.5 rounded-full transition-all border", isChatOpen ? "bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400" : "bg-transparent border-transparent text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5")}>
+        <MessageSquare className="w-5 h-5" />
+    </button>
+            <button onClick={handleDelete} disabled={isDeleting} className="p-2.5 rounded-full text-red-500 bg-red-500/0 hover:bg-red-500/10 disabled:opacity-30 transition-colors" title="Delete Form">
+                {isDeleting ? <Loader2 className="w-5 h-5 animate-spin"/> : <Trash2 className="w-5 h-5" />}
+            </button>
+            
+            <Button variant="ghost" size="sm" onClick={() => handleSave()} className="rounded-full px-4 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">
+                {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            </Button>
+            
+            <Button variant="primary" size="sm" onClick={handlePublish} disabled={isPublishing || !formId} className="rounded-full px-5 shadow-lg shadow-indigo-500/20 transition-all hover:bg-indigo-500 hover:shadow-indigo-500/40 hover:-translate-y-px">
+                {isPublishing ? <Loader2 className="w-4 h-4 animate-spin" /> : isPublished ? <Globe className="w-4 h-4" /> : <Rocket className="w-4 h-4" />}
+                <span className="ml-2">{isPublished ? 'Published' : 'Publish'}</span>
+            </Button>
+        </div>
         </header>
       </div>
 

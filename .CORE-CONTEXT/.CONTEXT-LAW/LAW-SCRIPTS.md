@@ -4,7 +4,6 @@
 
 ```
 scripts/
-
 ├── magistrate-results/
 ├── rc/
 │   ├── api/
@@ -42,7 +41,9 @@ scripts/
 ├── run-drive-ingest.ts
 ├── run-local-ingest.ts
 ├── run-magistrate-batch.ts
-├── staging_complex_scenarios.md
+├── smoke-grab-law.ts
+├── smoke-magistrate.ts
+├── staging_complex_scenarios.json
 ```
 
 ## File Summaries
@@ -101,10 +102,22 @@ scripts/
 - `main()` - Vectorizes a query and prints the top 5 semantic matches with score breakdowns.
 **Dependencies:** `HybridSearchService`, `OpenAiClient`.
 
+### `debug-urns.ts`
+**Role:** Diagnostic tool to inspect URN structure.
+**Key Exports:**
+- *Implicit main execution*
+**Dependencies:** `SupabaseDbClient`.
+
 ### `deep-search-by-urn.ts`
 **Role:** Finds all descendant nodes of a URN prefix, useful for locating specific sections within a large document structure.
 **Key Exports:**
 - `deepSearch()` - Queries the DB for URNs matching a prefix and scans content for definition keywords.
+**Dependencies:** `SupabaseDbClient`.
+
+### `get-node-text.ts`
+**Role:** Retrieves the raw text content of a specific node by ID for inspection.
+**Key Exports:**
+- `main()` - Fetches content column via SQL query.
 **Dependencies:** `SupabaseDbClient`.
 
 ### `hydrate-from-cache.ts`
@@ -167,11 +180,23 @@ scripts/
 - `runBatch()` - Orchestrates the generation of cases, execution of the Judge logic, and reporting of verdicts/stats.
 **Dependencies:** `JudgeService`, `openai`, `withRetry`, `HybridSearchService`.
 
-### `staging_complex_scenarios.md`
-**Role:** A static data fixture (JSON content) containing high-fidelity, complex legal intake scenarios used by `run-magistrate-batch.ts` to ensure consistent test inputs.
+### `smoke-grab-law.ts`
+**Role:** CLI smoke test for node retrieval by URN or Hybrid Search query. Used to verify DB connectivity and search logic.
+**Key Exports:**
+- `main()` - CLI entry point handling arguments for `--urn` lookup or free-text query.
+**Dependencies:** `HybridSearchService`, `SupabaseGraphReader`.
+
+### `smoke-magistrate.ts`
+**Role:** CLI smoke test for the Magistrate verdict engine. Evaluates a raw intent string against the `JudgeService` to output a JSON verdict and citation evidence.
+**Key Exports:**
+- `main()` - CLI entry point that mocks form data based on intent keywords and runs the `JudgeService`.
+**Dependencies:** `JudgeService`, `HybridSearchService`, `SupabaseGraphReader`, `SupabaseOverrideRepo`.
+
+### `staging_complex_scenarios.json`
+**Role:** A static data fixture (JSON) containing high-fidelity, complex legal intake scenarios used by `run-magistrate-batch.ts` to ensure consistent benchmarking.
 **Key Exports:**
 - JSON Array of test objects containing `id`, `intent`, `formData`, and `expected_bias`.
-**Dependencies:** None
+**Dependencies:** None.
 
 ---
 

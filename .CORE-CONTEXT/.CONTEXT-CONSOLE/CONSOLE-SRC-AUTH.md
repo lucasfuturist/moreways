@@ -1,6 +1,4 @@
---- START OF FILE CONSOLE-SRC-AUTH.md ---
-
-# High-Resolution Interface Map
+# High-Resolution Interface Map: `apps/console/src/auth`
 
 ## Tree: `apps/console/src/auth`
 
@@ -45,7 +43,7 @@ auth/
 **Dependencies:** *None*
 
 ### `svc/auth.svc.GetCurrentUserAsync.ts`
-**Role:** Authenticates the request by verifying a Supabase token (from Header or Cookie) and resolving the user identity against the local database. Includes a fallback for development.
+**Role:** Authenticates requests by validating tokens (Header or Cookie) using the Supabase Service Role key and resolving the identity against the local database.
 **Key Exports:**
-- `GetCurrentUserAsync(req): Promise<User | null>` - Returns the mapped user context or the dev fallback if keys are missing.
+- `GetCurrentUserAsync(req): Promise<User | null>` - Returns the mapped user context, or a dev mock if keys are missing.
 **Dependencies:** `createClient` (Supabase), `db`, `cookies`, `env`, `logger`.

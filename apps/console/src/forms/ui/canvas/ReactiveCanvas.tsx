@@ -117,9 +117,9 @@ export function ReactiveCanvas({ fields, setFields, onFieldAiRequest, isBlueprin
 
 
       {/* Scrollable Canvas Area */}
-      <div 
-        ref={containerRef} 
-        className="absolute inset-0 overflow-y-auto scroll-smooth custom-scrollbar px-6 pt-24" 
+      <div
+        ref={containerRef}
+        className="absolute inset-0 overflow-y-auto scroll-smooth px-6 pt-24"
         onClick={() => setActiveFieldIdx(null)}
       >
         {/* Floating Toolbar - Placed inside scroll container so it scrolls away */}

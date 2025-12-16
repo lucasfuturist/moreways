@@ -51,7 +51,7 @@ export default function DynamicIntakePage({ params }: { params: { id: string } }
       <UnifiedRunner 
         formId={params.id}
         organizationId="org_default_local" // Default org for public link
-        schema={schema}
+        initialSchema={schema}
         intent={schema.title || "General Intake"} // Pass the Form Title as Intent to the Brain
       />
     </div>
