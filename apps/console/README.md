@@ -1,142 +1,89 @@
-# argueOS
+# MoreWays Console
 
-argueOS is an **AI-assisted legal intake + CRM platform** designed for modern law firms.  
-V1 delivers: **Prompt → AI-Generated Form Schema → Live Preview → Stored Versioning**.
+The **MoreWays Console** is an AI-native legal intake and case management platform. It combines a natural-language "Form Architect" with a conversational intake engine and automated legal merit assessment to streamline the bridge between potential clients and legal professionals.
 
----
+## 🚀 Core Capabilities
 
-## 🚀 Quick Start (Local Dev)
+*   **AI Form Architect:** Build complex, versioned legal forms using natural language prompts. The system generates structured JSON schemas, including conditional logic and PII (Personally Identifiable Information) detection.
+*   **Conversational Intake (ChatRunner):** Transform any static form into an intelligent, multi-turn chat conversation. The AI agent performs "Deep Listening" to extract data, handle side-loaded information, and clarify ambiguous answers.
+*   **Automated Claim Assessment:** Integrated "Magistrate" AI service that evaluates submissions for legal merit, providing scores, executive summaries, and prima facie element analysis.
+*   **Secure CRM & Inbox:** A workspace for legal teams to review submissions, export professional legal memos, and manage "Matters" (cases) with field-level encryption (FLE) for sensitive client data.
+*   **Developer-First Infrastructure:** Built-in simulation engines for user personas, robust audit logging, and a comprehensive suite of E2E and unit tests.
+
+## 🛠️ Tech Stack
+
+*   **Framework:** [Next.js 14](https://nextjs.org/) (App Router, Server Actions)
+*   **Language:** TypeScript
+*   **Database & ORM:** [Prisma](https://www.prisma.io/) with PostgreSQL (via Supabase)
+*   **Authentication:** Supabase Auth
+*   **AI/LLM:** OpenAI (GPT-4o / GPT-4 Turbo)
+*   **UI/UX:** Tailwind CSS, Framer Motion (Animations), Radix UI (Primitives), Lucide React (Icons)
+*   **Testing:** Vitest (Unit/Integration), Playwright (E2E)
+
+## 📁 Project Structure
+
+```text
+src/
+├── admin/      # Operations Center for managing tenants and support
+├── app/        # Next.js App Router (Routes and API Endpoints)
+├── auth/       # Identity management and session handling
+├── components/ # Shared UI library (Glassmorphism, Page Transitions)
+├── crm/        # Lead management, Case/Matter tracking, and Legal Memos
+├── forms/      # The "Grand Unified Schema" logic and Form Builder UI
+├── infra/      # Core services: Encryption, Rate Limiting, Logging, DB Client
+├── intake/     # The "Architect" pipeline (Prompt -> Schema generation)
+├── lib/        # Shared utility functions
+├── llm/        # AI Service layer (Prompt builders, JSON parsers, Agent logic)
+└── tests/      # Comprehensive testing suite (E2E, Fuzz, Unit)
+```
+
+## 🚦 Getting Started
 
 ### Prerequisites
-- Node.js ≥ 18
-- `pnpm`
-- Docker (recommended for Postgres)
+*   Node.js (v18+)
+*   pnpm (recommended) or npm
+*   A running PostgreSQL instance (or Supabase project)
 
-### Setup
+### Installation
+1.  **Clone the repo:**
+    ```bash
+    git clone https://github.com/moreways-ecosystem/console.git
+    cd console
+    ```
+2.  **Install dependencies:**
+    ```bash
+    pnpm install
+    ```
+3.  **Environment Setup:**
+    Copy `.env.example` to `.env.local` and fill in:
+    *   `DATABASE_URL`: Prisma connection string
+    *   `OPENAI_API_KEY`: For the Form Architect and Intake Agent
+    *   `ENCRYPTION_KEY`: 32-character hex string for PII protection
 
-```bash
-git clone https://github.com/your-org/argueOS.git
-cd argueOS
+4.  **Database Migration:**
+    ```bash
+    npx prisma migrate dev
+    ```
 
-pnpm install
-cp .env.example .env   # then fill in CONSOLE_DATABASE_URL + OPENAI_API_KEY
+5.  **Run Development Server:**
+    ```bash
+    pnpm dev
+    ```
 
-docker-compose up -d   # starts Postgres
-pnpm db:migrate
-pnpm dev
-````
+## 🧪 Testing & Development
 
-App runs at:
-👉 [http://localhost:3000](http://localhost:3000)
+*   **Unit/Integration Tests:** `pnpm test` (Uses Vitest)
+*   **E2E Smoke Tests:** `npx playwright test`
+*   **Seed Development Data:** Hit the internal endpoint `/api/dev/seed` to populate a test organization and sample forms.
+*   **Simulation:** Use the "Auto-Fill Engine" in the form previewer to test how different user personas (e.g., "Anxious," "Corporate") interact with your generated forms.
 
----
+## 🔐 Security & Compliance
 
-## 📚 Core Project Docs
+*   **PII Redaction:** The `infra.svc.logger` automatically redacts sensitive keys from system logs.
+*   **At-Rest Encryption:** Sensitive form fields are protected using **AES-256-GCM** via the `EncryptionService` before hitting the database.
+*   **Audit Trails:** Every access to PII-decrypted data is logged to an immutable audit trail for compliance.
+*   **Honeypots:** Public form submissions include hidden fields to mitigate automated bot spam.
 
-**READ THESE BEFORE WRITING CODE**
+## 📄 License
 
-| File                                       | Purpose                                                      |
-| ------------------------------------------ | ------------------------------------------------------------ |
-| **PRODUCT_V1.md**                          | What v1 *is* and *is not*                                    |
-| **01-technical-vision-and-conventions.md** | Architecture, naming, folder strategy (**Required Reading**) |
-| **DATA_API_SPEC.md**                       | DB schema + primary API endpoint                             |
-| **PROMPTS.md**                             | LLM prompt template rules (lives in `/prompts`)              |
-| **02-fat-v1-prompt-to-preview-slice.md**   | Field Acceptance Test — defines “DONE”                       |
-
----
-
-## 🏗 Repo Structure (high-level)
-
-```
-/src
-  /intake
-  /forms
-  /crm
-  /llm
-  /infra
-/docs
-/prompts
-.env.example
-```
-
-Architecture follows our enforced **domain × layer** structure
-(see: `01-technical-vision-and-conventions.md`).
-
----
-
-## 🧪 Tests & Quality
-
-Run all tests:
-
-```bash
-pnpm test
-```
-
-Lint:
-
-```bash
-pnpm lint
-```
-
-Type safety enforced via:
-
-```bash
-pnpm typecheck
-```
-
----
-
-## 🤝 Contributing
-
-We are building *deliberately*.
-
-* Feature branches → PR → CI must pass
-* Follow naming & folder conventions exactly
-* All code touching LLM output **must validate schema before write**
-
-PRs that violate conventions will be rejected.
-
----
-
-## 🗺 Roadmap
-
-V1 vertical slice target:
-
-> “Lawyer prompt → AI schema → Stored version → Live preview”
-
-(Full acceptance criteria defined in `02-fat-v1-prompt-to-preview-slice.md`)
-
----
-
-## 🧠 AI Agents
-
-This repository is **fully compatible with autonomous LLM coding agents**.
-
-Agents must:
-
-1. Read `01-technical-vision-and-conventions.md` FIRST
-2. Obey naming rules
-3. Never write code that bypasses schema validation
-4. Pass FAT checklist
-
----
-
-## 🛠 Useful Commands
-
-| Action     | Command           |
-| ---------- | ----------------- |
-| Dev server | `pnpm dev`        |
-| DB migrate | `pnpm db:migrate` |
-| Run tests  | `pnpm test`       |
-| Lint       | `pnpm lint`       |
-
----
-
-## 🏛 License
-
-Private, all rights reserved (pending)
-
-```
-
----
-
+Internal MoreWays Ecosystem Property. See `CONTRIBUTING.md` for guidelines.
